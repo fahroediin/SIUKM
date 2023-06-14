@@ -1,0 +1,383 @@
+.navbar {
+  background-color: #3F72AF;
+}
+
+.navbar .nav-link {
+  color: #fff;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #fff;
+}
+
+.navbar .dropdown-menu {
+  background-color: #112D4E;
+}
+
+.navbar .dropdown-item {
+  color: #fff;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+  background-color: #0D7EA5;
+  color: #fff;
+}
+
+.navbar .btn-signin {
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+.navbar .btn-signin:hover,
+.navbar .btn-signin:focus {
+  background-color: #112D4E;
+  border: 1px solid #112D4E;
+  color: #112D4E;
+}
+
+.nav-greeting {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1c1919;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-greeting::before {
+  content: "\f007";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  margin-right: 5px;
+}
+
+.nav-greeting span {
+  margin-right: 5px;
+}
+
+.nav-greeting:hover {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+/* Style untuk judul halaman */
+h1 {
+  padding-top: 20px;
+}
+
+/* Style untuk paragraf */
+p {
+  font-size: 1.3rem;
+  line-height: 1.2;
+  text-align: justify;
+}
+
+/* Style untuk tombol daftar */
+.btn-primary {
+  background-color: #3F72AF;
+  border-color: #3F72AF;
+}
+
+
+.btn-primary:hover {
+  background-color: #112D4E;
+  border-color: #112D4E;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 550px; /* Ubah angka ini sesuai kebutuhan */
+  object-fit: cover;
+} 
+
+/* Style untuk footer */
+footer {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #112D4E;
+  z-index: 9999;
+}
+
+.btn-signin {
+  background-color: #112D4E;
+  border-color: #112D4E;
+  color: #112D4E;
+}
+
+.btn-signin:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+  color: #112D4E;
+}
+
+
+.signup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px; /* Sesuaikan dengan ketinggian konten */
+  background-color: #f2f2f2;
+}
+
+.signup p {
+  margin: 0;
+}
+
+
+.jumbotron {
+  background-color: #f8f9fa;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.signup a {
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.logo-siukm {
+  width: 300px;
+  height: 300px;
+}
+
+/* Style CSS tabel per halaman */
+
+       table {
+  border-collapse: collapse;
+  width: 100%;
+        }
+
+        table th, table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+
+        table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        }
+
+        table tr:nth-child(even) {
+        background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+        background-color: #f5f5f5;
+        }
+
+        .divider {
+            border: none;
+            border-top: 2px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+/* Styles untuk layar dengan lebar 992px atau lebih */
+@media (min-width: 992px) {
+  /* Menampilkan menu pada baris yang sama */
+  .navbar-nav {
+    display: flex;
+    flex-direction: row;
+  }
+
+  /* Membuat tombol Sign In lebih besar */
+
+}
+
+/* Styles untuk layar dengan lebar kurang dari 992px */
+@media (max-width: 991.98px) {
+  /* Menampilkan menu dalam dropdown */
+  .navbar-nav .dropdown-menu {
+    position: absolute;
+    right: 0;
+    left: auto;
+  }
+
+  /* Mengatur jarak antara menu dropdown dan menu utama */
+  .navbar-nav .dropdown-toggle::after {
+    display: none;
+  }
+
+  .navbar-nav .dropdown-toggle::before {
+    display: inline-block;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    content: "\25bc";
+  }
+
+  /* Membuat tombol Sign In lebih kecil */
+  .navbar-nav .btn-signin {
+    font-size: 1rem;
+    padding: 0.3rem 1rem;
+  }
+
+  /* Memindahkan menu "Pilih UKM" ke dalam navbar */
+  .navbar-nav .dropdown-menu {
+    position: static;
+    float: none;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .navbar-nav .dropdown-item {
+    display: block;
+    text-align: left;
+    color: #F6F1F1;
+  }
+}
+.navbar-nav .nav-item.dropdown:hover .nav-link {
+  cursor: pointer;
+}
+
+
+body {
+  margin-bottom: 150px; /* memberikan jarak 50px antara body dengan footer */
+}
+
+
+.gallery {
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.gallery img {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-out;
+}
+
+.gallery .row {
+  margin-bottom: 20px;
+}
+
+.gallery img:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+footer {
+  background-color: #DBE2EF;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+footer a {
+  color: #555;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #333;
+}
+
+@media screen and (max-width: 480px) {
+  footer {
+    font-size: 12px;
+  }
+}
+
+/* CSS untuk tata letak sidebar */
+       .sidebar {
+            width: 200px;
+            background-color: #3F72AF;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            transition: width 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .btn {
+            background-color: #112D4E;
+            color: #fff;
+            display: block;
+            margin-bottom: 10px;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar .btn:hover {
+            background-color: #3F72AF;
+        }
+
+        .sidebar .btn:first-child {
+            margin-top: 0;
+        }
+
+        .sidebar .btn:last-child {
+            margin-bottom: 0;
+        }
+
+        /* CSS untuk konten utama */
+        .content {
+            margin-left: 200px; /* Atur margin kiri sesuai dengan lebar sidebar */
+            padding: 10px;
+            transition: margin-left 0.3s;
+        }
+
+        .content.collapsed {
+            margin-left: 70px;
+        }
+
+        /* CSS untuk toggle button */
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+        }
+
+        .toggle-btn span {
+            display: block;
+            width: 30px;
+            height: 5px;
+            background-color: #000;
+            margin-bottom: 5px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn.collapsed span:first-child {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .toggle-btn.collapsed span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .toggle-btn.collapsed span:last-child {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
