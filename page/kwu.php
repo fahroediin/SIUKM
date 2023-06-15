@@ -19,6 +19,24 @@ if (!$result) {
     exit();
 }
 
+// Mendapatkan data UKM-info berupa visi dan misi
+$query = "SELECT * FROM tab_ukm WHERE id_ukm = 'kwu'";
+$infoResult = mysqli_query($conn, $query);
+
+// Memeriksa apakah query berhasil dieksekusi
+if (!$infoResult) {
+    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+    echo "Error: " . mysqli_error($conn);
+    exit();
+}
+
+// Mengambil visi dan misi dari hasil query
+$row = mysqli_fetch_assoc($infoResult);
+$visi = $row['visi'];
+$misi = $row['misi'];
+$sejarah = $row['sejarah'];
+$nama_ukm = $row['nama_ukm'];
+
 // Menghitung jumlah anggota pada setiap jabatan berdasarkan id_ukm
 $jabatan_count = array();
 while ($row = mysqli_fetch_assoc($result)) {
@@ -71,7 +89,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title>KWU - SIUKM STMIK KOMPUTAMA MAJENANG</title>
+	<title>EKONOMI - SIUKM STMIK KOMPUTAMA MAJENANG</title>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -227,7 +245,7 @@ h2 {
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-  		<?php
+      <?php
 				// Cek apakah pengguna sudah login
 				if (!isset($_SESSION['level'])) {
 					// Jika belum login, arahkan ke halaman login.php
@@ -259,55 +277,47 @@ h2 {
                 <img src="..\assets\images\logoukm\kwu.jpg" alt="Logo UKM Ekonomi" class="ukm-logo">
             </div>
             <div>
-                <h2>Sejarah UKM</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae lectus sit amet risus porttitor venenatis sed id nunc. Nulla ut ipsum dapibus, eleifend lectus a, iaculis massa. Morbi malesuada nulla leo, ac interdum lacus facilisis id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer consequat elit quis dapibus consequat. Vivamus in eros in nisi semper finibus id et enim. Nam facilisis, massa non suscipit facilisis, nisi diam scelerisque dolor, eu auctor enim nunc id mauris. Nullam euismod libero at tellus sagittis, vitae semper metus malesuada.</p>
+                <h2><?php echo $nama_ukm; ?></h2>
+                <p><?php echo $sejarah; ?></p>
             </div>
         </div>
 
         <div class="divider jumbotron">
+     <div class="ukm-info">
+        <!-- Menampilkan visi dan misi -->
+        <h3>Visi:</h3>
+         <p><?php echo $visi; ?></p>
 
-        <div class="ukm-info">
-            
-        <div class="ukm-info">
-            <h2>Visi Misi UKM</h2>
-            <p>Visi:</p>
-            <ul>
-                <li>Visi UKM 1</li>
-                <li>Visi UKM 2</li>
-                <li>Visi UKM 3</li>
-            </ul>
-            <p>Misi:</p>
-            <ul>
-                <li>Misi UKM 1</li>
-                <li>Misi UKM 2</li>
-                <li>Misi UKM 3</li>
-            </ul>
-        </div>
-		</div>
+       <h3>Misi:</h3>
+        <p><?php echo $misi; ?></p>
+    </div>
+
+  </div>
 		</div>
 		<div class="divider">
-		<div class="container">
+    <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
     <?php
     $id_ukm_target = 'kwu';
 
-	foreach ($jabatan as $id_jabatan => $nama_jabatan) {
-		echo "<h4>$nama_jabatan</h4>";
-		
-		foreach ($struktur[$id_jabatan] as $id_ukm => $anggota) {
-			if ($id_ukm === $id_ukm_target) {
-				// Menghitung jumlah anggota pada jabatan dan UKM tertentu
-				$jumlah_anggota = count($anggota);
-				
-				foreach ($anggota as $data) {
-					$nim = $data['nim'];
-					$nama_lengkap = $data['nama_lengkap'];
-					echo "<p>$nama_lengkap<br>$nim</p>";
-				}
-			}
-		}
-	}
-	?>
+    echo "<table>";
+    foreach ($jabatan as $id_jabatan => $nama_jabatan) {
+        echo "<tr><th colspan='2' class='table-heading'>$nama_jabatan</th></tr>";
+        foreach ($struktur[$id_jabatan] as $id_ukm => $anggota) {
+            if ($id_ukm === $id_ukm_target) {
+                foreach ($anggota as $data) {
+                    $nim = $data['nim'];
+                    $nama_lengkap = $data['nama_lengkap'];
+                    echo "<tr><td>$nama_lengkap</td><td>$nim</td></tr>";
+                }
+            }
+        }
+    }
+    echo "</table>";
+    ?>
+</div>
+
+
 
 </div>
 	</div>

@@ -19,6 +19,24 @@ if (!$result) {
     exit();
 }
 
+// Mendapatkan data UKM-info berupa visi dan misi
+$query = "SELECT * FROM tab_ukm WHERE id_ukm = 'mcriset'";
+$infoResult = mysqli_query($conn, $query);
+
+// Memeriksa apakah query berhasil dieksekusi
+if (!$infoResult) {
+    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+    echo "Error: " . mysqli_error($conn);
+    exit();
+}
+
+// Mengambil visi dan misi dari hasil query
+$row = mysqli_fetch_assoc($infoResult);
+$visi = $row['visi'];
+$misi = $row['misi'];
+$sejarah = $row['sejarah'];
+$nama_ukm = $row['nama_ukm'];
+
 // Menghitung jumlah anggota pada setiap jabatan berdasarkan id_ukm
 $jabatan_count = array();
 while ($row = mysqli_fetch_assoc($result)) {
@@ -71,7 +89,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title>MC.SET - SIUKM STMIK KOMPUTAMA MAJENANG</title>
+	<title>PENELITIAN - SIUKM STMIK KOMPUTAMA MAJENANG</title>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -227,7 +245,7 @@ h2 {
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-  		<?php
+      <?php
 				// Cek apakah pengguna sudah login
 				if (!isset($_SESSION['level'])) {
 					// Jika belum login, arahkan ke halaman login.php
@@ -253,40 +271,31 @@ h2 {
 </nav>
 
 	<div class="container">
-        <h1>Penelitian</h1>
+        <h1>Pramuka</h1>
         <div class="ukm-info">
             <div class="ukm-logo">
-                <img src="..\assets\images\logoukm\mcs.jpg" alt="Logo UKM MCS" class="ukm-logo">
+                <img src="..\assets\images\logoukm\mcs.jpg" alt="Logo UKM Penelitian" class="ukm-logo">
             </div>
             <div>
-                <h2>Sejarah MC.Set</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae lectus sit amet risus porttitor venenatis sed id nunc. Nulla ut ipsum dapibus, eleifend lectus a, iaculis massa. Morbi malesuada nulla leo, ac interdum lacus facilisis id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer consequat elit quis dapibus consequat. Vivamus in eros in nisi semper finibus id et enim. Nam facilisis, massa non suscipit facilisis, nisi diam scelerisque dolor, eu auctor enim nunc id mauris. Nullam euismod libero at tellus sagittis, vitae semper metus malesuada.</p>
+                <h2><?php echo $nama_ukm; ?></h2>
+                <p><?php echo $sejarah; ?></p>
             </div>
         </div>
 
         <div class="divider jumbotron">
+     <div class="ukm-info">
+        <!-- Menampilkan visi dan misi -->
+        <h3>Visi:</h3>
+         <p><?php echo $visi; ?></p>
 
-        <div class="ukm-info">
-    
-        <div class="ukm-info">
-            <h2>Visi Misi UKM</h2>
-            <p>Visi:</p>
-            <ul>
-                <li>Visi UKM 1</li>
-                <li>Visi UKM 2</li>
-                <li>Visi UKM 3</li>
-            </ul>
-            <p>Misi:</p>
-            <ul>
-                <li>Misi UKM 1</li>
-                <li>Misi UKM 2</li>
-                <li>Misi UKM 3</li>
-            </ul>
-        </div>
-		</div>
+       <h3>Misi:</h3>
+        <p><?php echo $misi; ?></p>
+    </div>
+
+  </div>
 		</div>
 		<div class="divider">
-		<div class="container">
+    <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
     <?php
     $id_ukm_target = 'mcriset';
@@ -309,6 +318,9 @@ h2 {
     ?>
 </div>
 
+
+
+</div>
 	</div>
 	</div>
     <footer>SIUKM @2023 | Visit our <a href="https://stmikkomputama.ac.id/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
