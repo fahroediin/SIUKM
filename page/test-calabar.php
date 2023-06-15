@@ -31,6 +31,12 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+// Mendapatkan nomor soal yang sedang aktif
+$currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
+
+// Mendapatkan total jumlah soal
+$totalQuestions = 4;
+
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +53,9 @@ if (isset($_GET['logout'])) {
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 	<style>
+		body {
+		width: 100%;
+		}
 		.card {
 			margin-top: 40px;
 			width: 90%;
@@ -102,18 +111,57 @@ if (isset($_GET['logout'])) {
 		}
 
 		.card-body {
-			border-top: 1px solid #ccc;
-			padding-top: 10px;
-		}
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        .card-body .options {
+            margin-bottom: 10px;
+        }
 
-		.card-body h3 {
-			margin-top: 0;
-		}
+        .card-body .options label {
+            display: block;
+        }
 
-		.card-body p {
-			margin-bottom: 10px;
-		}
+        .card-body .options input[type="radio"] {
+            margin-right: 5px;
+        }
 
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-footer .pagination {
+            margin: 0;
+        }
+
+        .card-footer .pagination li {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .card-footer .pagination li:last-child {
+            margin-right: 0;
+        }
+
+        .card-footer .pagination .page-link {
+            padding: 6px 12px;
+            background-color: #f8f9fa;
+            color: #212529;
+            border: 1px solid #dee2e6;
+            transition: background-color 0.3s;
+        }
+
+        .card-footer .pagination .page-link:hover {
+            background-color: #e9ecef;
+        }
+
+        .card-footer .pagination .page-link.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
 		.question {
 			display: none;
 		}
@@ -125,6 +173,7 @@ if (isset($_GET['logout'])) {
 		.card-body {
 			border-top: 1px solid #ccc;
 			padding-top: 10px;
+			width: 80%;
 		}
 
 		.card-body h3 {
@@ -139,16 +188,41 @@ if (isset($_GET['logout'])) {
 			border-bottom: 1px solid #ccc;
 			margin-bottom: 10px;
 		}
+		.button {
+		width: 40px; /* Sesuaikan lebar sesuai dengan kebutuhan Anda */
+		}
 
-			.button-container {
+		.button-container {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 20px;
 		}
-
 		.button-container .btn {
 		margin-top: 10px;
+		/* Tambahkan gaya yang sama untuk kedua tombol */
+		padding: 10px 20px;
+		color: #ffffff;
 		}
+		.page-link {
+		display: inline-block;
+		padding: 8px 12px;
+		margin: 0 5px;
+		border: 1px solid #ccc;
+		background-color: #f0f0f0;
+		color: #333;
+		text-decoration: none;
+		border-radius: 4px;
+		}
+
+		.page-link:hover {
+		background-color: #e0e0e0;
+		}
+
+		.page-link.active {
+		background-color: #333;
+		color: #fff;
+		}
+
   </style>
    <script>
         // Fungsi untuk menghitung dan menampilkan timer
@@ -175,226 +249,1255 @@ if (isset($_GET['logout'])) {
             var display = document.querySelector('.timer-container');
             startTimer(duration, display);
         };
-    </script>
+		</script>
+
+		<script>
+    var currentQuestion = 1; // Nomor soal saat ini
+
+    function nextQuestion() {
+        // Menampilkan nomor soal berikutnya
+        if (currentQuestion < 4) {
+            currentQuestion++;
+            showQuestion(currentQuestion);
+        }
+    }
+
+    function previousQuestion() {
+        // Menampilkan nomor soal sebelumnya
+        if (currentQuestion > 1) {
+            currentQuestion--;
+            showQuestion(currentQuestion);
+        }
+    }
+
+    function showQuestion(questionNumber) {
+        // Menampilkan pertanyaan sesuai nomor soal
+        var questions = document.getElementsByClassName("question");
+        var questionButtons = document.getElementsByClassName("question-button");
+        var soalNomor = document.getElementById("soal-nomor");
+
+        // Menyembunyikan semua pertanyaan
+        for (var i = 0; i < questions.length; i++) {
+            questions[i].style.display = "none";
+        }
+
+        // Mengubah kelas tombol aktif
+        for (var j = 0; j < questionButtons.length; j++) {
+            questionButtons[j].classList.remove("active");
+        }
+        
+        // Menampilkan pertanyaan yang dipilih
+        questions[questionNumber - 1].style.display = "block";
+        questionButtons[questionNumber - 1].classList.add("active");
+
+        // Mengubah label "Soal Nomor" dengan nomor soal saat ini
+        soalNomor.textContent = "Soal Nomor: " + questionNumber;
+    }
+</script>
+
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light custom-navbar">
-<a class="navbar-brand"><span style="font-size: 25px; font-weight: bold;">TES POTENSI AKADEMIK</span></a>
-		<div class="navbar-collapse justify-content-end">
-			<ul class="navbar-nav">
-				<li class="nav-item">
-				<div class="welcome-container" style="display: flex; flex-direction: column;">
-					<span class="welcome-text">Selamat datang,</span>
-					<span class="welcome-text"> <?php echo $nama_depan . " " . $nama_belakang; ?></span>
-					<div class="logout-container">
-						<a class="logout-button" href="?logout">Logout</a>
+<div class="navbar">
+    <div class="welcome-container">
+        <div class="welcome-text">
+            <h3>Selamat datang, <?php echo $nama_depan . ' ' . $nama_belakang; ?></h3>
+        </div>
+        <div class="logout-container">
+            <a href="?logout=true" class="logout-button">Logout</a>
+        </div>
+    </div>
+</div>
+
+		<div class="timer-container">
+        <span class="timer-label">Time Left:</span>
+        <span class="timer">30:00</span>
+    </div>
+        <div class="card">
+            <div class="card-header">
+                <h4>Halaman Tes Calon Anggota - SIUKM</h4>
+            </div>
+            <div class="card-body">
+                <div class="question active" id="question1">
+                    <h5>Soal 1</h5>
+                    <p>Pertanyaan 1</p>
+                    <div class="options">
+                        <label>
+                            <input type="radio" name="answer1"  value="A" data-correct> Jawaban A
+                        </label>
+                        <label>
+                            <input type="radio" name="answer1" value="B"> Jawaban B
+                        </label>
+                        <label>
+                            <input type="radio" name="answer1" value="C"> Jawaban C
+                        </label>
+						<label>
+                            <input type="radio" name="answer1" value="D"> Jawaban D
+                        </label>
+						<label>
+                            <input type="radio" name="answer1" value="E"> Jawaban E
+                        </label>
+                    </div>
+                </div>
+                <div class="question" id="question2">
+                    <h5>Soal 2</h5>
+                    <p>Pertanyaan 2</p>
+                    <div class="options">
+                        <label>
+                            <input type="radio" name="answer2" value="A"> Jawaban A
+                        </label>
+                        <label>
+                            <input type="radio" name="answer2" value="B"> Jawaban B
+                        </label>
+                        <label>
+                            <input type="radio" name="answer2" value="C"> Jawaban C
+                        </label>
+						<label>
+                            <input type="radio" name="answer2" value="D"> Jawaban D
+                        </label>
+						<label>
+                            <input type="radio" name="answer2" value="E"> Jawaban E
+                        </label>
+                    </div>
+                </div>
+                <div class="question" id="question3">
+                    <h5>Soal 3</h5>
+                    <p>Pertanyaan 3</p>
+                    <div class="options">
+                        <label>
+                            <input type="radio" name="answer3" value="A"> Jawaban A
+                        </label>
+                        <label>
+                            <input type="radio" name="answer3" value="B"> Jawaban B
+                        </label>
+                        <label>
+                            <input type="radio" name="answer3" value="C"> Jawaban C
+                        </label>
+						<label>
+                            <input type="radio" name="answer3" value="D"> Jawaban D
+                        </label>
+						<label>
+                            <input type="radio" name="answer3" value="E"> Jawaban E
+                        </label>
+                    </div>
+                </div>
+				<div class="question" id="question4">
+                    <h5>Soal 4</h5>
+                    <p>Pertanyaan 4</p>
+                    <div class="options">
+                        <label>
+                            <input type="radio" name="answer4" value="A"> Jawaban A
+                        </label>
+                        <label>
+                            <input type="radio" name="answer4" value="B"> Jawaban B
+                        </label>
+                        <label>
+                            <input type="radio" name="answer4" value="C"> Jawaban C
+                        </label>
+						<label>
+                            <input type="radio" name="answer4" value="D"> Jawaban D
+                        </label>
+						<label>
+                            <input type="radio" name="answer4" value="E"> Jawaban E
+                        </label>
+                    </div>
+                </div>
+				<div class="question" id="question5">
+                    <h5>Soal 5</h5>
+                    <p>Pertanyaan 5</p>
+                    <div class="options">
+                        <label>
+                            <input type="radio" name="answer5" value="A"> Jawaban A
+                        </label>
+                        <label>
+                            <input type="radio" name="answer5" value="B"> Jawaban B
+                        </label>
+                        <label>
+                            <input type="radio" name="answer5" value="C"> Jawaban C
+                        </label>
+						<label>
+                            <input type="radio" name="answer5" value="D"> Jawaban D
+                        </label>
+						<label>
+                            <input type="radio" name="answer5" value="E"> Jawaban E
+                        </label>
+                    </div>
+                </div>
+				<div class="question" id="question6">
+					<h5>Soal 6</h5>
+					<p>Pertanyaan 6</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer6" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer6" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer6" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer6" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer6" value="E"> Jawaban E
+						</label>
 					</div>
 				</div>
-				</li>
-			</ul>
-		</div>
-	</nav>
+				<div class="question" id="question7">
+					<h5>Soal 7</h5>
+					<p>Pertanyaan 7</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer7" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer7" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer7" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer7" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer7" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question8">
+					<h5>Soal 8</h5>
+					<p>Pertanyaan 8</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer8" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer8" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer8" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer8" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer8" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question9">
+					<h5>Soal 9</h5>
+					<p>Pertanyaan 9</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer9" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer9" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer9" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer9" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer9" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question10">
+					<h5>Soal 10</h5>
+					<p>Pertanyaan 10</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer10" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer10" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer10" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer10" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer10" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question11">
+					<h5>Soal 11</h5>
+					<p>Pertanyaan 11</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer11" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer11" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer11" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer11" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer11" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question12">
+					<h5>Soal 12</h5>
+					<p>Pertanyaan 12</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer12" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer12" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer12" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer12" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer12" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question13">
+					<h5>Soal 13</h5>
+					<p>Pertanyaan 13</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer13" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer13" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer13" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer13" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer13" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question14">
+					<h5>Soal 14</h5>
+					<p>Pertanyaan 14</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer14" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer14" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer14" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer14" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer14" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question15">
+					<h5>Soal 15</h5>
+					<p>Pertanyaan 15</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer15" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer15" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer15" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer15" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer15" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question16">
+					<h5>Soal 16</h5>
+					<p>Pertanyaan 16</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer16" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer16" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer16" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer16" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer16" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question17">
+					<h5>Soal 17</h5>
+					<p>Pertanyaan 17</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer17" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer17" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer17" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer17" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer17" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question18">
+					<h5>Soal 18</h5>
+					<p>Pertanyaan 18</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer18" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer18" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer18" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer18" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer18" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question19">
+					<h5>Soal 19</h5>
+					<p>Pertanyaan 19</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer19" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer19" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer19" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer19" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer19" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question20">
+					<h5>Soal 20</h5>
+					<p>Pertanyaan 20</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer20" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer20" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer20" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer20" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer20" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question21">
+					<h5>Soal 21</h5>
+					<p>Pertanyaan 21</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer21" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer21" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer21" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer21" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer21" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question22">
+					<h5>Soal 22</h5>
+					<p>Pertanyaan 22</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer22" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer22" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer22" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer22" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer22" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question23">
+					<h5>Soal 23</h5>
+					<p>Pertanyaan 23</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer23" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer23" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer23" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer23" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer23" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question24">
+					<h5>Soal 24</h5>
+					<p>Pertanyaan 24</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer24" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer24" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer24" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer24" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer24" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question25">
+					<h5>Soal 25</h5>
+					<p>Pertanyaan 25</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer25" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer25" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer25" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer25" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer25" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question26">
+					<h5>Soal 26</h5>
+					<p>Pertanyaan 26</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer26" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer26" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer26" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer26" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer26" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question27">
+					<h5>Soal 27</h5>
+					<p>Pertanyaan 27</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer27" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer27" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer27" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer27" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer27" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question28">
+					<h5>Soal 28</h5>
+					<p>Pertanyaan 28</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer28" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer28" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer28" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer28" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer28" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question29">
+					<h5>Soal 29</h5>
+					<p>Pertanyaan 29</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer29" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer29" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer29" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer29" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer29" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question30">
+					<h5>Soal 30</h5>
+					<p>Pertanyaan 30</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer30" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer30" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer30" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer30" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer30" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question31">
+					<h5>Soal 31</h5>
+					<p>Pertanyaan 31</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer31" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer31" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer31" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer31" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer31" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question32">
+					<h5>Soal 32</h5>
+					<p>Pertanyaan 32</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer32" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer32" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer32" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer32" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer32" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question33">
+					<h5>Soal 33</h5>
+					<p>Pertanyaan 33</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer33" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer33" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer33" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer33" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer33" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question34">
+					<h5>Soal 34</h5>
+					<p>Pertanyaan 34</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer34" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer34" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer34" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer34" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer34" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question35">
+					<h5>Soal 35</h5>
+					<p>Pertanyaan 35</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer35" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer35" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer35" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer35" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer35" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question36">
+					<h5>Soal 36</h5>
+					<p>Pertanyaan 36</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer36" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer36" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer36" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer36" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer36" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question37">
+					<h5>Soal 37</h5>
+					<p>Pertanyaan 37</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer37" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer37" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer37" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer37" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer37" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question38">
+					<h5>Soal 38</h5>
+					<p>Pertanyaan 38</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer38" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer38" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer38" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer38" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer38" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question39">
+					<h5>Soal 39</h5>
+					<p>Pertanyaan 39</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer39" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer39" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer39" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer39" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer39" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question40">
+					<h5>Soal 40</h5>
+					<p>Pertanyaan 40</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer40" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer40" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer40" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer40" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer40" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question41">
+					<h5>Soal 41</h5>
+					<p>Pertanyaan 41</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer41" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer41" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer41" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer41" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer41" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question42">
+					<h5>Soal 42</h5>
+					<p>Pertanyaan 42</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer42" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer42" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer42" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer42" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer42" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question43">
+					<h5>Soal 43</h5>
+					<p>Pertanyaan 43</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer43" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer43" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer43" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer43" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer43" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question44">
+					<h5>Soal 44</h5>
+					<p>Pertanyaan 44</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer44" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer44" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer44" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer44" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer44" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question45">
+					<h5>Soal 45</h5>
+					<p>Pertanyaan 45</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer45" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer45" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer45" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer45" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer45" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question46">
+					<h5>Soal 46</h5>
+					<p>Pertanyaan 46</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer46" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer46" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer46" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer46" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer46" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question47">
+					<h5>Soal 47</h5>
+					<p>Pertanyaan 47</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer47" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer47" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer47" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer47" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer47" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question48">
+					<h5>Soal 48</h5>
+					<p>Pertanyaan 48</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer48" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer48" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer48" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer48" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer48" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question49">
+					<h5>Soal 49</h5>
+					<p>Pertanyaan 49</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer49" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer49" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer49" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer49" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer49" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+				<div class="question" id="question50">
+					<h5>Soal 50</h5>
+					<p>Pertanyaan 50</p>
+					<div class="options">
+						<label>
+							<input type="radio" name="answer50" value="A"> Jawaban A
+						</label>
+						<label>
+							<input type="radio" name="answer50" value="B"> Jawaban B
+						</label>
+						<label>
+							<input type="radio" name="answer50" value="C"> Jawaban C
+						</label>
+						<label>
+							<input type="radio" name="answer50" value="D"> Jawaban D
+						</label>
+						<label>
+							<input type="radio" name="answer50" value="E"> Jawaban E
+						</label>
+					</div>
+				</div>
+            </div>
+			<button id="previousBtn" onclick="previousQuestion()" disabled>Previous</button>
+			<button id="nextBtn" onclick="nextQuestion()">Next</button>
+			<button id="submitBtn" onclick="submitAnswers()" disabled>Submit</button>
+<script>
+    var currentQuestion = 1;
+    var totalQuestions = 50;
+
+    function previousQuestion() {
+        var currentQuestionElement = document.getElementById('question' + currentQuestion);
+        currentQuestionElement.classList.remove('active');
+        currentQuestion--;
+
+        var previousQuestionElement = document.getElementById('question' + currentQuestion);
+        previousQuestionElement.classList.add('active');
+
+        document.getElementById('nextBtn').disabled = false;
+
+        if (currentQuestion === 1) {
+            document.getElementById('previousBtn').disabled = true;
+        }
+    }
+
+    function nextQuestion() {
+        var currentQuestionElement = document.getElementById('question' + currentQuestion);
+        currentQuestionElement.classList.remove('active');
+        currentQuestion++;
+
+        var nextQuestionElement = document.getElementById('question' + currentQuestion);
+        nextQuestionElement.classList.add('active');
+
+        document.getElementById('previousBtn').disabled = false;
+
+        if (currentQuestion === totalQuestions) {
+            document.getElementById('nextBtn').disabled = true;
+        }
+    }
+	function submitAnswers() {
+    var selectedOptions = document.querySelectorAll('.question.active input[type="radio"]:checked');
+	var allAnswered = selectedOptions.length === totalQuestions;
+		
+	if (allAnswered) {
+            // Tombol "Submit" dapat diaktifkan
+            console.log("Semua opsi telah dipilih. Tombol Submit diaktifkan.");
+        } else {
+            // Tombol "Submit" tidak dapat diaktifkan
+            console.log("Belum semua opsi dipilih. Tombol Submit tidak dapat diaktifkan.");
+        }
+
+    for (var i = 0; i < selectedOptions.length; i++) {
+        var selectedOption = selectedOptions[i];
+        var questionId = selectedOption.name;
+        var answerValue = selectedOption.value;
+        var isCorrect = selectedOption.getAttribute('data-correct');
+
+        if (isCorrect) {
+            correctAnswers++;
+        }
+    }
+
+    console.log('Jawaban yang benar: ' + correctAnswers);
+}
 
 
-<div class="container">
-	<div class="card">
-	<p>SOAL NOMOR:</p>
-	<div class="timer-container">
-		<span class="timer-label">Sisa Waktu:</span>
-		<span id="timer"></span>
-	</div>
-		<div id="question1" class="question active">
-			<div class="card-body">
-				<div class="divider"></div>
-				<p>Pilihlah pasangan kata yang paling tepat untuk mengisi titik-titik (...) pada setiap nomor soal, sehingga hubungan antara dua kata di bagian kiri tanda ≈ sepadan dengan hubungan antara dua kata di bagian kanan tanda ≈</p>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer1" id="answer1a" value="a">
-					<label class="form-check-label" for="answer1a">
-						A. Jawaban A
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer1" id="answer1b" value="b">
-					<label class="form-check-label" for="answer1b">
-						B. Jawaban B
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer1" id="answer1c" value="c">
-					<label class="form-check-label" for="answer1c">
-						C. Jawaban C
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer1" id="answer1d" value="d">
-					<label class="form-check-label" for="answer1d">
-						D. Jawaban D
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer1" id="answer1e" value="e">
-					<label class="form-check-label" for="answer1e">
-						E. Jawaban E
-					</label>
-				</div>
-				<div class="button-container">
-    <button onclick="previousQuestion()" class="btn btn-secondary">Sebelumnya</button>
-    <button onclick="nextQuestion()" class="btn btn-primary">Selanjutnya</button>
-</div>
-			</div>
-		</div>
+</script>
+        <script>
+        // Timer functionality
+        var timerElement = document.querySelector('.timer');
+        var duration = 60 * 60; // 60 minutes in seconds
 
-		<div id="question2" class="question">
-			<div class="card-body">
-				<h3>No.2</h3>
-				<div class="divider"></div>
-				<p>Tekst soal 2.</p>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer2" id="answer2a" value="a">
-					<label class="form-check-label" for="answer2a">
-						A. Jawaban A
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer2" id="answer2b" value="b">
-					<label class="form-check-label" for="answer2b">
-						B. Jawaban B
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer2" id="answer2c" value="c">
-					<label class="form-check-label" for="answer2c">
-						C. Jawaban C
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer2" id="answer2d" value="d">
-					<label class="form-check-label" for="answer2d">
-						D. Jawaban D
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer2" id="answer2e" value="e">
-					<label class="form-check-label" for="answer2e">
-						E. Jawaban E
-					</label>
-				</div>
-				<div class="button-container">
-					<button onclick="previousQuestion()">Sebelumnya</button>
-					<button onclick="nextQuestion()">Selanjutnya</button>
-				</div>
-			</div>
-			</div>
-			<div id="question3" class="question">
-			<div class="card-body">
-				<h3>No.3</h3>
-				<div class="divider"></div>
-				<p>Tekst soal 3.</p>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer3" id="answer3a" value="a">
-					<label class="form-check-label" for="answer3a">
-						A. Jawaban A
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer3" id="answer3b" value="b">
-					<label class="form-check-label" for="answer3b">
-						B. Jawaban B
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer3" id="answer3c" value="c">
-					<label class="form-check-label" for="answer3c">
-						C. Jawaban C
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer3" id="answer3d" value="d">
-					<label class="form-check-label" for="answer3d">
-						D. Jawaban D
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer3" id="answer3e" value="e">
-					<label class="form-check-label" for="answer3e">
-						E. Jawaban E
-					</label>
-				</div>
-				<div class="button-container">
-					<button onclick="previousQuestion()">Sebelumnya</button>
-					<button onclick="nextQuestion()">Selanjutnya</button>
-				</div>
-			</div>
-			</div>
-			<div id="question4" class="question">
-			<div class="card-body">
-				<h3>No.4</h3>
-				<div class="divider"></div>
-				<p>Tekst soal 4.</p>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer4" id="answer4a" value="a">
-					<label class="form-check-label" for="answer4a">
-						A. Jawaban A
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer4" id="answer4b" value="b">
-					<label class="form-check-label" for="answer4b">
-						B. Jawaban B
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer4" id="answer4c" value="c">
-					<label class="form-check-label" for="answer4c">
-						C. Jawaban C
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer4" id="answer4d" value="d">
-					<label class="form-check-label" for="answer4d">
-						D. Jawaban D
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="answer4" id="answer4e" value="e">
-					<label class="form-check-label" for="answer4e">
-						E. Jawaban E
-					</label>
-				</div>
-				<div class="button-container">
-					<button onclick="previousQuestion()">Sebelumnya</button>
-					<button onclick="nextQuestion()">Selanjutnya</button>
-				</div>
-			</div>
-			</div>
-		</div>
-	</div>
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            var timerInterval = setInterval(function() {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
 
-	<script>
-		// Fungsi untuk pindah ke soal sebelumnya
-		function previousQuestion() {
-			var currentQuestion = $(".question.active");
-			var previousQuestion = currentQuestion.prev(".question");
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
 
-			currentQuestion.removeClass("active");
-			previousQuestion.addClass("active");
-		}
+                display.textContent = minutes + ":" + seconds;
 
-		// Fungsi untuk pindah ke soal selanjutnya
-		function nextQuestion() {
-			var currentQuestion = $(".question.active");
-			var nextQuestion = currentQuestion.next(".question");
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    // Perform action when timer reaches 0
+                    alert('Time is up! Submit your answers.');
+                    submitForm();
+                }
+            }, 1000);
+        }
 
-			currentQuestion.removeClass("active");
-			nextQuestion.addClass("active");
-		}
-	</script>
+        // Call the timer function
+        startTimer(duration, timerElement);
+
+        function changeQuestion(questionNumber) {
+            var questions = document.getElementsByClassName('question');
+            for (var i = 0; i < questions.length; i++) {
+                questions[i].classList.remove('active');
+            }
+            document.getElementById('question' + questionNumber).classList.add('active');
+        }
+
+        function submitForm() {
+            var answers = [];
+            var questions = document.getElementsByClassName('question');
+            for (var i = 0; i < questions.length; i++) {
+                var questionNumber = i + 1;
+                var answer = document.querySelector('input[name="answer' + questionNumber + '"]:checked');
+                if (answer) {
+                    answers.push(answer.value);
+                } else {
+                    answers.push('');
+                }
+            }
+
+            // Send the answers to the server for processing
+            // You can use AJAX to send the data to a PHP script
+            // and process it on the server side.
+
+            // For example:
+            // var xhr = new XMLHttpRequest();
+            // xhr.open('POST', 'process_answers.php');
+            // xhr.setRequestHeader('Content-Type', 'application/json');
+            // xhr.onload = function () {
+            //     if (xhr.status === 200) {
+            //         // Process the response from the server
+            //         var response = JSON.parse(xhr.responseText);
+            //         // Do something with the response
+            //     }
+            // };
+            // xhr.send(JSON.stringify(answers));
+        }
+    </script>
 </body>
 </html>
-
-<script>window.addEventListener('beforeunload', function (event) {
-  // Tuliskan pesan konfirmasi di sini
-  event.preventDefault();
-  // Jika pengguna memilih untuk tetap tinggal, fungsi preventDefault() akan mencegah pengguna untuk meninggalkan halaman
-  // Jika pengguna memilih untuk meninggalkan halaman, maka tidak perlu melakukan apapun karena browser akan menangani penggunaannya secara otomatis.
-});</script>
