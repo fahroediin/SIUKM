@@ -254,7 +254,7 @@ if (isset($_POST['submit'])) {
                 </select>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="submit">Tambah User</button>
+                <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
             </div>
         </form>
     </div>

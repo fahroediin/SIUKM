@@ -208,6 +208,9 @@ $conn->close();
     .btn:hover {
         background-color: #0056b3;
     }
+    .delete-button {
+        background-color: red;
+    }
 </style>
 <script>
   function generateIdPrestasi() {
@@ -255,8 +258,8 @@ $conn->close();
     
     <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Manajemen Prestasi</h2>
-        <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
+    <h2>Manajemen Prestasi</h2>
+    <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
     <a href="update.php" class="btn btn-primary <?php if($active_page == 'update') echo 'active'; ?>">Update</a>
     <a href="?logout=true" class="btn btn-primary <?php if($active_page == 'logout') echo 'active'; ?>">Logout</a>
@@ -304,7 +307,7 @@ $conn->close();
                         <td>
                             <form method="post" action="proses_delete_prestasi.php">
                                 <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                                <button type="submit" class="btn btn-danger btn-sm" name="submit">Hapus</button>
+                                <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
                             </form>
                         </td>
                     </tr>
@@ -320,7 +323,7 @@ $conn->close();
         <form method="post" action="proses_prestasi.php">
             <div class="form-group">
                 <label for="id_prestasi">ID Prestasi:</label>
-                <input type="text" class="form-control" id="id_prestasi" name="id_prestasi">
+                <input type="text" class="form-control" id="id_prestasi" placeholder="Kolom akan terisi otomatis" name="id_prestasi" readonly>
             </div>
             <div class="form-group">
                 <label for="nama_prestasi">Nama Prestasi:</label>
@@ -350,7 +353,7 @@ $conn->close();
                 <label for="nama_ukm">Nama UKM:</label>
                 <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" readonly>
             </div>
-            <button type="submit" class="btn btn-primary" name="submit">Submit</button>
+            <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
         </form>
     </div>
 
