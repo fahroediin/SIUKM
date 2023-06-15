@@ -34,6 +34,8 @@ if (!$infoResult) {
 $row = mysqli_fetch_assoc($infoResult);
 $visi = $row['visi'];
 $misi = $row['misi'];
+$sejarah = $row['sejarah'];
+$nama_ukm = $row['nama_ukm'];
 
 // Menghitung jumlah anggota pada setiap jabatan berdasarkan id_ukm
 $jabatan_count = array();
@@ -275,8 +277,8 @@ h2 {
                 <img src="..\assets\images\logoukm\racana.jpg" alt="Logo UKM Racana" class="ukm-logo">
             </div>
             <div>
-                <h2>Sejarah Racana Sunan Gunung Jati & Nyi Roro Jati</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae lectus sit amet risus porttitor venenatis sed id nunc. Nulla ut ipsum dapibus, eleifend lectus a, iaculis massa. Morbi malesuada nulla leo, ac interdum lacus facilisis id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer consequat elit quis dapibus consequat. Vivamus in eros in nisi semper finibus id et enim. Nam facilisis, massa non suscipit facilisis, nisi diam scelerisque dolor, eu auctor enim nunc id mauris. Nullam euismod libero at tellus sagittis, vitae semper metus malesuada.</p>
+                <h2><?php echo $nama_ukm; ?></h2>
+                <p><?php echo $sejarah; ?></p>
             </div>
         </div>
 

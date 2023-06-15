@@ -103,6 +103,41 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
+<style>
+    .card {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
 <body>
 <div class="sidebar">
     <h2>Manajemen Pengguna</h2>
@@ -120,11 +155,11 @@ if (isset($_POST['submit'])) {
 </div>
 
  <!-- Data User -->
-<div class="content">
-        <h1>Daftar User</h1>
-        <table class="table">
-            <thead>
-                <tr>
+ <div class="content">
+    <h2>Daftar User</h2>
+    <table class="table">
+        <thead>
+            <tr>
                 <th>ID User</th>
                 <th>Nama Depan</th>
                 <th>Nama Belakang</th>
@@ -133,85 +168,110 @@ if (isset($_POST['submit'])) {
                 <th>Level</th>
                 <th>Aksi</th>
             </tr>
-            </thead>
-            <tbody>
+        </thead>
+        <tbody>
             <?php
-
             // Fetch users from the database
             $sql = "SELECT * FROM tab_user";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
-             // Output data of each row
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . $row["id_user"] . "</td>";
-            echo "<td>" . $row["nama_depan"] . "</td>";
-            echo "<td>" . $row["nama_belakang"] . "</td>";
-            echo "<td>" . $row["email"] . "</td>";
-            echo "<td>" . $row["no_hp"] . "</td>";
-            echo "<td>" . $row["level"] . "</td>";
-            
-            // Menambahkan kondisi jika ID user adalah "admin"
-            if ($row["id_user"] == "admin") {
-                echo "<td>Tidak dapat dihapus</td>";
-            } else {
-                echo "<td><a href='edit.php?id=" . $row["id_user"] . "'>Edit</a> | <a href='proses_delete_user.php?id=" . $row["id_user"] . "'>Hapus</a></td>";
-            }
-            
-            echo "</tr>";
-        }
+                // Output data of each row
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . $row["id_user"] . "</td>";
+                    echo "<td>" . $row["nama_depan"] . "</td>";
+                    echo "<td>" . $row["nama_belakang"] . "</td>";
+                    echo "<td>" . $row["email"] . "</td>";
+                    echo "<td>" . $row["no_hp"] . "</td>";
+                    echo "<td>" . $row["level"] . "</td>";
 
+                    // Menambahkan kondisi jika ID user adalah "admin"
+                    if ($row["id_user"] == "admin") {
+                        echo "<td>Tidak dapat dihapus</td>";
+                    } else {
+                        echo "<td><a href='edit.php?id=" . $row["id_user"] . "'>Edit</a> | <a href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a></td>";
+                    }
+
+                    echo "</tr>";
+                }
             } else {
                 echo "<tr><td colspan='5'>Tidak ada data user.</td></tr>";
             }
 
             // Close the database connection
             $conn->close();
-                ?>
-            </tbody>
-        </table>
+            ?>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Apakah Anda yakin ingin menghapus data ini?");
+    }
+</script>
+
+
+<div class="content">
+    <div class="card">
+        <h2>Tambah User Baru</h2>
+        <form method="POST" action="proses_user.php" onsubmit="return validateForm();">
+            <div class="form-group">
+                <label for="id_user">ID User:</label>
+                <input type="text" class="form-control" id="id_user" name="id_user" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="konfirmasi_password">Konfirmasi Password:</label>
+                <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password" required>
+            </div>
+            <div class="form-group">
+                <label for="nama_depan">Nama Depan:</label>
+                <input type="text" class="form-control" id="nama_depan" name="nama_depan" required>
+            </div>
+            <div class="form-group">
+                <label for="nama_belakang">Nama Belakang:</label>
+                <input type="text" class="form-control" id="nama_belakang" name="nama_belakang">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="no_hp">No. HP:</label>
+                <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+            </div>
+            <div class="form-group">
+                <label for="level">Level:</label>
+                <select id="level" name="level" class="form-control">
+                    <option value="3">User</option>
+                    <option value="2">Kemahasiswaan</option>
+                    <option value="1">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" name="submit">Tambah User</button>
+            </div>
+        </form>
     </div>
 
-    <div class="content">
-    <h1>Tambah User Baru</h1>
-    <form method="POST" action="proses_user.php">
-        <div class="form-group">
-            <label for="id_user">ID User:</label>
-            <input type="text" class="form-control" id="id_user" name="id_user" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <label for="nama_depan">Nama Depan:</label>
-            <input type="text" class="form-control" id="nama_depan" name="nama_depan" required>
-        </div>
-        <div class="form-group">
-            <label for="nama_belakang">Nama Belakang:</label>
-            <input type="text" class="form-control" id="nama_belakang" name="nama_belakang" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-            <label for="no_hp">No. HP:</label>
-            <input type="text" class="form-control" id="no_hp" name="no_hp" required>
-        </div>
-        <div class="form-group">
-            <label for="level">Level:</label>
-            <select id="level" name="level">
-                <option value="1">Admin</option>
-                <option value="2">Kemahasiswaan</option>
-                <option value="3">User</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary" name="submit">Tambah User</button>
-        </div>
-    </form>
+<script>
+    function validateForm() {
+        var password = document.getElementById("password").value;
+        var konfirmasiPassword = document.getElementById("konfirmasi_password").value;
+
+        if (password !== konfirmasiPassword) {
+            alert("Password tidak cocok!");
+            return false;
+        }
+
+        return true;
+    }
+</script>
 
 <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -60,7 +60,65 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+// Memeriksa apakah form telah disubmit
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Mengambil data dari form
+    $oldPassword = $_POST['old_password'];
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+    $email = $_POST['email'];
+    $namaDepan = $_POST['nama_depan'];
+    $namaBelakang = $_POST['nama_belakang'];
+    $noHp = $_POST['no_hp'];
+
+    // Memeriksa apakah password baru dan konfirmasi password cocok
+    if ($password !== $confirmPassword) {
+        // Password baru dan konfirmasi password tidak cocok
+        $error = "Error: Password baru dan konfirmasi password tidak cocok.";
+    } else {
+        // Menghindari SQL injection
+        $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
+        $password = mysqli_real_escape_string($conn, $password);
+        $email = mysqli_real_escape_string($conn, $email);
+        $namaDepan = mysqli_real_escape_string($conn, $namaDepan);
+        $namaBelakang = mysqli_real_escape_string($conn, $namaBelakang);
+        $noHp = mysqli_real_escape_string($conn, $noHp);
+
+        // Mengecek kebenaran password lama
+        $userId = $_SESSION['id_user'];
+        $query = "SELECT * FROM tab_user WHERE id_user = '$userId' AND password = '$oldPassword'";
+        $result = mysqli_query($conn, $query);
+
+        if (mysqli_num_rows($result) === 0) {
+            // Password lama tidak cocok
+            $error = "Error: Password lama tidak cocok.";
+        } else {
+            // Membuat query update
+            $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_depan = '$namaDepan', nama_belakang = '$namaBelakang', no_hp = '$noHp' WHERE id_user = '$userId'";
+
+            // Mengeksekusi query update
+            $updateResult = mysqli_query($conn, $query);
+
+            // Tampilkan snackbar jika data berhasil diubah
+            if ($updateResult) {
+                // Mengupdate data di dalam session
+                $_SESSION['password'] = $password;
+                $_SESSION['email'] = $email;
+                $_SESSION['nama_depan'] = $namaDepan;
+                $_SESSION['nama_belakang'] = $namaBelakang;
+                $_SESSION['no_hp'] = $noHp;
+
+                // Tampilkan snackbar jika data berhasil diubah
+                echo "<script>showSnackbar('Data berhasil diubah.');</script>";
+            } else {
+                // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+                $error = "Error: " . mysqli_error($conn);
+            }
+        }
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>

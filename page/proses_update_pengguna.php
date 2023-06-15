@@ -86,55 +86,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 // Memeriksa apakah form telah disubmit
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form
-    $id_user = $_POST['id_user'];
+    $oldPassword = $_POST['old_password'];
     $password = $_POST['password'];
-    $nama_depan = $_POST['nama_depan'];
-    $nama_belakang = $_POST['nama_belakang'];
+    $confirmPassword = $_POST['confirm_password'];
     $email = $_POST['email'];
-    $no_hp = $_POST['no_hp'];
+    $namaDepan = $_POST['nama_depan'];
+    $namaBelakang = $_POST['nama_belakang'];
+    $noHp = $_POST['no_hp'];
 
-    // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
-    $userId = $_SESSION['id_user'];
-    $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+    // Memeriksa apakah password baru dan konfirmasi password cocok
+    if ($password !== $confirmPassword) {
+        // Password baru dan konfirmasi password tidak cocok
+        $error = "Error: Password baru dan konfirmasi password tidak cocok.";
+    } else {
+        // Menghindari SQL injection
+        $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
+        $password = mysqli_real_escape_string($conn, $password);
+        $email = mysqli_real_escape_string($conn, $email);
+        $namaDepan = mysqli_real_escape_string($conn, $namaDepan);
+        $namaBelakang = mysqli_real_escape_string($conn, $namaBelakang);
+        $noHp = mysqli_real_escape_string($conn, $noHp);
 
-    // Mengeksekusi query
-    $result = mysqli_query($conn, $query);
+        // Mengecek kebenaran password lama
+$userId = $_SESSION['id_user'];
+$query = "SELECT * FROM tab_user WHERE id_user = '$userId' AND password = '$oldPassword'";
+$result = mysqli_query($conn, $query);
 
-    // Memeriksa apakah query berhasil dieksekusi
-    if ($result) {
-        // Mengambil data pengguna
-        $user = mysqli_fetch_assoc($result);
+if (mysqli_num_rows($result) === 0) {
+    // Password lama tidak cocok
+    echo "<script>alert('Password lama salah.');</script>";
+} else {
+    // Membuat query update
+    $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_depan = '$namaDepan', nama_belakang = '$namaBelakang', no_hp = '$noHp' WHERE id_user = '$userId'";
 
-        // Memeriksa apakah password yang dimasukkan cocok dengan password di database
-        if (password_verify($password, $user['password'])) {
-            // Update data pengguna di tabel tab_user
-            $query = "UPDATE tab_user SET nama_depan='$nama_depan', nama_belakang='$nama_belakang', email='$email', no_hp='$no_hp' WHERE id_user='$id_user'";
-            $updateResult = mysqli_query($conn, $query);
+    // Mengeksekusi query update
+    $updateResult = mysqli_query($conn, $query);
 
-            // Memeriksa apakah query update berhasil dieksekusi
-            if ($updateResult) {
-                // Mengupdate data pengguna di session
-                $_SESSION['nama_depan'] = $nama_depan;
-                $_SESSION['nama_belakang'] = $nama_belakang;
-                $_SESSION['email'] = $email;
-                $_SESSION['no_hp'] = $no_hp;
+    // Tampilkan snackbar jika data berhasil diubah
+    if ($updateResult) {
+        // Mengupdate data di dalam session
+        $_SESSION['password'] = $password;
+        $_SESSION['email'] = $email;
+        $_SESSION['nama_depan'] = $namaDepan;
+        $_SESSION['nama_belakang'] = $namaBelakang;
+        $_SESSION['no_hp'] = $noHp;
 
-                // Redirect ke halaman dashboard.php
-                header("Location: dashboard.php");
-                exit();
-            } else {
-                // Jika query update gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-                echo "Error: " . mysqli_error($conn);
-            }
-        } else {
-            // Password tidak cocok, tampilkan snackbar "password salah!"
-            echo '<script>$(document).ready(function() { $("#snackbar").html("Password salah!").addClass("show"); setTimeout(function(){ $("#snackbar").removeClass("show"); }, 3000); });</script>';
-        }
+        // Tampilkan snackbar jika data berhasil diubah
+        echo "<script>showSnackbar('Data berhasil diubah.');</script>";
     } else {
         // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-        echo "Error: " . mysqli_error($conn);
+        $error = "Error: " . mysqli_error($conn);
+        echo "<script>alert('$error');</script>";
+    }
+}
     }
 }
 ?>
@@ -142,98 +148,184 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Pengguna</title>
+    <title>Update Data Pengguna - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
-        /* Style untuk snackbar */
-#snackbar {
-  visibility: hidden; /* Menyembunyikan snackbar secara default */
-  min-width: 250px; /* Lebar minimum snackbar */
-  margin-left: -125px; /* Mengatur posisi snackbar di tengah */
-  background-color: #333; /* Warna latar belakang snackbar */
-  color: #fff; /* Warna teks snackbar */
-  text-align: center; /* Posisi teks di tengah snackbar */
-  border-radius: 2px; /* Mengatur sudut bulat snackbar */
-  padding: 16px; /* Ruang dalam snackbar */
-  position: fixed; /* Menempatkan snackbar di posisi tetap di atas elemen lain */
-  z-index: 1; /* Mengatur tingkat tumpukan snackbar */
-  left: 50%; /* Mengatur posisi horizontal snackbar di tengah */
-  bottom: 30px; /* Mengatur posisi vertikal snackbar 30px dari bawah */
-  font-size: 14px; /* Ukuran font teks snackbar */
-}
+    body {
+        background-color: #f8f9fa;
+    }
 
-/* Tampilkan snackbar */
-#snackbar.show {
-  visibility: visible;
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s; /* Animasi muncul dan menghilang */
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+    }
 
-/* Animasi muncul */
-@-webkit-keyframes fadein {
-  from {bottom: 0; opacity: 0;} 
-  to {bottom: 30px; opacity: 1;}
-}
+    .container h1 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-@keyframes fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 30px; opacity: 1;}
-}
+    .form-container {
+        margin-bottom: 20px;
+    }
 
-/* Animasi menghilang */
-@-webkit-keyframes fadeout {
-  from {bottom: 30px; opacity: 1;} 
-  to {bottom: 0; opacity: 0;}
-}
+    .form-container .form-group label {
+        font-weight: bold;
+    }
 
-@keyframes fadeout {
-  from {bottom: 30px; opacity: 1;}
-  to {bottom: 0; opacity: 0;}
-}
-    </style>
+    .form-container .form-group input {
+        border-radius: 5px;
+    }
+
+    .form-container .btn-primary {
+        width: 100%;
+    }
+
+    /* Style for snackbar */
+    #snackbar {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 2px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 30px;
+        font-size: 17px;
+    }
+
+    #snackbar.show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+
+    @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+
+    @-webkit-keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+    }
+
+    @keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+    }
+</style>
+<script>
+        function showSnackbar(message) {
+            var snackbar = document.getElementById("snackbar");
+            snackbar.innerHTML = message;
+            snackbar.className = "show";
+            setTimeout(function() {
+                snackbar.className = snackbar.className.replace("show", "");
+            }, 3000);
+        }
+    </script>
 </head>
 <body>
     <div class="sidebar">
-        <h2>Dashboard</h2>
+        <h2>Manajemen Pengguna</h2>
         <a href="dashboard.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
         <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
         <a href="proses_update_pengguna.php" class="btn btn-primary <?php if($active_page == 'proses_update_pengguna') echo 'active'; ?>">Update</a>
         <a href="?logout=true" class="btn btn-primary <?php if($active_page == 'logout') echo 'active'; ?>">Logout</a>
     </div>
-    <div class="content">
-        <h2>Update Pengguna</h2>
-        <form action="proses_update_pengguna.php" method="POST">
-            <div class="form-group">
-                <label for="id_user">ID User:</label>
-                <input type="text" class="form-control" id="id_user" name="id_user" value="<?php echo $_SESSION['id_user']; ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label for="nama_depan">Nama Depan:</label>
-                <input type="text" class="form-control" id="nama_depan" name="nama_depan" value="<?php echo $_SESSION['nama_depan']; ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="nama_belakang">Nama Belakang:</label>
-                <input type="text" class="form-control" id="nama_belakang" name="nama_belakang" value="<?php echo $_SESSION['nama_belakang']; ?>">
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" value="<?php echo $_SESSION['email']; ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="no_hp">No. HP:</label>
-                <input type="text" class="form-control" id="no_hp" name="no_hp" value="<?php echo $_SESSION['no_hp']; ?>" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Update</button>
-        </form>
+    <div class="container">
+<h2 class="text-center">UPDATE DATA</h2>
+<div class="container">
+    <div class="row">
+    <div class="col-md-12">
+
+</div>
     </div>
+    <form class="form-container" method="POST" action="">
+        <div class="form-group">
+            <label for="id_user">ID User (NIM):</label>
+            <input type="text" class="form-control" id="id_user" name="id_user" required value="<?php echo $_SESSION['id_user']; ?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="old_password">Password Lama:</label>
+            <input type="password" class="form-control" id="old_password" name="old_password">
+        </div>
+        <div class="form-group">
+            <label for="password">Password Baru:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">Konfirmasi Password:</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required value="<?php echo $_SESSION['email']; ?>">
+        </div>
+        <div class="form-group">
+            <label for="nama_depan">Nama Depan:</label>
+            <input type="text" class="form-control" id="nama_depan" name="nama_depan" required value="<?php echo $_SESSION['nama_depan']; ?>">
+        </div>
+        <div class="form-group">
+            <label for="nama_belakang">Nama Belakang:</label>
+            <input type="text" class="form-control" id="nama_belakang" name="nama_belakang" required value="<?php echo $_SESSION['nama_belakang']; ?>">
+        </div>
+        <div class="form-group">
+            <label for="no_hp">Nomor Telepon:</label>
+            <input type="text" class="form-control" id="no_hp" name="no_hp" required value="<?php echo $_SESSION['no_hp']; ?>">
+        </div>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+    </form>
+    </div>
+    <!-- snackbar jika password tidak cocok-->
+    <div id="snackbar"></div>
+
+<!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
+<script src="script.js"></script>
+<script>
+        function showSnackbar(message) {
+            var snackbar = document.getElementById("snackbar");
+            snackbar.innerHTML = message;
+            snackbar.className = "show";
+            setTimeout(function() {
+                snackbar.className = snackbar.className.replace("show", "");
+            }, 3000);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.querySelector("form");
+            form.addEventListener("submit", function(event) {
+                var oldPassword = document.getElementById("old_password").value;
+                var password = document.getElementById("password").value;
+                var confirmPassword = document.getElementById("confirm_password").value;
+
+                if (oldPassword !== "" && password !== confirmPassword) {
+                    event.preventDefault();
+                    showSnackbar("Password tidak cocok");
+                }
+            });
+        });
+    </script>
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

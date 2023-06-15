@@ -54,6 +54,7 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+
 ?>
 <!DOCTYPE html>
 <html>

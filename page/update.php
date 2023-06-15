@@ -180,7 +180,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="col-md-12">
     <a href="dashboard.php" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Dashboard</a>
 </div>
-
     </div>
     <form class="form-container" method="POST" action="">
         <div class="form-group">

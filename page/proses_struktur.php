@@ -75,10 +75,45 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
+<style>
+    .card {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
 <body>
    <!-- Sidebar -->
 <div class="sidebar">
-    <h2>Edit Struktur</h2>
+    <h2>Manajemen Struktur</h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
     <a href="update.php" class="btn btn-primary <?php if($active_page == 'update') echo 'active'; ?>">Update</a>
@@ -93,38 +128,38 @@ if (isset($_POST['submit'])) {
 </div>
     <!-- Konten -->
     <div class="content">
+    <div class="card">
         <h2>Kelola Struktur Organisasi</h2>
         <form method="post" action="proses_struktur.php">
-        <div class="form-group">
-    <label for="id_ukm">Nama UKM:</label>
-    <select class="form-control" id="id_ukm" name="id_ukm" required>
-        <?php
-        // Query untuk mendapatkan data tab_ukm
-        $sql_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-        $result_ukm = $conn->query($sql_ukm);
+            <div class="form-group">
+                <label for="id_ukm">Nama UKM:</label>
+                <select class="form-control" id="id_ukm" name="id_ukm" required>
+                    <?php
+                    // Query untuk mendapatkan data tab_ukm
+                    $sql_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+                    $result_ukm = $conn->query($sql_ukm);
 
-        // Menampilkan opsi untuk setiap baris data
-        while ($row_ukm = $result_ukm->fetch_assoc()) {
-            $id_ukm = $row_ukm['id_ukm'];
-            $nama_ukm = $row_ukm['nama_ukm'];
-            echo "<option value='$id_ukm'>$nama_ukm</option>";
-        }
-        ?>
-    </select>
-</div>
-<div class="form-group">
-    <label for="id_jabatan">ID Jabatan:</label>
-    <select class="form-control" id="id_jabatan" name="id_jabatan" required>
-        <option value="0">Pembimbing</option>
-        <option value="1">Ketua</option>
-        <option value="2">Wakil Ketua</option>
-        <option value="3">Sekretaris</option>
-        <option value="4">Bendahara</option>
-        <option value="5">Koordinator</option>
-        <option value="6">Anggota</option>
-    </select>
-</div>
-
+                    // Menampilkan opsi untuk setiap baris data
+                    while ($row_ukm = $result_ukm->fetch_assoc()) {
+                        $id_ukm = $row_ukm['id_ukm'];
+                        $nama_ukm = $row_ukm['nama_ukm'];
+                        echo "<option value='$id_ukm'>$nama_ukm</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_jabatan">ID Jabatan:</label>
+                <select class="form-control" id="id_jabatan" name="id_jabatan" required>
+                    <option value="6">Anggota</option>
+                    <option value="5">Koordinator</option>
+                    <option value="4">Bendahara</option>
+                    <option value="3">Sekretaris</option>
+                    <option value="2">Wakil Ketua</option>
+                    <option value="1">Ketua</option>
+                    <option value="0">Pembimbing</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label for="nama_lengkap">Nama Lengkap:</label>
                 <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
@@ -133,8 +168,11 @@ if (isset($_POST['submit'])) {
                 <label for="nim">NIM:</label>
                 <input type="text" class="form-control" id="nim" name="nim" required>
             </div>
-            <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
+            </div>
         </form>
+    </div>
 
     <!-- Script untuk mengatur perubahan lebar sidebar -->
     <script>

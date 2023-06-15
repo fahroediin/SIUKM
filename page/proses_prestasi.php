@@ -124,11 +124,47 @@ $conn->close();
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
+<style>
+    .card {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 <body>
     
     <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Edit Prestasi</h2>
+        <h2>Manajemen Prestasi</h2>
         <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
     <a href="update.php" class="btn btn-primary <?php if($active_page == 'update') echo 'active'; ?>">Update</a>
@@ -181,6 +217,7 @@ $conn->close();
                                 <button type="submit" class="btn btn-danger btn-sm" name="submit">Hapus</button>
                             </form>
                         </td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -189,7 +226,8 @@ $conn->close();
     
     <!-- Form Tambah Prestasi -->
     <div class="content">
-        <h2>Tambah Prestasi</h2>
+    <div class="card">
+    <h2>Tambah Prestasi</h2>
         <form method="post" action="proses_prestasi.php">
             <div class="form-group">
                 <label for="id_prestasi">ID Prestasi:</label>
@@ -217,6 +255,7 @@ $conn->close();
             </div>
             <button type="submit" class="btn btn-primary" name="submit">Submit</button>
         </form>
+    </div>
 
 </body>
 <footer>SIUKM @2023 | Visit our <a href="https://stmikkomputama.ac.id/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
