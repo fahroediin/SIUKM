@@ -34,6 +34,7 @@ if (mysqli_num_rows($result) > 0) {
 	$row = mysqli_fetch_assoc($result);
 	$_SESSION["id_user"] = $row["id_user"];
 	$_SESSION["nama_depan"] = $row["nama_depan"];
+	$_SESSION["nama_belakang"] = $row["nama_belakang"];
 	$_SESSION["level"] = $row["level"];
 	$lowercaseLevel = strtolower($row["level"]);
     
@@ -201,7 +202,7 @@ if (mysqli_num_rows($result) > 0) {
   }
 
   .forgot-password-link {
-    font-size: 12px;
+    font-size: 15px;
   }
     </style>
 	<script>

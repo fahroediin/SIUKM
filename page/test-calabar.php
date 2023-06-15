@@ -1,117 +1,395 @@
+<?php
+// Memasukkan file db_connect.php
+require_once "db_connect.php";
+
+// Memulai session
+session_start();
+        
+// Menonaktifkan pesan error
+error_reporting(0);
+
+
+// Mendapatkan nama depan dan level dari session
+$nama_depan = $_SESSION["nama_depan"];
+$nama_belakang = $_SESSION["nama_belakang"];
+$level = $_SESSION["level"];
+
+
+// Fungsi logout
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke beranda.php setelah logout
+    header("Location: beranda.php");
+    exit();
+}
+
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
-	<title>SISTEM INFORMASI UKM STMIK KOMPUTAMA MAJENANG</title>
+	<title>Halaman Tes Calon Anggota - SIUKM</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+	<link rel="stylesheet" href="../assets/css/style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-
-</head>
-<body>
-<nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: #146C94";>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-	        	<div class="collapse navbar-collapse" id="collapsibleNavbar">
-			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link" href="beranda.php">Beranda</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="profil.php">Profil</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="prestasi.php">Prestasi</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="galeri.php">Galeri</a>
-				</li>
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-						Pilih UKM
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="racana.php">Racana</a>
-						<a class="dropdown-item" href="wanacetta.php">Wanacetta</a>
-						<a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-						<a class="dropdown-item" href="ecc.php">ECC</a>
-						<a class="dropdown-item" href="riset.php">Riset</a>
-						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hrs.php">HRS</a>
-					</div>
-				</li>
-			</ul>
-			<ul class="navbar-nav ml-auto">
-			<!DOCTYPE html>
-<html>
-<head>
-	<title>Soal Tes Potensi Akademik</title>
 	<style>
-		/* styling untuk tombol selesai dan batal */
-		.btn {
-			display: inline-block;
-			padding: 8px 16px;
-			font-size: 16px;
-			font-weight: bold;
-			border-radius: 5px;
-			text-align: center;
-			cursor: pointer;
-			margin: 10px;
-			border: none;
+		.card {
+			margin-top: 40px;
+			width: 90%;
+		}
+
+		.welcome-container {
+			background-color: #212A3E;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 10px;
+		}
+
+		.welcome-text {
+			font-size: 20px;
 			color: #fff;
+			height: 100%;
+			display: flex;
+			align-items: center;
 		}
 
-		.btn-selesai {
-			background-color: #28a745;
+		.logout-container {
+			display: flex;
+			align-items: flex-end;
 		}
 
-		.btn-batal {
-			background-color: #dc3545;
+		.logout-button {
+			padding: 10px 20px;
+			color: #ffffff;
 		}
 
-		/* styling untuk halaman soal */
-		.container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 20px;
+		.timer-container {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
 		}
 
-		h1 {
-			text-align: center;
-			margin-top: 0;
-		}
-
-		.question {
-			margin: 20px 0;
-			font-size: 18px;
-			font-weight: bold;
-		}
-
-		input[type="radio"] {
+		.timer-label {
 			margin-right: 10px;
 		}
 
-		label {
-			font-size: 16px;
+		h3 {
+			margin: 0;
 		}
-	</style>
+
+		.question {
+			display: none;
+		}
+
+		.question.active {
+			display: block;
+		}
+
+		.card-body {
+			border-top: 1px solid #ccc;
+			padding-top: 10px;
+		}
+
+		.card-body h3 {
+			margin-top: 0;
+		}
+
+		.card-body p {
+			margin-bottom: 10px;
+		}
+
+		.question {
+			display: none;
+		}
+
+		.question.active {
+			display: block;
+		}
+
+		.card-body {
+			border-top: 1px solid #ccc;
+			padding-top: 10px;
+		}
+
+		.card-body h3 {
+			margin-top: 0;
+		}
+
+		.card-body p {
+			margin-bottom: 10px;
+		}
+
+		.divider {
+			border-bottom: 1px solid #ccc;
+			margin-bottom: 10px;
+		}
+
+			.button-container {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 20px;
+		}
+
+		.button-container .btn {
+		margin-top: 10px;
+		}
+  </style>
+   <script>
+        // Fungsi untuk menghitung dan menampilkan timer
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    // Timer selesai, tambahkan aksi yang diinginkan di sini
+                }
+            }, 1000);
+        }
+
+        // Panggil fungsi startTimer saat halaman dimuat
+        window.onload = function () {
+            var duration = 60 * 30; // 60 dikalikan dengan mau berapa menit
+            var display = document.querySelector('.timer-container');
+            startTimer(duration, display);
+        };
+    </script>
 </head>
 <body>
-	<h1>hahaha</h1>
+<nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+<a class="navbar-brand"><span style="font-size: 25px; font-weight: bold;">TES POTENSI AKADEMIK</span></a>
+		<div class="navbar-collapse justify-content-end">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+				<div class="welcome-container" style="display: flex; flex-direction: column;">
+					<span class="welcome-text">Selamat datang,</span>
+					<span class="welcome-text"> <?php echo $nama_depan . " " . $nama_belakang; ?></span>
+					<div class="logout-container">
+						<a class="logout-button" href="?logout">Logout</a>
+					</div>
+				</div>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+
+<div class="container">
+	<div class="card">
+	<p>SOAL NOMOR:</p>
+	<div class="timer-container">
+		<span class="timer-label">Sisa Waktu:</span>
+		<span id="timer"></span>
+	</div>
+		<div id="question1" class="question active">
+			<div class="card-body">
+				<div class="divider"></div>
+				<p>Pilihlah pasangan kata yang paling tepat untuk mengisi titik-titik (...) pada setiap nomor soal, sehingga hubungan antara dua kata di bagian kiri tanda ≈ sepadan dengan hubungan antara dua kata di bagian kanan tanda ≈</p>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer1" id="answer1a" value="a">
+					<label class="form-check-label" for="answer1a">
+						A. Jawaban A
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer1" id="answer1b" value="b">
+					<label class="form-check-label" for="answer1b">
+						B. Jawaban B
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer1" id="answer1c" value="c">
+					<label class="form-check-label" for="answer1c">
+						C. Jawaban C
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer1" id="answer1d" value="d">
+					<label class="form-check-label" for="answer1d">
+						D. Jawaban D
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer1" id="answer1e" value="e">
+					<label class="form-check-label" for="answer1e">
+						E. Jawaban E
+					</label>
+				</div>
+				<div class="button-container">
+    <button onclick="previousQuestion()" class="btn btn-secondary">Sebelumnya</button>
+    <button onclick="nextQuestion()" class="btn btn-primary">Selanjutnya</button>
+</div>
+			</div>
+		</div>
+
+		<div id="question2" class="question">
+			<div class="card-body">
+				<h3>No.2</h3>
+				<div class="divider"></div>
+				<p>Tekst soal 2.</p>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer2" id="answer2a" value="a">
+					<label class="form-check-label" for="answer2a">
+						A. Jawaban A
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer2" id="answer2b" value="b">
+					<label class="form-check-label" for="answer2b">
+						B. Jawaban B
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer2" id="answer2c" value="c">
+					<label class="form-check-label" for="answer2c">
+						C. Jawaban C
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer2" id="answer2d" value="d">
+					<label class="form-check-label" for="answer2d">
+						D. Jawaban D
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer2" id="answer2e" value="e">
+					<label class="form-check-label" for="answer2e">
+						E. Jawaban E
+					</label>
+				</div>
+				<div class="button-container">
+					<button onclick="previousQuestion()">Sebelumnya</button>
+					<button onclick="nextQuestion()">Selanjutnya</button>
+				</div>
+			</div>
+			</div>
+			<div id="question3" class="question">
+			<div class="card-body">
+				<h3>No.3</h3>
+				<div class="divider"></div>
+				<p>Tekst soal 3.</p>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer3" id="answer3a" value="a">
+					<label class="form-check-label" for="answer3a">
+						A. Jawaban A
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer3" id="answer3b" value="b">
+					<label class="form-check-label" for="answer3b">
+						B. Jawaban B
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer3" id="answer3c" value="c">
+					<label class="form-check-label" for="answer3c">
+						C. Jawaban C
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer3" id="answer3d" value="d">
+					<label class="form-check-label" for="answer3d">
+						D. Jawaban D
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer3" id="answer3e" value="e">
+					<label class="form-check-label" for="answer3e">
+						E. Jawaban E
+					</label>
+				</div>
+				<div class="button-container">
+					<button onclick="previousQuestion()">Sebelumnya</button>
+					<button onclick="nextQuestion()">Selanjutnya</button>
+				</div>
+			</div>
+			</div>
+			<div id="question4" class="question">
+			<div class="card-body">
+				<h3>No.4</h3>
+				<div class="divider"></div>
+				<p>Tekst soal 4.</p>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer4" id="answer4a" value="a">
+					<label class="form-check-label" for="answer4a">
+						A. Jawaban A
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer4" id="answer4b" value="b">
+					<label class="form-check-label" for="answer4b">
+						B. Jawaban B
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer4" id="answer4c" value="c">
+					<label class="form-check-label" for="answer4c">
+						C. Jawaban C
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer4" id="answer4d" value="d">
+					<label class="form-check-label" for="answer4d">
+						D. Jawaban D
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="answer4" id="answer4e" value="e">
+					<label class="form-check-label" for="answer4e">
+						E. Jawaban E
+					</label>
+				</div>
+				<div class="button-container">
+					<button onclick="previousQuestion()">Sebelumnya</button>
+					<button onclick="nextQuestion()">Selanjutnya</button>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Fungsi untuk pindah ke soal sebelumnya
+		function previousQuestion() {
+			var currentQuestion = $(".question.active");
+			var previousQuestion = currentQuestion.prev(".question");
+
+			currentQuestion.removeClass("active");
+			previousQuestion.addClass("active");
+		}
+
+		// Fungsi untuk pindah ke soal selanjutnya
+		function nextQuestion() {
+			var currentQuestion = $(".question.active");
+			var nextQuestion = currentQuestion.next(".question");
+
+			currentQuestion.removeClass("active");
+			nextQuestion.addClass("active");
+		}
+	</script>
 </body>
-<footer>
-<footer>SIUKM @2023 | Visit our <a href="https://stmikkomputama.ac.id/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
-  <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
-</svg> Website</a> 
-| Connect with us on <a href="https://www.facebook.com/stmikkomputama"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
-  <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
-</svg> Facebook</a></footer>
-</footer>
 </html>
 
 <script>window.addEventListener('beforeunload', function (event) {

@@ -29,9 +29,7 @@ $error = '';
 //} else {
 //    echo "Data tidak ada";
 //}
-
 ?>
-
 
 <!DOCTYPE html>
 <html>

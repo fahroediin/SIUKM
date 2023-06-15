@@ -12,6 +12,13 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
+// Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
+$userId = $_SESSION['id_user'];
+$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+
+// Mengeksekusi query
+$result = mysqli_query($conn, $query);
+
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form
@@ -379,28 +386,50 @@ button[type=reset]:hover {
   
   <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <div>
-            <label for="id_user">ID User (NIM):</label>
-            <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)">
+        <label for="id_user">ID User</label>
+          <input type="text" name="id_user" value="<?php echo $_SESSION['id_user']; ?>" readonly>
+                </div>
+                <div>
+                    <label for="nama_depan">Nama Depan:</label>
+                    <input type="text" id="nama_depan" name="nama_depan" required placeholder="Masukkan nama depan">
+                </div>
+                <div>
+                    <label for="nama_belakang">Nama Belakang:</label>
+                    <input type="text" id="nama_belakang" name="nama_belakang" placeholder="Masukkan nama belakang">
+                </div>
+                <div>
+                    <label for="nim">Masukkan NIM:</label>
+                    <input type="text" id="nim" name="nim" required placeholder="Masukkan NIM">
+                </div>
+                <div>
+          <label for="semester">Masukkan semester:</label>
+          <select id="semester" name="semester" required>
+          <option value="" selected disabled>Pilih semester</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+          </select>
         </div>
+
         <div>
-            <label for="nama_depan">Nama Depan:</label>
-            <input type="text" id="nama_depan" name="nama_depan" required placeholder="Masukkan nama depan">
-        </div>
-        <div>
-            <label for="nama_belakang">Nama Belakang:</label>
-            <input type="text" id="nama_belakang" name="nama_belakang" required placeholder="Masukkan nama belakang">
-        </div>
-        <div>
-            <label for="nim">Masukkan NIM:</label>
-            <input type="text" id="nim" name="nim" required placeholder="Masukkan NIM">
-        </div>
-        <div>
-            <label for="semester">Masukkan semester:</label>
-            <input type="text" id="semester" name="semester" required placeholder="Masukkan semester">
-        </div>
-        <div>
-            <label for="prodi">Program studi:</label>
-            <input type="text" id="prodi" name="prodi" required placeholder="Masukkan program studi">
+        <label for="prodi">Program studi:</label>
+        <select id="prodi" name="prodi" required>
+        <option value="" selected disabled>Pilih program studi</option>
+          <option value="sistem_informasi">Sistem Informasi</option>
+          <option value="teknik_informatika">Teknik Informatika</option>
+        </select>
+
         </div>
         <!-- Tambahkan div untuk combobox ID UKM -->
         <div>

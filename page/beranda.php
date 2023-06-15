@@ -132,8 +132,13 @@ $level = $_SESSION["level"];
 		</div>
 
 			<div class="col-md-5" style="text-align: justify;">
-				<p>SIUKM adalah sistem informasi yang dirancang khusus untuk mendukung kegiatan mahasiswa dalam Unit Kegiatan Mahasiswa (UKM). Sistem ini bertujuan untuk mempermudah dan mempercepat proses administrasi serta koordinasi kegiatan yang dilakukan oleh UKM. Dengan SIUKM, mahasiswa dapat dengan mudah mengakses informasi terkait kegiatan UKM, seperti jadwal pertemuan, agenda acara, dan tugas-tugas yang harus dilakukan. Selain itu, SIUKM juga menyediakan fitur untuk mengatur keanggotaan, pengelolaan keuangan, dan komunikasi antara anggota UKM. Dengan adanya SIUKM, 
-					diharapkan kegiatan mahasiswa dalam UKM dapat berjalan lebih efisien dan terorganisir dengan baik.</p>
+				<p>
+				SIUKM (Sistem Informasi Unit Kegiatan Mahasiswa) STMIK Komputama Majenang merupakan sebuah platform web yang didedikasikan untuk mendukung kegiatan
+				 Unit Kegiatan Mahasiswa (UKM) di STMIK Komputama Majenang. Platform ini memberikan kemudahan dalam mengelola kegiatan UKM serta menyediakan berbagai informasi yang dibutuhkan oleh anggota dan calon anggota UKM.
+				 Salah satu fitur utama yang disediakan oleh SIUKM adalah pendaftaran calon anggota baru untuk UKM yang diminati. Calon anggota dapat mendaftar melalui platform ini dengan mengisi formulir pendaftaran yang telah disediakan. 
+				 Hal ini memudahkan proses penerimaan anggota baru dan memastikan data yang tercatat lebih terstruktur.	
+
+				</p>
 			</div>
 		</div>
 		<div class="row mx-7">
