@@ -43,27 +43,62 @@ if (isset($_GET['logout'])) {
 // Memeriksa apakah form tambah prestasi telah di-submit
 if (isset($_POST['submit'])) {
     // Mengambil data dari form
-    $id_prestasi = $_POST['id_prestasi'];
     $nama_prestasi = $_POST['nama_prestasi'];
     $penyelenggara = $_POST['penyelenggara'];
     $tgl_prestasi = $_POST['tgl_prestasi'];
     $id_ukm = $_POST['id_ukm'];
     $nama_ukm = $_POST['nama_ukm'];
 
-    // Menyimpan data ke database
-    $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm')";
-    $result = $conn->query($sql);
+    // Generate ID Prestasi
+    $id_prestasi = generateIdPrestasi($nama_prestasi, $tgl_prestasi);
 
-    if ($result) {
-        // Redirect ke halaman daftar prestasi setelah penyimpanan berhasil
-        header("Location: proses_prestasi.php");
-        exit();
+    // Memeriksa apakah ID Prestasi sudah ada di database
+    $check_query = "SELECT COUNT(*) AS count FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
+    $check_result = $conn->query($check_query);
+    $check_data = $check_result->fetch_assoc();
+
+    if ($check_data['count'] > 0) {
+        // ID Prestasi sudah ada, tampilkan pesan alert
+        echo '<script>alert("ID Prestasi tidak boleh sama");</script>';
     } else {
-        // Jika terjadi kesalahan saat menyimpan prestasi
-        echo "Error: " . $conn->error;
-        exit();
+        // Menyimpan data ke database
+        $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm')";
+        $result = $conn->query($sql);
+
+        if ($result) {
+            // Redirect ke halaman daftar prestasi setelah penyimpanan berhasil
+            header("Location: proses_prestasi.php");
+            exit();
+        } else {
+            // Jika terjadi kesalahan saat menyimpan prestasi
+            echo "Error: " . $conn->error;
+            exit();
+        }
     }
 }
+
+function generateIdPrestasi($nama_prestasi, $tgl_prestasi)
+{
+    // Menghapus karakter non-alfanumerik dari nama prestasi
+    $clean_nama_prestasi = preg_replace("/[^a-zA-Z0-9]/", "", $nama_prestasi);
+
+    // Mengambil 6 digit pertama dari nama prestasi
+    $id_prestasi = substr($clean_nama_prestasi, 0, 6);
+
+    // Mengubah format tanggal prestasi menjadi Ymd (misal: 2023-06-15 menjadi 20230615)
+    $tanggal_prestasi = date('Ymd', strtotime($tgl_prestasi));
+
+    // Mengambil 6 digit terakhir dari tanggal prestasi
+    $id_prestasi .= substr($tanggal_prestasi, -6);
+
+    // Jika panjang ID Prestasi kurang dari 12 digit, tambahkan digit acak
+    while (strlen($id_prestasi) < 12) {
+        $id_prestasi .= mt_rand(0, 9);
+    }
+
+    return $id_prestasi;
+}
+
 
 // Memeriksa apakah form edit atau hapus telah di-submit
 if (isset($_POST['action'])) {
@@ -98,6 +133,21 @@ if (isset($_POST['action'])) {
             }
         }
     }
+
+    // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, nama_ketua, nim_ketua, sejarah, visi, misi FROM tab_ukm";
+$result = mysqli_query($conn, $query);
+
+// Inisialisasi variabel untuk opsi combobox
+$options = "";
+
+// Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
+$namaUKM = array();
+while ($row = mysqli_fetch_assoc($result)) {
+  $id_ukm = $row['id_ukm'];
+  $nama_ukm = $row['nama_ukm'];
+  $namaUKM[$id_ukm] = $nama_ukm;
+}
 // Mengambil data dari tabel tab_prestasi
 $sql = "SELECT * FROM tab_prestasi";
 $result = $conn->query($sql);
@@ -159,7 +209,48 @@ $conn->close();
         background-color: #0056b3;
     }
 </style>
+<script>
+  function generateIdPrestasi() {
+    var namaPrestasi = document.getElementById("nama_prestasi").value;
+    var akronim = "";
+    
+    // Mengambil akronim dari nama prestasi
+    var words = namaPrestasi.split(" ");
+    for (var i = 0; i < words.length; i++) {
+      akronim += words[i].charAt(0);
+    }
+    
+    // Mendapatkan 3 digit angka acak
+    var angka = Math.floor(Math.random() * 1000);
+    var angkaStr = ("000" + angka).slice(-3);
+    
+    // Mengisi textfield id_prestasi dengan hasil generate
+    var idPrestasi = akronim.toUpperCase() + angkaStr;
+    document.getElementById("id_prestasi").value = idPrestasi;
+  }
+</script>
 
+<script>
+    // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm
+    function updateNamaUKM(select) {
+      var id_ukm = select.value;
+      var nama_ukmField = document.getElementById("nama_ukm");
+
+      // Mengirim permintaan AJAX ke server
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Mengambil respons dari server
+          var nama_ukm = this.responseText;
+
+          // Mengatur nilai field nama_ukm dengan respons dari server
+          nama_ukmField.value = nama_ukm;
+        }
+      };
+      xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
+      xhttp.send();
+    }
+    </script>
 <body>
     
     <!-- Sidebar -->
@@ -204,20 +295,18 @@ $conn->close();
                         <td><?php echo $prestasi['id_ukm']; ?></td>
                         <td><?php echo $prestasi['nama_ukm']; ?></td>
                         <td>
-                            <form method="post" action="proses_prestasi.php">
+                        <form method="post" action="proses_prestasi.php">
                                 <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
                                 <input type="hidden" name="action" value="edit">
                                 <button type="submit" class="btn btn-primary btn-sm" name="submit">Edit</button>
-                            </form>
+                        </form>
                         </td>
                         <td>
-                            <form method="post" action="proses_prestasi.php">
+                            <form method="post" action="proses_delete_prestasi.php">
                                 <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                                <input type="hidden" name="action" value="delete">
                                 <button type="submit" class="btn btn-danger btn-sm" name="submit">Hapus</button>
                             </form>
                         </td>
-
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -231,7 +320,7 @@ $conn->close();
         <form method="post" action="proses_prestasi.php">
             <div class="form-group">
                 <label for="id_prestasi">ID Prestasi:</label>
-                <input type="text" class="form-control" id="id_prestasi" name="id_prestasi" required>
+                <input type="text" class="form-control" id="id_prestasi" name="id_prestasi">
             </div>
             <div class="form-group">
                 <label for="nama_prestasi">Nama Prestasi:</label>
@@ -247,11 +336,19 @@ $conn->close();
             </div>
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>
-                <input type="text" class="form-control" id="id_ukm" name="id_ukm" required>
+                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
+                    <option value="" selected disabled>Pilih ID UKM</option>
+                    <?php
+                    // Membuat opsi combobox dari hasil query
+                    foreach ($namaUKM as $id_ukm => $nama_ukm) {
+                        echo "<option value='$id_ukm'>$id_ukm</option>";
+                    }
+                    ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
+                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" readonly>
             </div>
             <button type="submit" class="btn btn-primary" name="submit">Submit</button>
         </form>
