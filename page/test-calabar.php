@@ -5,9 +5,6 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
         
-// Menonaktifkan pesan error
-error_reporting(0);
-
 
 // Mendapatkan nama depan dan level dari session
 $nama_depan = $_SESSION["nama_depan"];
@@ -36,7 +33,46 @@ $currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
 
 // Mendapatkan total jumlah soal
 $totalQuestions = 50;
+// Fungsi untuk menghitung nilai TPA berdasarkan jawaban
+function calculateTPAScore($jawaban) {
+    $skorBenar = 1; // Skor untuk jawaban benar
+    $skorSalah = 0; // Skor untuk jawaban salah
+    $nilaiTPA = 0; // Nilai total TPA
 
+    // Misalnya, kita memiliki jawaban yang benar untuk setiap nomor soal
+    $jawabanBenar = array(
+        1 => "C", // Jawaban benar untuk soal 1 adalah C
+        2 => "A", // Jawaban benar untuk soal 2 adalah A
+        // Tambahkan jawaban benar untuk setiap nomor soal
+    );
+
+    // Menghitung nilai TPA berdasarkan jawaban
+    foreach ($jawaban as $nomorSoal => $jawabanPengguna) {
+        if (isset($jawabanBenar[$nomorSoal])) {
+            if ($jawabanPengguna === $jawabanBenar[$nomorSoal]) {
+                $nilaiTPA += $skorBenar;
+            } else {
+                $nilaiTPA += $skorSalah;
+            }
+        }
+    }
+
+    return $nilaiTPA;
+}
+// Fungsi untuk menyimpan nilai TPA ke database
+function saveTPAScore($userId, $nilaiTPA) {
+	 // Menyimpan nilai TPA ke database
+	 $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_user = $userId";
+
+	 if ($conn->query($sql) === true) {
+		 echo "Nilai TPA berhasil disimpan.";
+	 } else {
+		 echo "Error: " . $sql . "<br>" . $conn->error;
+	 }
+ 
+	 // Menutup koneksi database
+	 $conn->close();
+ }
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +83,7 @@ $totalQuestions = 50;
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<link rel="stylesheet" href="../assets/css/style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -64,7 +101,9 @@ $totalQuestions = 50;
 		}
 
 		.welcome-container {
-			background-color: #212A3E;
+			background-color: #F6F1F1;
+			border-top-right-radius: 5px; /* Mengganti sudut bulat pada pojok kanan atas */
+			border-bottom-right-radius: 5px; /* Mengganti sudut bulat pada pojok kanan atas */
 			height: 100%;
 			display: flex;
 			align-items: center;
@@ -74,39 +113,63 @@ $totalQuestions = 50;
 
 		.welcome-text {
 			font-size: 20px;
-			color: #fff;
+			color: #212A3E;
 			height: 100%;
 			display: flex;
 			align-items: center;
 		}
 
 		.logout-container {
-			display: flex;
-			align-items: flex-end;
+		display: flex;
+		align-items: center;
 		}
 
 		.logout-button {
-			padding: 10px 20px;
-			color: #ffffff;
+		margin-left: 30px;
+		align-items: center;
+		justify-content: center;
+		color: #212A3E;
+		font-size: 20px;
+		padding: 15px 15px;
+		border-radius: 5px;
+		cursor: pointer;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		}
+
+		.logout-icon {
+		margin-right: 5px;
 		}
 
 		.timer-container {
-      display: flex;
-      flex-direction: column;
-      align-items: end;
-      font-size: 24px;
-    }
+		align-items: end;
+		font-size: 24px;
+		font-weight: bold;
+		}
 
-    .timer-label {
-      margin-bottom: 10px;
-    }
-
-    .timer {
-      font-weight: bold;
-    }
+		.timer-label {
+		margin-left: 540px;
+		font-weight: bold;
+		font-size: 24px;
+		margin-top: 5px;
+		}
 
 		h3 {
 			margin: 0;
+		}
+
+		h4 {
+			font-size: 24px;
+		}
+
+		h5 {
+		color: #333;
+		font-size: 20px;
+		text-align: start;
+		background-color: #AFD3E2;
+		padding: 10px;
+		border-radius: 5px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+		display: inline-block;
 		}
 
 		.question {
@@ -117,6 +180,18 @@ $totalQuestions = 50;
 			display: block;
 		}
 
+		.card-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		background-color: #146C94; /* Mengganti warna latar belakang menjadi #146C94 */
+		color: #fff; /* Mengganti warna teks menjadi putih */
+		padding: 10px;
+		border-top-left-radius: 5px; /* Mengganti sudut bulat pada pojok kiri atas */
+		border-top-right-radius: 5px; /* Mengganti sudut bulat pada pojok kanan atas */
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Menambahkan efek bayangan */
+		}
+		
 		.card-body {
             border-top: 1px solid #ccc;
             padding-top: 10px;
@@ -155,7 +230,7 @@ $totalQuestions = 50;
         .card-footer .pagination .page-link {
             padding: 6px 12px;
             background-color: #f8f9fa;
-            color: #212529;
+            color: #F9F54B;
             border: 1px solid #dee2e6;
             transition: background-color 0.3s;
         }
@@ -167,7 +242,7 @@ $totalQuestions = 50;
         .card-footer .pagination .page-link.active {
             background-color: #007bff;
             color: #fff;
-            border-color: #007bff;
+            border-color: #007bff; 
         }
 		.question {
 			display: none;
@@ -199,11 +274,21 @@ $totalQuestions = 50;
 		width: 40px; /* Sesuaikan lebar sesuai dengan kebutuhan Anda */
 		}
 
-		.button-container {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 20px;
+		#previousBtn {
+		background-color: #F39C12;
+		margin-right: 1000px;
 		}
+
+		#nextBtn {
+		background-color: #3498DB;
+		margin-left: 1000px;
+		}
+
+		#submitBtn {
+		display:inline-block;
+		background-color: #27AE60;
+		}
+
 		.button-container .btn {
 		margin-top: 10px;
 		/* Tambahkan gaya yang sama untuk kedua tombol */
@@ -273,6 +358,52 @@ $totalQuestions = 50;
         }
     }
   </style>
+  <script>
+    // Fungsi untuk mengupdate dan menyimpan jumlah refresh halaman dalam session
+    function updateRefreshCount() {
+      // Cek apakah session storage tersedia
+      if (typeof(Storage) !== "undefined") {
+        // Cek apakah sudah ada data refreshCount dalam session
+        if (sessionStorage.refreshCount) {
+          // Jika sudah ada, tambahkan 1 ke jumlah refresh
+          sessionStorage.refreshCount = Number(sessionStorage.refreshCount) + 1;
+        } else {
+          // Jika belum ada, set jumlah refresh menjadi 0
+          sessionStorage.refreshCount = 0;
+        }
+      } else {
+        // Session storage tidak tersedia
+        console.log("Session storage is not supported.");
+      }
+    }
+
+    // Fungsi untuk mendapatkan dan menampilkan jumlah refresh halaman dari session
+    function displayRefreshCount() {
+      // Cek apakah session storage tersedia
+      if (typeof(Storage) !== "undefined") {
+        // Cek apakah data refreshCount ada dalam session
+        if (sessionStorage.refreshCount) {
+          // Dapatkan nilai refreshCount dari session
+          var refreshCount = sessionStorage.refreshCount;
+
+          // Tampilkan nilai refreshCount di elemen HTML
+          document.getElementById("refreshCount").textContent = refreshCount;
+        } else {
+          // Jika data refreshCount tidak ada dalam session, tampilkan nilai default
+          document.getElementById("refreshCount").textContent = "0";
+        }
+      } else {
+        // Session storage tidak tersedia
+        console.log("Session storage is not supported.");
+      }
+    }
+
+    // Panggil fungsi updateRefreshCount saat halaman selesai dimuat
+    window.onload = function() {
+      updateRefreshCount();
+      displayRefreshCount();
+    }
+  </script>
 <script>
     var isTimerExpired = false; // Variabel untuk menandakan apakah timer telah selesai
 
@@ -308,24 +439,6 @@ $totalQuestions = 50;
         submitBtn.disabled = false;
     }
 
-    function submitAnswers() {
-        if (isTimerExpired) {
-            var selectedOptions = document.querySelectorAll('.question.active input[type="radio"]:checked');
-            var answeredQuestions = selectedOptions.length;
-            var totalQuestions = 50;
-
-            if (answeredQuestions === totalQuestions) {
-                // Semua pertanyaan telah dijawab, lakukan logika pengiriman jawaban atau tindakan lainnya
-                // ...
-                alert('Jawaban telah dikirim!');
-            } else {
-                // Belum semua pertanyaan dijawab, berikan pesan kepada pengguna
-                alert('Mohon isi semua pertanyaan terlebih dahulu.');
-            }
-        } else {
-            alert('Waktu belum habis!');
-        }
-    }
 </script>
 <script>
 
@@ -379,36 +492,34 @@ $totalQuestions = 50;
         <div class="welcome-text">
             <h3>Selamat datang, <?php echo $nama_depan . ' ' . $nama_belakang; ?></h3>
         </div>
-        <div class="logout-container">
-            <a href="?logout=true" class="logout-button">Logout</a>
-        </div>
+		<div class="logout-container">
+    <a href="?logout=true" class="logout-button"><i class="fas fa-sign-out-alt logout-icon"></i>Logout</a>
+  </div>
     </div>
 </div>
-
-		<div class="timer-container">
-			<span class="timer-label">Time Left:</span>
-			<span class="timer">30:00</span>
-		</div>
-
    
-        <div class="card">
-            <div class="card-header">
-                <h4>Tes Potensi Akademik - SIUKM</h4>
-            </div>
-			<div id="snackbar"></div>
-            <div class="card-body">
+<div class="card">
+    <div class="card-header">
+      <h4>Tes Potensi Akademik - SIUKM</h4>
+	  <label class="timer-label">Sisa Waktu:</label>
+      <div class="timer-container">
+        <span class="timer">30:00</span>
+      </div>
+    </div>
+    <div id="snackbar"></div>
+    <div class="card-body">
                 <div class="question active" id="question1">
                     <h5>Soal 1</h5>
                     <p>gitar : ... ≈ ... : pukul</p>
                     <div class="options">
                         <label>
-                            <input type="radio" name="answer1"  value="A" data-correct> bernyanyi tukang
+                            <input type="radio" name="answer1"  value="A"> bernyanyi tukang
                         </label>
                         <label>
                             <input type="radio" name="answer1" value="B"> kayu besi
                         </label>
                         <label>
-                            <input type="radio" name="answer1" value="C"> petik jimbe
+                            <input type="radio" name="answer1" value="C" data-correct> petik jimbe
                         </label>
 						<label>
                             <input type="radio" name="answer1" value="D"> musik paku
@@ -426,7 +537,7 @@ $totalQuestions = 50;
                             <input type="radio" name="answer2" value="A"> piringan logam
                         </label>
                         <label>
-                            <input type="radio" name="answer2" value="B"> data dompet
+                            <input type="radio" name="answer2" value="B" data-correct> data dompet
                         </label>
                         <label>
                             <input type="radio" name="answer2" value="C"> piringan kertas
@@ -450,7 +561,7 @@ $totalQuestions = 50;
                             <input type="radio" name="answer3" value="B"> asin gelap
                         </label>
                         <label>
-                            <input type="radio" name="answer3" value="C"> sisik manusia
+                            <input type="radio" name="answer3" value="C" data-correct> sisik manusia
                         </label>
 						<label>
                             <input type="radio" name="answer3" value="D"> insang pori-pori
@@ -465,7 +576,7 @@ $totalQuestions = 50;
                     <p>lombok : ... ≈ ... : manis</p>
                     <div class="options">
                         <label>
-                            <input type="radio" name="answer4" value="A"> pedas gula
+                            <input type="radio" name="answer4" value="A" data-correct> pedas gula
                         </label>
                         <label>
                             <input type="radio" name="answer4" value="B"> cabe tebu
@@ -486,7 +597,7 @@ $totalQuestions = 50;
                     <p>catur : ... ≈ ... : knock down</p>
                     <div class="options">
                         <label>
-                            <input type="radio" name="answer5" value="A"> skakmat tinju
+                            <input type="radio" name="answer5" value="A" data-correct> skakmat tinju
                         </label>
                         <label>
                             <input type="radio" name="answer5" value="B"> bidak mebel
@@ -516,7 +627,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer6" value="C"> komisaris besar polisi kapten
 						</label>
 						<label>
-							<input type="radio" name="answer6" value="D"> ajun komisaris besar polisi letnan kolonel
+							<input type="radio" name="answer6" value="D" data-correct> ajun komisaris besar polisi letnan kolonel
 						</label>
 						<label>
 							<input type="radio" name="answer6" value="E"> komisaris jenderal polisi mayor jenderal
@@ -528,7 +639,7 @@ $totalQuestions = 50;
 					<p>wisuda : ... ≈ pertunangan : ...</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer7" value="A"> toga cincin
+							<input type="radio" name="answer7" value="A" data-correct> toga cincin
 						</label>
 						<label>
 							<input type="radio" name="answer7" value="B"> gelar pelaminan
@@ -549,7 +660,7 @@ $totalQuestions = 50;
 					<p>karet : ... ≈ aren : …</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer8" value="A"> getah nira
+							<input type="radio" name="answer8" value="A" data-correct> getah nira
 						</label>
 						<label>
 							<input type="radio" name="answer8" value="B"> ban manis
@@ -579,7 +690,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer9" value="C"> burung ikan
 						</label>
 						<label>
-							<input type="radio" name="answer9" value="D"> kepak hentak
+							<input type="radio" name="answer9" value="D" data-correct> kepak hentak
 						</label>
 						<label>
 							<input type="radio" name="answer9" value="E"> udara air
@@ -603,7 +714,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer10" value="D"> tubuh obat
 						</label>
 						<label>
-							<input type="radio" name="answer10" value="E"> nyeri gesekan
+							<input type="radio" name="answer10" value="E" data-correct> nyeri gesekan
 						</label>
 					</div>
 				</div>
@@ -615,7 +726,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer11" value="A"> gelap panas
 						</label>
 						<label>
-							<input type="radio" name="answer11" value="B"> bulan siang
+							<input type="radio" name="answer11" value="B" data-correct> bulan siang
 						</label>
 						<label>
 							<input type="radio" name="answer11" value="C"> tidur bekerja
@@ -645,7 +756,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer12" value="D"> harta buku
 						</label>
 						<label>
-							<input type="radio" name="answer12" value="E"> kaya jenius
+							<input type="radio" name="answer12" value="E" data-correct> kaya jenius
 						</label>
 					</div>
 				</div>
@@ -657,7 +768,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer13" value="A"> kolam bulu
 						</label>
 						<label>
-							<input type="radio" name="answer13" value="B"> nyamuk burung
+							<input type="radio" name="answer13" value="B" data-correct> nyamuk burung
 						</label>
 						<label>
 							<input type="radio" name="answer13" value="C"> serangga kupu-kupu
@@ -681,7 +792,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer14" value="B"> boscha perpustakaan
 						</label>
 						<label>
-							<input type="radio" name="answer14" value="C"> teleskop pelajar
+							<input type="radio" name="answer14" value="C" data-correct> teleskop pelajar
 						</label>
 						<label>
 							<input type="radio" name="answer14" value="D"> rasi penulis
@@ -696,7 +807,7 @@ $totalQuestions = 50;
 					<p>... : penjahit ≈ kuas : ...</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer15" value="A"> mesin jahit tukang cat
+							<input type="radio" name="answer15" value="A" data-correct> mesin jahit tukang cat
 						</label>
 						<label>
 							<input type="radio" name="answer15" value="B"> jarum cat
@@ -714,7 +825,7 @@ $totalQuestions = 50;
 				</div>
 				<div class="question" id="question16">
 					<h5>Soal 16</h5>
-					<p>. Setelah lulus S1, jika mahasiswa melanjutkan studi S2 maka ia tidak menikah.
+					<p>Setelah lulus S1, jika mahasiswa melanjutkan studi S2 maka ia tidak menikah.
 						Resita menikah setelah lulus S1.</p>
 					<div class="options">
 						<label>
@@ -730,7 +841,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer16" value="D"> Resita menikah setelah melanjutkan studi S2
 						</label>
 						<label>
-							<input type="radio" name="answer16" value="E"> Resita tidak melanjutkan studi S2
+							<input type="radio" name="answer16" value="E" data-correct> Resita tidak melanjutkan studi S2
 						</label>
 					</div>
 				</div>
@@ -748,7 +859,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer17" value="C"> Firman tidak mengikuti kegiatan karena makan di kantin sekolah
 						</label>
 						<label>
-							<input type="radio" name="answer17" value="D"> Firman mengikuti kegiatan sebelum makan di kantin sekolah
+							<input type="radio" name="answer17" value="D" data-correct> Firman mengikuti kegiatan sebelum makan di kantin sekolah
 						</label>
 						<label>
 							<input type="radio" name="answer17" value="E"> Firman mengikuti kegiatan setelah makan di kantin sekolah
@@ -769,7 +880,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer18" value="C"> Sebagian bunga di taman penyerbukannya dibantu serangga
 						</label>
 						<label>
-							<input type="radio" name="answer18" value="D"> Sebagian bunga di taman penyerbukannya tidak dibantu serangga
+							<input type="radio" name="answer18" value="D" data-correct> Sebagian bunga di taman penyerbukannya tidak dibantu serangga
 						</label>
 						<label>
 							<input type="radio" name="answer18" value="E"> Sebagian bunga di taman penyerbukannya dibantu serangga, sebagiannya lagi tidak
@@ -790,7 +901,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer19" value="C"> Sampah berserakan bukan karena tumbuh- tumbuhan yang meranggas
 						</label>
 						<label>
-							<input type="radio" name="answer19" value="D"> Saat musim kemarau sampah berserakan
+							<input type="radio" name="answer19" value="D" data-correct> Saat musim kemarau sampah berserakan
 						</label>
 						<label>
 							<input type="radio" name="answer19" value="E"> Saat musim bukan kemarau sampah berserakan
@@ -805,7 +916,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer20" value="A"> Ardi lulus ujian geometri dengan nilai bagus sedangkan Nolang hampir lulus ujian geometri
 						</label>
 						<label>
-							<input type="radio" name="answer20" value="B"> Ardi dan Nolang keduanya lulus ujian geometri
+							<input type="radio" name="answer20" value="B" data-correct> Ardi dan Nolang keduanya lulus ujian geometri
 						</label>
 						<label>
 							<input type="radio" name="answer20" value="C"> Ardi lulus ujian geometri tetapi Ardi tidak lulus ujian geometri
@@ -823,7 +934,7 @@ $totalQuestions = 50;
 					<p>Semua atlet berada di pusat pelatihan atau libur di rumah masing-masing. Ruang pusat pelatihan atlet sedang digunakan.</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer21" value="A"> Semua atlet tidak berada di rumah masing-masing
+							<input type="radio" name="answer21" value="A" data-correct> Semua atlet tidak berada di rumah masing-masing
 						</label>
 						<label>
 							<input type="radio" name="answer21" value="B"> Semua atlet sedang berlatih di rumah masing-masing
@@ -844,7 +955,7 @@ $totalQuestions = 50;
 					<p> Semua pegawai diberikan THR. Sebagian pegawai diberikan cuti.</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer22" value="A"> Sebagian pegawai tidak diberikan cuti tetapi diberikan THR
+							<input type="radio" name="answer22" value="A" data-correct> Sebagian pegawai tidak diberikan cuti tetapi diberikan THR
 						</label>
 						<label>
 							<input type="radio" name="answer22" value="B"> Sebagian pegawai diberikan cuti tetapi tidak diberikan THR
@@ -869,7 +980,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer23" value="A"> Penonton dapat memperoleh informasi pembelian karcis
 						</label>
 						<label>
-							<input type="radio" name="answer23" value="B"> Penonton tidak dapat memperoleh informasi pembelian karcis
+							<input type="radio" name="answer23" value="B" data-correct> Penonton tidak dapat memperoleh informasi pembelian karcis
 						</label>
 						<label>
 							<input type="radio" name="answer23" value="C"> Penonton tidak dapat membeli karcis
@@ -887,7 +998,7 @@ $totalQuestions = 50;
 					<p>Memancing adalah aktivitas yang selalu Eko lakukan pada hari Minggu. Minggu ini pekerjaan Eko menumpuk.</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer24" value="A"> Hari Minggu ini Eko memancing
+							<input type="radio" name="answer24" value="A" data-correct> Hari Minggu ini Eko memancing
 						</label>
 						<label>
 							<input type="radio" name="answer24" value="B"> Hari Minggu ini Eko tidak memancing
@@ -910,7 +1021,7 @@ $totalQuestions = 50;
 					</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer25" value="A"> Sebagian handphone dapat digunakan untuk mengakses internet dan untuk mengirim SMS
+							<input type="radio" name="answer25" value="A" data-correct> Sebagian handphone dapat digunakan untuk mengakses internet dan untuk mengirim SMS
 						</label>
 						<label>
 							<input type="radio" name="answer25" value="B"> Sebagian handphone dapat digunakan untuk mengakses internet tetapi tidak bisa untuk mengirim SMS
@@ -935,7 +1046,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer26" value="A"> Vita hanya harus mengerjakan soal TPA dan TKD Umum
 						</label>
 						<label>
-							<input type="radio" name="answer26" value="B"> Vita harus mengerjakan soal TPA, TKD Umum, dan TKD Soshum
+							<input type="radio" name="answer26" value="B" data-correct> Vita harus mengerjakan soal TPA, TKD Umum, dan TKD Soshum
 						</label>
 						<label>
 							<input type="radio" name="answer26" value="C"> Vita harus mengerjakan soal TPA, TKD Umum, atau TKD Soshum
@@ -959,7 +1070,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer27" value="B"> Pembangunan terhambat selalu disebabkan oleh turunnya pemasukan pajak
 						</label>
 						<label>
-							<input type="radio" name="answer27" value="C"> Pemasukan pajak yang berkurang menyebabkan terhambatnya pembangunan
+							<input type="radio" name="answer27" value="C" data-correct> Pemasukan pajak yang berkurang menyebabkan terhambatnya pembangunan
 						</label>
 						<label>
 							<input type="radio" name="answer27" value="D"> Pemasukan pajak yang berkurang tidak mempengaruhi pembangunan
@@ -1001,7 +1112,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer28" value="A"> Anak dari Pak Markam
 						</label>
 						<label>
-							<input type="radio" name="answer28" value="B"> Anak dari Pak Saiful
+							<input type="radio" name="answer28" value="B" data-correct> Anak dari Pak Saiful
 						</label>
 						<label>
 							<input type="radio" name="answer28" value="C"> Anak dari Pak Santo
@@ -1031,7 +1142,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer29" value="D"> Isteri Pak Gunawan dengan anak bernama Putra
 						</label>
 						<label>
-							<input type="radio" name="answer29" value="E"> Isteri Pak Santo dengan anak bernama Hadi
+							<input type="radio" name="answer29" value="E" data-correct> Isteri Pak Santo dengan anak bernama Hadi
 						</label>
 					</div>
 				</div>
@@ -1040,7 +1151,7 @@ $totalQuestions = 50;
 					<p>Ibu Hesti dan Ibu Dewi dan masing-masing keluarganya tinggal di kota Bandung, sementara kedua keluarga lainnya tinggal di kota Jakarta. Siapakah yang tinggal di kota Jakarta? </p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer30" value="A"> Pak Markam
+							<input type="radio" name="answer30" value="A" data-correct> Pak Markam
 						</label>
 						<label>
 							<input type="radio" name="answer30" value="B"> Putra
@@ -1073,7 +1184,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer31" value="C"> Hanya III yang benar
 						</label>
 						<label>
-							<input type="radio" name="answer31" value="D"> Hanya I dan III yang benar
+							<input type="radio" name="answer31" value="D" data-correct> Hanya I dan III yang benar
 						</label>
 						<label>
 							<input type="radio" name="answer31" value="E"> Ketiganya benar
@@ -1113,7 +1224,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer32" value="B"> Selasa
 						</label>
 						<label>
-							<input type="radio" name="answer32" value="C"> Rabu
+							<input type="radio" name="answer32" value="C" data-correct> Rabu
 						</label>
 						<label>
 							<input type="radio" name="answer32" value="D"> Kamis
@@ -1141,7 +1252,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer33" value="B"> Selasa dan Jumat
 						</label>
 						<label>
-							<input type="radio" name="answer33" value="C"> Senin dan Jumat
+							<input type="radio" name="answer33" value="C" data-correct> Senin dan Jumat
 						</label>
 						<label>
 							<input type="radio" name="answer33" value="D"> Kamis dan Jumat
@@ -1174,7 +1285,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer34" value="D"> Les piano dan les melukis
 						</label>
 						<label>
-							<input type="radio" name="answer34" value="E"> Les melukis dan latihan taekwondo
+							<input type="radio" name="answer34" value="E" data-correct> Les melukis dan latihan taekwondo
 						</label>
 					</div>
 				</div>
@@ -1206,7 +1317,7 @@ $totalQuestions = 50;
 					sebelah pengemudi adalah ....</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer35" value="A"> Lisa 
+							<input type="radio" name="answer35" value="A" data-correct> Lisa 
 						</label>
 						<label>
 							<input type="radio" name="answer35" value="B"> Jono
@@ -1242,7 +1353,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer36" value="D"> Nuri duduk di bangku yang sama dengan Heru
 						</label>
 						<label>
-							<input type="radio" name="answer36" value="E"> Heru duduk di bangku yang sama dengan Roni
+							<input type="radio" name="answer36" value="E" data-correct> Heru duduk di bangku yang sama dengan Roni
 						</label>
 					</div>
 				</div>
@@ -1263,7 +1374,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer37" value="D"> Lisa duduk di bangku yang sama dengan Sarah
 						</label>
 						<label>
-							<input type="radio" name="answer37" value="E"> Marta duduk di bangku yang sama dengan Vina
+							<input type="radio" name="answer37" value="E" data-correct> Marta duduk di bangku yang sama dengan Vina
 						</label>
 					</div>
 				</div>
@@ -1281,7 +1392,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer38" value="C"> Nuri, Susi, dan Vina
 						</label>
 						<label>
-							<input type="radio" name="answer38" value="D"> Heru, Lisa, dan Susi
+							<input type="radio" name="answer38" value="D" data-correct> Heru, Lisa, dan Susi
 						</label>
 						<label>
 							<input type="radio" name="answer38" value="E"> Lisa, Marta, dan Roni
@@ -1302,7 +1413,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer39" value="C"> $\frac{4}{7}$
 						</label>
 						<label>
-							<input type="radio" name="answer39" value="D"> $\frac{3}{4}$
+							<input type="radio" name="answer39" value="D" data-correct> $\frac{3}{4}$
 						</label>
 						<label>
 							<input type="radio" name="answer39" value="E"> $\frac{5}{11}$
@@ -1320,7 +1431,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer40" value="B"> 23/48
 						</label>
 						<label>
-							<input type="radio" name="answer40" value="C"> 7/24
+							<input type="radio" name="answer40" value="C" data-correct> 7/24
 						</label>
 						<label>
 							<input type="radio" name="answer40" value="D"> 23/24
@@ -1341,7 +1452,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer41" value="B"> 0,25 
 						</label>
 						<label>
-							<input type="radio" name="answer41" value="C"> 2,5
+							<input type="radio" name="answer41" value="C" data-correct> 2,5
 						</label>
 						<label>
 							<input type="radio" name="answer41" value="D"> 25
@@ -1362,7 +1473,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer42" value="B"> 4
 						</label>
 						<label>
-							<input type="radio" name="answer42" value="C"> 5
+							<input type="radio" name="answer42" value="C" data-correct> 5
 						</label>
 						<label>
 							<input type="radio" name="answer42" value="D"> 6
@@ -1383,7 +1494,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer43" value="B"> 4
 						</label>
 						<label>
-							<input type="radio" name="answer43" value="C"> 6
+							<input type="radio" name="answer43" value="C" data-correct> 6
 						</label>
 						<label>
 							<input type="radio" name="answer43" value="D"> 8
@@ -1401,7 +1512,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer44" value="A"> Rp 19.000,00
 						</label>
 						<label>
-							<input type="radio" name="answer44" value="B"> Rp 31.000,00
+							<input type="radio" name="answer44" value="B" data-correct> Rp 31.000,00
 						</label>
 						<label>
 							<input type="radio" name="answer44" value="C"> Rp 36.000,00
@@ -1459,7 +1570,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer45" value="A"> Ahmad
 						</label>
 						<label>
-							<input type="radio" name="answer45" value="B"> Beny
+							<input type="radio" name="answer45" value="B" data-correct> Beny
 						</label>
 						<label>
 							<input type="radio" name="answer45" value="C"> Citra
@@ -1488,7 +1599,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer46" value="B"> Ctrl + X
 						</label>
 						<label>
-							<input type="radio" name="answer46" value="C"> Ctrl + V
+							<input type="radio" name="answer46" value="C" data-correct> Ctrl + V
 						</label>
 						<label>
 							<input type="radio" name="answer46" value="D"> Ctrl + C
@@ -1514,7 +1625,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer47" value="C"> Ctrl + V
 						</label>
 						<label>
-							<input type="radio" name="answer47" value="D"> Ctrl + C
+							<input type="radio" name="answer47" value="D" data-correct> Ctrl + C
 						</label>
 						<label>
 							<input type="radio" name="answer47" value="E"> Ctrl + P
@@ -1532,7 +1643,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer48" value="B"> Italic
 						</label>
 						<label>
-							<input type="radio" name="answer48" value="C"> Garis
+							<input type="radio" name="answer48" value="C" data-correct> Garis
 						</label>
 						<label>
 							<input type="radio" name="answer48" value="D"> Underline
@@ -1556,7 +1667,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer49" value="C"> Print
 						</label>
 						<label>
-							<input type="radio" name="answer49" value="D"> Copy
+							<input type="radio" name="answer49" value="D" data-correct> Copy
 						</label>
 						<label>
 							<input type="radio" name="answer49" value="E"> Semua benar
@@ -1573,7 +1684,7 @@ $totalQuestions = 50;
 							<input type="radio" name="answer50" value="A"> Microsoft Excel
 						</label>
 						<label>
-							<input type="radio" name="answer50" value="B"> Microsoft Word
+							<input type="radio" name="answer50" value="B" data-correct> Microsoft Word
 						</label>
 						<label>
 							<input type="radio" name="answer50" value="C"> Microsoft Powerpoint
@@ -1590,82 +1701,83 @@ $totalQuestions = 50;
 			<button id="previousBtn" onclick="previousQuestion()" disabled>Previous</button>
 			<button id="nextBtn" onclick="nextQuestion()">Next</button>
 			<button id="submitBtn" onclick="submitAnswers()">Submit</button>
+
 			<script>
-    var currentQuestion = 1;
-    var totalQuestions = 50;
+			var currentQuestion = 1;
+			var totalQuestions = 50;
 
-    function previousQuestion() {
-        var currentQuestionElement = document.getElementById('question' + currentQuestion);
-        currentQuestionElement.classList.remove('active');
-        currentQuestion--;
+			function previousQuestion() {
+				var currentQuestionElement = document.getElementById('question' + currentQuestion);
+				currentQuestionElement.classList.remove('active');
+				currentQuestion--;
 
-        var previousQuestionElement = document.getElementById('question' + currentQuestion);
-        previousQuestionElement.classList.add('active');
+				var previousQuestionElement = document.getElementById('question' + currentQuestion);
+				previousQuestionElement.classList.add('active');
 
-        var isAllOptionsSelected = checkAllOptionsSelected();
-        document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
+				var isAllOptionsSelected = checkAllOptionsSelected();
+				document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
 
-        document.getElementById('nextBtn').disabled = false;
+				document.getElementById('nextBtn').disabled = false;
 
-        if (currentQuestion === 1) {
-            document.getElementById('previousBtn').disabled = true;
-        }
-    }
+				if (currentQuestion === 1) {
+					document.getElementById('previousBtn').disabled = true;
+				}
+			}
 
-    function nextQuestion() {
-        var currentQuestionElement = document.getElementById('question' + currentQuestion);
-        currentQuestionElement.classList.remove('active');
-        currentQuestion++;
+			function nextQuestion() {
+				var currentQuestionElement = document.getElementById('question' + currentQuestion);
+				currentQuestionElement.classList.remove('active');
+				currentQuestion++;
 
-        var nextQuestionElement = document.getElementById('question' + currentQuestion);
-        nextQuestionElement.classList.add('active');
+				var nextQuestionElement = document.getElementById('question' + currentQuestion);
+				nextQuestionElement.classList.add('active');
 
-        var isAllOptionsSelected = checkAllOptionsSelected();
-        document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
+				var isAllOptionsSelected = checkAllOptionsSelected();
+				document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
 
-        document.getElementById('previousBtn').disabled = false;
+				document.getElementById('previousBtn').disabled = false;
 
-        if (currentQuestion === totalQuestions) {
-            document.getElementById('nextBtn').disabled = true;
-        }
-    }
+				if (currentQuestion === totalQuestions) {
+					document.getElementById('nextBtn').disabled = true;
+				}
+			}
 
-    function submitAnswers() {
-        var isAllOptionsSelected = checkAllOptionsSelected();
-        if (isAllOptionsSelected) {
-            showSnackbar();
-            redirectToDashboard();
-        } else {
-            alert('Harap kerjakan semua soal.');
-        }
-    }
+			function submitAnswers() {
+				var isAllOptionsSelected = checkAllOptionsSelected();
+				if (isAllOptionsSelected) {
+					showSnackbar();
+					redirectToDashboard();
+				} else {
+					alert('Harap kerjakan semua soal.');
+				}
+			}
 
-    function checkAllOptionsSelected() {
-        var questions = document.querySelectorAll('.question');
-        for (var i = 0; i < questions.length; i++) {
-            var question = questions[i];
-            var selectedOption = question.querySelector('input[type="radio"]:checked');
-            if (!selectedOption) {
-                return false; // Ada pertanyaan yang belum terisi
-            }
-        }
-        return true; // Semua pertanyaan terisi
-    }
+			function checkAllOptionsSelected() {
+				var questions = document.querySelectorAll('.question');
+				for (var i = 0; i < questions.length; i++) {
+					var question = questions[i];
+					var selectedOption = question.querySelector('input[type="radio"]:checked');
+					if (!selectedOption) {
+						return false; // Ada pertanyaan yang belum terisi
+					}
+				}
+				return true; // Semua pertanyaan terisi
+			}
 
-    function showSnackbar() {
-        var snackbar = document.getElementById('snackbar');
-        snackbar.textContent = 'Terima kasih telah mengerjakan tes potensi akademik';
-        snackbar.classList.add('show');
-        setTimeout(function () {
-            snackbar.classList.remove('show');
-        }, 3000);
-    }
+			function showSnackbar() {
+				var snackbar = document.getElementById('snackbar');
+				snackbar.textContent = 'Terima kasih telah mengerjakan tes potensi akademik';
+				snackbar.classList.add('show');
+				setTimeout(function () {
+					snackbar.classList.remove('show');
+				}, 3000);
+			}
 
-    function redirectToDashboard() {
-        // Redirect to dashboard.php
-        window.location.href = 'dashboard.php';
-    }
-</script>
+			function redirectToDashboard() {
+				// Redirect to dashboard.php
+				window.location.href = 'dashboard.php';
+			}
+		</script>
         <script>
         // Timer functionality
         var timerElement = document.querySelector('.timer');

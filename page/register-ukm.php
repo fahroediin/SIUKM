@@ -57,21 +57,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $foto_ktm = $_POST['foto_ktm'];
     $alasan = $_POST['alasan'];
 
-    // Menyimpan data pendaftaran ke tabel tab_pacab
-    $query = "INSERT INTO tab_pacab (id_Calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-              VALUES ('1','$id_user', '$nama_depan', '$nama_belakang', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+   // Generate 4 digit angka acak
+   $randomDigits = rand(1000, 9999);
 
-    // Menjalankan query
-    if (mysqli_query($conn, $query)) {
-        // Pendaftaran berhasil, redirect ke halaman test-calabar.php
-        header("Location: test-calabar.php");
-        exit();
-    } else {
-        echo "Error: " . $query . "<br>" . mysqli_error($conn);
-    }
+   // Menggabungkan NIM dengan angka acak
+   $id_calabar = $nim . $randomDigits;
 
-    // Menutup koneksi database
-    mysqli_close($conn);
+   // Menyimpan data pendaftaran ke tabel tab_pacab
+   $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+             VALUES ('$id_calabar','$id_user', '$nama_depan', '$nama_belakang', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+
+   // Menjalankan query
+   if (mysqli_query($conn, $query)) {
+       // Pendaftaran berhasil, redirect ke halaman test-calabar.php
+       header("Location: test-calabar.php");
+       exit();
+   } else {
+       echo "Error: " . $query . "<br>" . mysqli_error($conn);
+   }
+
+   // Menutup koneksi database
+   mysqli_close($conn);
 }
 ?>
 <!DOCTYPE html>
