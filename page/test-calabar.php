@@ -35,7 +35,7 @@ if (isset($_GET['logout'])) {
 $currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
 
 // Mendapatkan total jumlah soal
-$totalQuestions = 4;
+$totalQuestions = 50;
 
 ?>
 
@@ -222,36 +222,106 @@ $totalQuestions = 4;
 		background-color: #333;
 		color: #fff;
 		}
+		/* Snackbar style */
+		#snackbar {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 2px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 30px;
+        font-size: 17px;
+    }
 
-  </style>
-   <script>
-        // Fungsi untuk menghitung dan menampilkan timer
-        function startTimer(duration, display) {
-            var timer = duration, minutes, seconds;
-            setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
+    #snackbar.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
 
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    // Timer selesai, tambahkan aksi yang diinginkan di sini
-                }
-            }, 1000);
+    @keyframes fadein {
+        from {
+            bottom: 0;
+            opacity: 0;
         }
+        to {
+            bottom: 30px;
+            opacity: 1;
+        }
+    }
 
-        // Panggil fungsi startTimer saat halaman dimuat
-        window.onload = function () {
-            var duration = 60 * 30; // 60 dikalikan dengan mau berapa menit
-            var display = document.querySelector('.timer-container');
-            startTimer(duration, display);
-        };
-		</script>
+    @keyframes fadeout {
+        from {
+            bottom: 30px;
+            opacity: 1;
+        }
+        to {
+            bottom: 0;
+            opacity: 0;
+        }
+    }
+  </style>
+<script>
+    var isTimerExpired = false; // Variabel untuk menandakan apakah timer telah selesai
 
-		<script>
+    // Fungsi untuk menghitung dan menampilkan timer
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        var timerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(timerInterval);
+                isTimerExpired = true; // Timer telah selesai
+                enableSubmitButton();
+            }
+        }, 1000);
+    }
+
+    // Panggil fungsi startTimer saat halaman dimuat
+    window.onload = function () {
+        var duration = 60 * 30; // 60 dikalikan dengan mau berapa menit
+        var display = document.querySelector('.timer-container');
+        startTimer(duration, display);
+    };
+
+    function enableSubmitButton() {
+        var submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = false;
+    }
+
+    function submitAnswers() {
+        if (isTimerExpired) {
+            var selectedOptions = document.querySelectorAll('.question.active input[type="radio"]:checked');
+            var answeredQuestions = selectedOptions.length;
+            var totalQuestions = 50;
+
+            if (answeredQuestions === totalQuestions) {
+                // Semua pertanyaan telah dijawab, lakukan logika pengiriman jawaban atau tindakan lainnya
+                // ...
+                alert('Jawaban telah dikirim!');
+            } else {
+                // Belum semua pertanyaan dijawab, berikan pesan kepada pengguna
+                alert('Mohon isi semua pertanyaan terlebih dahulu.');
+            }
+        } else {
+            alert('Waktu belum habis!');
+        }
+    }
+</script>
+<script>
+
     var currentQuestion = 1; // Nomor soal saat ini
 
     function nextQuestion() {
@@ -316,6 +386,7 @@ $totalQuestions = 4;
             <div class="card-header">
                 <h4>Halaman Tes Calon Anggota - SIUKM</h4>
             </div>
+			<div id="snackbar"></div>
             <div class="card-body">
                 <div class="question active" id="question1">
                     <h5>Soal 1</h5>
@@ -1370,8 +1441,8 @@ $totalQuestions = 4;
             </div>
 			<button id="previousBtn" onclick="previousQuestion()" disabled>Previous</button>
 			<button id="nextBtn" onclick="nextQuestion()">Next</button>
-			<button id="submitBtn" onclick="submitAnswers()" disabled>Submit</button>
-<script>
+			<button id="submitBtn" onclick="submitAnswers()">Submit</button>
+			<script>
     var currentQuestion = 1;
     var totalQuestions = 50;
 
@@ -1382,6 +1453,9 @@ $totalQuestions = 4;
 
         var previousQuestionElement = document.getElementById('question' + currentQuestion);
         previousQuestionElement.classList.add('active');
+
+        var isAllOptionsSelected = checkAllOptionsSelected();
+        document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
 
         document.getElementById('nextBtn').disabled = false;
 
@@ -1398,39 +1472,51 @@ $totalQuestions = 4;
         var nextQuestionElement = document.getElementById('question' + currentQuestion);
         nextQuestionElement.classList.add('active');
 
+        var isAllOptionsSelected = checkAllOptionsSelected();
+        document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
+
         document.getElementById('previousBtn').disabled = false;
 
         if (currentQuestion === totalQuestions) {
             document.getElementById('nextBtn').disabled = true;
         }
     }
-	function submitAnswers() {
-    var selectedOptions = document.querySelectorAll('.question.active input[type="radio"]:checked');
-	var allAnswered = selectedOptions.length === totalQuestions;
-		
-	if (allAnswered) {
-            // Tombol "Submit" dapat diaktifkan
-            console.log("Semua opsi telah dipilih. Tombol Submit diaktifkan.");
+
+    function submitAnswers() {
+        var isAllOptionsSelected = checkAllOptionsSelected();
+        if (isAllOptionsSelected) {
+            showSnackbar();
+            redirectToDashboard();
         } else {
-            // Tombol "Submit" tidak dapat diaktifkan
-            console.log("Belum semua opsi dipilih. Tombol Submit tidak dapat diaktifkan.");
-        }
-
-    for (var i = 0; i < selectedOptions.length; i++) {
-        var selectedOption = selectedOptions[i];
-        var questionId = selectedOption.name;
-        var answerValue = selectedOption.value;
-        var isCorrect = selectedOption.getAttribute('data-correct');
-
-        if (isCorrect) {
-            correctAnswers++;
+            alert('Harap kerjakan semua soal.');
         }
     }
 
-    console.log('Jawaban yang benar: ' + correctAnswers);
-}
+    function checkAllOptionsSelected() {
+        var questions = document.querySelectorAll('.question');
+        for (var i = 0; i < questions.length; i++) {
+            var question = questions[i];
+            var selectedOption = question.querySelector('input[type="radio"]:checked');
+            if (!selectedOption) {
+                return false; // Ada pertanyaan yang belum terisi
+            }
+        }
+        return true; // Semua pertanyaan terisi
+    }
 
+    function showSnackbar() {
+        var snackbar = document.getElementById('snackbar');
+        snackbar.textContent = 'Terima kasih telah mengerjakan tes potensi akademik';
+        snackbar.classList.add('show');
+        setTimeout(function () {
+            snackbar.classList.remove('show');
+        }, 3000);
+    }
 
+    function redirectToDashboard() {
+        // Redirect to dashboard.php
+        window.location.href = 'dashboard.php';
+    }
 </script>
         <script>
         // Timer functionality
