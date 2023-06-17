@@ -135,8 +135,6 @@ if (isset($_POST['submit_jawaban'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 	<style>
 body {
   width: 100%;
@@ -1713,7 +1711,8 @@ h5 {
 			<button id="nextBtn" onclick="nextQuestion()">Next</button>
 			<button id="submitBtn" onclick="submitAnswers()">Submit</button>
 			</div>
-			
+			<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 			<script>
     var currentQuestion = 1;
     var totalQuestions = 50;
@@ -1850,6 +1849,7 @@ h5 {
         // xhr.send(JSON.stringify({ id_calabar: id_calabar, nilaiTPA: nilaiTPA }));
     }
 }
+
 </script>
 
 </body>

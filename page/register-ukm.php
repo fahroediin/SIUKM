@@ -25,8 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_user = $_POST['id_user'];
 }
 
-// Menyimpan id_calabar ke dalam session
-$_SESSION['id_calabar'] = $id_user;
+// Retrieve the nama_depan and nama_belakang values from the tab_user table
+$row = mysqli_fetch_assoc($result);
+$nama_depan = $row['nama_depan'];
+$nama_belakang = $row['nama_belakang'];
 
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm FROM tab_ukm";
@@ -38,10 +40,12 @@ $options = "";
 // Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
 $namaUKM = array();
 while ($row = mysqli_fetch_assoc($result)) {
-    $id_ukm = $row['id_ukm'];
-    $nama_ukm = $row['nama_ukm'];
-    $namaUKM[$id_ukm] = $nama_ukm;
+  $id_ukm = $row['id_ukm'];
+  $nama_ukm = $row['nama_ukm'];
+  $namaUKM[$id_ukm] = $nama_ukm;
+  echo '<option value="' . $id_ukm . '">' . $nama_ukm . '</option>';
 }
+
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -74,15 +78,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Menjalankan query
     if (mysqli_query($conn, $query)) {
-        // Pendaftaran berhasil, redirect ke halaman test-calabar.php
-        header("Location: test-calabar.php");
-        exit();
-    } else {
-        echo "Error: " . $query . "<br>" . mysqli_error($conn);
-    }
+      // Pendaftaran berhasil, simpan id_calabar ke dalam session
+      $_SESSION['id_calabar'] = $id_calabar;
 
-    // Menutup koneksi database
-    mysqli_close($conn);
+      // Redirect ke halaman test-calabar.php
+      header("Location: test-calabar.php");
+      exit();
+  } else {
+      echo "Error: " . $query . "<br>" . mysqli_error($conn);
+  }
+
+  // Menutup koneksi database
+  mysqli_close($conn);
 }
 ?>
 <!DOCTYPE html>
@@ -402,11 +409,10 @@ button[type=reset]:hover {
                 </div>
                 <div>
                     <label for="nama_depan">Nama Depan:</label>
-                    <input type="text" id="nama_depan" name="nama_depan" required placeholder="Masukkan nama depan">
-                </div>
+                    <input type="text" name="nama_depan" value="<?php echo $nama_depan; ?>" required readonly>
                 <div>
                     <label for="nama_belakang">Nama Belakang:</label>
-                    <input type="text" id="nama_belakang" name="nama_belakang" placeholder="Masukkan nama belakang">
+                    <input type="text" name="nama_belakang" value="<?php echo $nama_belakang; ?>" readonly>
                 </div>
                 <div>
                     <label for="nim">Masukkan NIM:</label>

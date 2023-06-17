@@ -100,26 +100,37 @@ while ($row = mysqli_fetch_assoc($result)) {
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <script>
-    // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm
-    function updateNamaUKM(select) {
+    // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm, sejarah, nama_ketua, nim_ketua, visi, dan misi
+    function updateFormData(select) {
       var id_ukm = select.value;
       var nama_ukmField = document.getElementById("nama_ukm");
+      var sejarahField = document.getElementById("sejarah");
+      var nama_ketuaField = document.getElementById("nama_ketua");
+      var nim_ketuaField = document.getElementById("nim_ketua");
+      var visiField = document.getElementById("visi");
+      var misiField = document.getElementById("misi");
 
       // Mengirim permintaan AJAX ke server
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          // Mengambil respons dari server
-          var nama_ukm = this.responseText;
+          // Mengambil respons dari server dalam bentuk JSON
+          var data = JSON.parse(this.responseText);
 
-          // Mengatur nilai field nama_ukm dengan respons dari server
-          nama_ukmField.value = nama_ukm;
+          // Mengatur nilai field-field yang sesuai dengan respons dari server
+          nama_ukmField.value = data.nama_ukm;
+          sejarahField.value = data.sejarah;
+          nama_ketuaField.value = data.nama_ketua;
+          nim_ketuaField.value = data.nim_ketua;
+          visiField.value = data.visi;
+          misiField.value = data.misi;
         }
       };
-      xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
+      xhttp.open("GET", "get_data_ukm.php?id_ukm=" + id_ukm, true);
       xhttp.send();
     }
-    </script>
+</script>
+
     
 </head>
 <style>
@@ -178,10 +189,10 @@ while ($row = mysqli_fetch_assoc($result)) {
 <div class="content">
     <div class="card">
     <h2>Edit Data UKM</h2>
-        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+    <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>
-                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
+                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateFormData(this)">
                     <option value="" selected disabled>Pilih ID UKM</option>
                     <?php
                     // Membuat opsi combobox dari hasil query
@@ -219,12 +230,25 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <label for="misi">Misi:</label>
                 <textarea class="form-control" id="misi" name="misi" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="submit" class="btn btn-primary" onclick="showConfirmation(event)">Simpan</button>
         </form>
     </div>
 
     <!-- Snackbar -->
 <div id="snackbar"></div>
+<script>
+  function showConfirmation(event) {
+    event.preventDefault(); // Menghentikan pengiriman form secara langsung
+
+    // Menampilkan konfirmasi dengan fungsi confirm()
+    var confirmation = confirm("Apakah Anda yakin ingin menyimpan data?");
+
+    if (confirmation) {
+      // Mengirim form jika pengguna menekan tombol "OK"
+      document.getElementById("dataForm").submit();
+    }
+  }
+</script>
 
 <!-- Add the following script to show the alert after the page loads -->
 <script>
