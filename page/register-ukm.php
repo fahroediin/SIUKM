@@ -24,7 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form
     $id_user = $_POST['id_user'];
 }
-  
+
+// Menyimpan id_calabar ke dalam session
+$_SESSION['id_calabar'] = $id_user;
+
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result = mysqli_query($conn, $query);
@@ -35,14 +38,15 @@ $options = "";
 // Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
 $namaUKM = array();
 while ($row = mysqli_fetch_assoc($result)) {
-  $id_ukm = $row['id_ukm'];
-  $nama_ukm = $row['nama_ukm'];
-  $namaUKM[$id_ukm] = $nama_ukm;
+    $id_ukm = $row['id_ukm'];
+    $nama_ukm = $row['nama_ukm'];
+    $namaUKM[$id_ukm] = $nama_ukm;
 }
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form
+    $id_calabar = $_POST['id_calabar'];
     $id_user = $_POST['id_user'];
     $nama_depan = $_POST['nama_depan'];
     $nama_belakang = $_POST['nama_belakang'];
@@ -56,28 +60,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pasfoto = $_POST['pasfoto'];
     $foto_ktm = $_POST['foto_ktm'];
     $alasan = $_POST['alasan'];
+    
 
-   // Generate 4 digit angka acak
-   $randomDigits = rand(1000, 9999);
+    // Generate 4 digit angka acak
+    $randomDigits = rand(1000, 9999);
 
-   // Menggabungkan NIM dengan angka acak
-   $id_calabar = $nim . $randomDigits;
+    // Menggabungkan NIM dengan angka acak
+    $id_calabar = $nim . $randomDigits;
 
-   // Menyimpan data pendaftaran ke tabel tab_pacab
-   $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+    // Menyimpan data pendaftaran ke tabel tab_pacab
+    $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
              VALUES ('$id_calabar','$id_user', '$nama_depan', '$nama_belakang', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
 
-   // Menjalankan query
-   if (mysqli_query($conn, $query)) {
-       // Pendaftaran berhasil, redirect ke halaman test-calabar.php
-       header("Location: test-calabar.php");
-       exit();
-   } else {
-       echo "Error: " . $query . "<br>" . mysqli_error($conn);
-   }
+    // Menjalankan query
+    if (mysqli_query($conn, $query)) {
+        // Pendaftaran berhasil, redirect ke halaman test-calabar.php
+        header("Location: test-calabar.php");
+        exit();
+    } else {
+        echo "Error: " . $query . "<br>" . mysqli_error($conn);
+    }
 
-   // Menutup koneksi database
-   mysqli_close($conn);
+    // Menutup koneksi database
+    mysqli_close($conn);
 }
 ?>
 <!DOCTYPE html>

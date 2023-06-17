@@ -103,7 +103,7 @@ if (isset($_GET['logout'])) {
 </div>
 
 <div class="content">
-    <h1>Dashboard Pengguna</h1>
+    <h1>Informasi Pengguna</h1>
     <hr class="divider">
     <div class="user-info">
     <div class="profile-container">

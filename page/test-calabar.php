@@ -4,16 +4,16 @@ require_once "db_connect.php";
 
 // Memulai session
 session_start();
-        
 
 // Mendapatkan nama depan dan level dari session
 $nama_depan = $_SESSION["nama_depan"];
 $nama_belakang = $_SESSION["nama_belakang"];
 $level = $_SESSION["level"];
-
+$id_calabar = $_SESSION['id_calabar'];
 
 // Fungsi logout
-function logout() {
+function logout()
+{
     // Menghapus semua data session
     session_unset();
     // Menghancurkan session
@@ -28,28 +28,31 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+
 // Mendapatkan nomor soal yang sedang aktif
 $currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
 
 // Mendapatkan total jumlah soal
 $totalQuestions = 50;
+
 // Fungsi untuk menghitung nilai TPA berdasarkan jawaban
-function calculateTPAScore($jawaban) {
+function calculateTPAScore($jawaban)
+{
     $skorBenar = 1; // Skor untuk jawaban benar
     $skorSalah = 0; // Skor untuk jawaban salah
     $nilaiTPA = 0; // Nilai total TPA
 
-    // Misalnya, kita memiliki jawaban yang benar untuk setiap nomor soal
+    // Jawaban benar dan data-correct untuk setiap nomor soal
     $jawabanBenar = array(
-        1 => "C", // Jawaban benar untuk soal 1 adalah C
-        2 => "A", // Jawaban benar untuk soal 2 adalah A
+        1 => 1, // Jawaban benar untuk soal 1
+        2 => 0, // Jawaban benar untuk soal 2
         // Tambahkan jawaban benar untuk setiap nomor soal
     );
 
     // Menghitung nilai TPA berdasarkan jawaban
     foreach ($jawaban as $nomorSoal => $jawabanPengguna) {
         if (isset($jawabanBenar[$nomorSoal])) {
-            if ($jawabanPengguna === $jawabanBenar[$nomorSoal]) {
+            if ($jawabanPengguna == $jawabanBenar[$nomorSoal]) {
                 $nilaiTPA += $skorBenar;
             } else {
                 $nilaiTPA += $skorSalah;
@@ -59,21 +62,64 @@ function calculateTPAScore($jawaban) {
 
     return $nilaiTPA;
 }
-// Fungsi untuk menyimpan nilai TPA ke database
-function saveTPAScore($userId, $nilaiTPA) {
-	 // Menyimpan nilai TPA ke database
-	 $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_user = $userId";
 
-	 if ($conn->query($sql) === true) {
-		 echo "Nilai TPA berhasil disimpan.";
-	 } else {
-		 echo "Error: " . $sql . "<br>" . $conn->error;
-	 }
- 
-	 // Menutup koneksi database
-	 $conn->close();
- }
+// Fungsi untuk menentukan kategori berdasarkan nilai TPA
+function determineCategory($nilaiTPA)
+{
+    $totalSoal = 50;
+    $persentaseBenar = ($nilaiTPA / $totalSoal) * 100;
+
+    if ($persentaseBenar == 100) {
+        return "Sangat Baik";
+    } elseif ($persentaseBenar >= 80) {
+        return "Baik";
+    } elseif ($persentaseBenar >= 50) {
+        return "Cukup";
+    } elseif ($persentaseBenar >= 30) {
+        return "Kurang Baik";
+    } else {
+        return "Kategori Tidak Tersedia";
+    }
+}
+
+function saveTPAScore($userId, $nilaiTPA)
+{
+    // Memasukkan file db_connect.php
+    require_once "db_connect.php";
+
+    // Menyimpan nilai TPA ke database berdasarkan id_calabar
+    $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_calabar = $userId";
+
+    if ($conn->query($sql) === true) {
+        echo "Nilai TPA berhasil disimpan.";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    // Menutup koneksi database
+    $conn->close();
+}
+
+// Memeriksa apakah pengguna sudah mengisi jawaban TPA
+if (isset($_POST['submit_jawaban'])) {
+    // Mendapatkan jawaban pengguna dari form
+    $jawaban = $_POST['jawaban'];
+
+    // Menghitung nilai TPA
+    $nilaiTPA = calculateTPAScore($jawaban);
+
+    // Mendapatkan id_calabar dari session
+    $userId = $_SESSION["id_calabar"];
+
+    // Menyimpan nilai TPA ke database
+    saveTPAScore($userId, $nilaiTPA);
+
+    // Menampilkan kategori berdasarkan nilai TPA
+    $kategori = determineCategory($nilaiTPA);
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -92,110 +138,123 @@ function saveTPAScore($userId, $nilaiTPA) {
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 	<style>
-		body {
-		width: 100%;
-		}
-		.card {
-			margin-top: 40px;
-			width: 90%;
-		}
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-		.welcome-container {
-			background-color: #F6F1F1;
-			border-top-right-radius: 5px; /* Mengganti sudut bulat pada pojok kanan atas */
-			border-bottom-right-radius: 5px; /* Mengganti sudut bulat pada pojok kanan atas */
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 10px;
-		}
+.card {
+  margin-top: 40px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-		.welcome-text {
-			font-size: 20px;
-			color: #212A3E;
-			height: 100%;
-			display: flex;
-			align-items: center;
-		}
+.welcome-container {
+  background-color: #F6F1F1;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
 
-		.logout-container {
-		display: flex;
-		align-items: center;
-		}
+.welcome-text {
+  font-size: 20px;
+  color: #212A3E;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 
-		.logout-button {
-		margin-left: 30px;
-		align-items: center;
-		justify-content: center;
-		color: #212A3E;
-		font-size: 20px;
-		padding: 15px 15px;
-		border-radius: 5px;
-		cursor: pointer;
+.logout-container {
+  display: flex;
+  align-items: center;
+}
+
+.logout-button {
+  margin-left: 30px;
+  align-items: center;
+  justify-content: center;
+  color: #212A3E;
+  font-size: 20px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #6DA9E4;
+}
+
+.logout-icon {
+  margin-right: 5px;
+}
+
+.timer-container {
+  display: flex;
+  align-items: flex-end;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.timer-label {
+	margin-left: 540px;
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+h3 {
+  margin: 0;
+}
+
+h4 {
+  font-size: 24px;
+}
+
+h5 {
+  color: #333;
+  font-size: 20px;
+  text-align: start;
+  background-color: #AFD3E2;
+  padding: 10px;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+}
+
+.question {
+  display: none;
+}
+
+.question.active {
+  display: block;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #146C94;
+  color: #fff;
+  padding: 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+	.card-body {
+		border-top: 1px solid #ccc;
+		padding-top: 10px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		}
 
-		.logout-icon {
-		margin-right: 5px;
-		}
-
-		.timer-container {
-		align-items: end;
-		font-size: 24px;
-		font-weight: bold;
-		}
-
-		.timer-label {
-		margin-left: 540px;
-		font-weight: bold;
-		font-size: 24px;
-		margin-top: 5px;
-		}
-
-		h3 {
-			margin: 0;
-		}
-
-		h4 {
-			font-size: 24px;
-		}
-
-		h5 {
-		color: #333;
-		font-size: 20px;
-		text-align: start;
-		background-color: #AFD3E2;
-		padding: 10px;
-		border-radius: 5px;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-		display: inline-block;
-		}
-
-		.question {
-			display: none;
-		}
-
-		.question.active {
-			display: block;
-		}
-
-		.card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		background-color: #146C94; /* Mengganti warna latar belakang menjadi #146C94 */
-		color: #fff; /* Mengganti warna teks menjadi putih */
-		padding: 10px;
-		border-top-left-radius: 5px; /* Mengganti sudut bulat pada pojok kiri atas */
-		border-top-right-radius: 5px; /* Mengganti sudut bulat pada pojok kanan atas */
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Menambahkan efek bayangan */
-		}
-		
-		.card-body {
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
-        }
         .card-body .options {
             margin-bottom: 10px;
         }
@@ -208,155 +267,102 @@ function saveTPAScore($userId, $nilaiTPA) {
             margin-right: 5px;
         }
 
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
 
-        .card-footer .pagination {
-            margin: 0;
-        }
+.divider {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
 
-        .card-footer .pagination li {
-            display: inline-block;
-            margin-right: 5px;
-        }
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+}
 
-        .card-footer .pagination li:last-child {
-            margin-right: 0;
-        }
+.button-container button {
+  width: 100px;
+  margin-right: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
 
-        .card-footer .pagination .page-link {
-            padding: 6px 12px;
-            background-color: #f8f9fa;
-            color: #F9F54B;
-            border: 1px solid #dee2e6;
-            transition: background-color 0.3s;
-        }
+#previousBtn {
+  background-color: #F39C12;
+}
 
-        .card-footer .pagination .page-link:hover {
-            background-color: #e9ecef;
-        }
+#submitBtn {
+  background-color: #27AE60;
+  margin-left: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
 
-        .card-footer .pagination .page-link.active {
-            background-color: #007bff;
-            color: #fff;
-            border-color: #007bff; 
-        }
-		.question {
-			display: none;
-		}
+#nextBtn {
+  background-color: #3498DB;
+}
 
-		.question.active {
-			display: block;
-		}
+.page-link {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+}
 
-		.card-body {
-			border-top: 1px solid #ccc;
-			padding-top: 10px;
-			width: 80%;
-		}
+.page-link:hover {
+  background-color: #e0e0e0;
+}
 
-		.card-body h3 {
-			margin-top: 0;
-		}
+.page-link.active {
+  background-color: #333;
+  color: #fff;
+}
 
-		.card-body p {
-			margin-bottom: 10px;
-		}
+/* Snackbar style */
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
 
-		.divider {
-			border-bottom: 1px solid #ccc;
-			margin-bottom: 10px;
-		}
-		.button {
-		width: 40px; /* Sesuaikan lebar sesuai dengan kebutuhan Anda */
-		}
+#snackbar.show {
+  visibility: visible;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
 
-		#previousBtn {
-		background-color: #F39C12;
-		margin-right: 1000px;
-		}
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
 
-		#nextBtn {
-		background-color: #3498DB;
-		margin-left: 1000px;
-		}
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
 
-		#submitBtn {
-		display:inline-block;
-		background-color: #27AE60;
-		}
-
-		.button-container .btn {
-		margin-top: 10px;
-		/* Tambahkan gaya yang sama untuk kedua tombol */
-		padding: 10px 20px;
-		color: #ffffff;
-		}
-		.page-link {
-		display: inline-block;
-		padding: 8px 12px;
-		margin: 0 5px;
-		border: 1px solid #ccc;
-		background-color: #f0f0f0;
-		color: #333;
-		text-decoration: none;
-		border-radius: 4px;
-		}
-
-		.page-link:hover {
-		background-color: #e0e0e0;
-		}
-
-		.page-link.active {
-		background-color: #333;
-		color: #fff;
-		}
-		/* Snackbar style */
-		#snackbar {
-        visibility: hidden;
-        min-width: 250px;
-        margin-left: -125px;
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        border-radius: 2px;
-        padding: 16px;
-        position: fixed;
-        z-index: 1;
-        left: 50%;
-        bottom: 30px;
-        font-size: 17px;
-    }
-
-    #snackbar.show {
-        visibility: visible;
-        animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    }
-
-    @keyframes fadein {
-        from {
-            bottom: 0;
-            opacity: 0;
-        }
-        to {
-            bottom: 30px;
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadeout {
-        from {
-            bottom: 30px;
-            opacity: 1;
-        }
-        to {
-            bottom: 0;
-            opacity: 0;
-        }
-    }
   </style>
   <script>
     // Fungsi untuk mengupdate dan menyimpan jumlah refresh halaman dalam session
@@ -493,9 +499,12 @@ function saveTPAScore($userId, $nilaiTPA) {
             <h3>Selamat datang, <?php echo $nama_depan . ' ' . $nama_belakang; ?></h3>
         </div>
 		<div class="logout-container">
-    <a href="?logout=true" class="logout-button"><i class="fas fa-sign-out-alt logout-icon"></i>Logout</a>
-  </div>
-    </div>
+  <button class="logout-button">
+    <span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
+    Logout
+  </button>
+</div>
+</div>
 </div>
    
 <div class="card">
@@ -1698,152 +1707,150 @@ function saveTPAScore($userId, $nilaiTPA) {
 					</div>
 				</div>
             </div>
+
+			<div class="button-container">
 			<button id="previousBtn" onclick="previousQuestion()" disabled>Previous</button>
 			<button id="nextBtn" onclick="nextQuestion()">Next</button>
 			<button id="submitBtn" onclick="submitAnswers()">Submit</button>
-
+			</div>
+			
 			<script>
-			var currentQuestion = 1;
-			var totalQuestions = 50;
+    var currentQuestion = 1;
+    var totalQuestions = 50;
 
-			function previousQuestion() {
-				var currentQuestionElement = document.getElementById('question' + currentQuestion);
-				currentQuestionElement.classList.remove('active');
-				currentQuestion--;
+    function previousQuestion() {
+        var currentQuestionElement = document.getElementById('question' + currentQuestion);
+        currentQuestionElement.classList.remove('active');
+        currentQuestion--;
 
-				var previousQuestionElement = document.getElementById('question' + currentQuestion);
-				previousQuestionElement.classList.add('active');
+        var previousQuestionElement = document.getElementById('question' + currentQuestion);
+        previousQuestionElement.classList.add('active');
 
-				var isAllOptionsSelected = checkAllOptionsSelected();
-				document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
+        var isAllOptionsSelected = checkAllOptionsSelected();
+        document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
 
-				document.getElementById('nextBtn').disabled = false;
+        document.getElementById('nextBtn').disabled = false;
 
-				if (currentQuestion === 1) {
-					document.getElementById('previousBtn').disabled = true;
-				}
-			}
-
-			function nextQuestion() {
-				var currentQuestionElement = document.getElementById('question' + currentQuestion);
-				currentQuestionElement.classList.remove('active');
-				currentQuestion++;
-
-				var nextQuestionElement = document.getElementById('question' + currentQuestion);
-				nextQuestionElement.classList.add('active');
-
-				var isAllOptionsSelected = checkAllOptionsSelected();
-				document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
-
-				document.getElementById('previousBtn').disabled = false;
-
-				if (currentQuestion === totalQuestions) {
-					document.getElementById('nextBtn').disabled = true;
-				}
-			}
-
-			function submitAnswers() {
-				var isAllOptionsSelected = checkAllOptionsSelected();
-				if (isAllOptionsSelected) {
-					showSnackbar();
-					redirectToDashboard();
-				} else {
-					alert('Harap kerjakan semua soal.');
-				}
-			}
-
-			function checkAllOptionsSelected() {
-				var questions = document.querySelectorAll('.question');
-				for (var i = 0; i < questions.length; i++) {
-					var question = questions[i];
-					var selectedOption = question.querySelector('input[type="radio"]:checked');
-					if (!selectedOption) {
-						return false; // Ada pertanyaan yang belum terisi
-					}
-				}
-				return true; // Semua pertanyaan terisi
-			}
-
-			function showSnackbar() {
-				var snackbar = document.getElementById('snackbar');
-				snackbar.textContent = 'Terima kasih telah mengerjakan tes potensi akademik';
-				snackbar.classList.add('show');
-				setTimeout(function () {
-					snackbar.classList.remove('show');
-				}, 3000);
-			}
-
-			function redirectToDashboard() {
-				// Redirect to dashboard.php
-				window.location.href = 'dashboard.php';
-			}
-		</script>
-        <script>
-        // Timer functionality
-        var timerElement = document.querySelector('.timer');
-        var duration = 60 * 60; // 60 minutes in seconds
-
-        function startTimer(duration, display) {
-            var timer = duration, minutes, seconds;
-            var timerInterval = setInterval(function() {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    clearInterval(timerInterval);
-                    // Perform action when timer reaches 0
-                    alert('Time is up! Submit your answers.');
-                    submitForm();
-                }
-            }, 1000);
+        if (currentQuestion === 1) {
+            document.getElementById('previousBtn').disabled = true;
         }
+    }
 
-        // Call the timer function
-        startTimer(duration, timerElement);
+    function nextQuestion() {
+        var currentQuestionElement = document.getElementById('question' + currentQuestion);
+        currentQuestionElement.classList.remove('active');
+        currentQuestion++;
 
-        function changeQuestion(questionNumber) {
-            var questions = document.getElementsByClassName('question');
-            for (var i = 0; i < questions.length; i++) {
-                questions[i].classList.remove('active');
+        var nextQuestionElement = document.getElementById('question' + currentQuestion);
+        nextQuestionElement.classList.add('active');
+
+        var isAllOptionsSelected = checkAllOptionsSelected();
+        document.getElementById('submitBtn').disabled = !isAllOptionsSelected;
+
+        document.getElementById('previousBtn').disabled = false;
+
+        if (currentQuestion === totalQuestions) {
+            document.getElementById('nextBtn').disabled = true;
+        }
+    }
+
+    function submitAnswers() {
+        var isAllOptionsSelected = checkAllOptionsSelected();
+        if (isAllOptionsSelected) {
+            showSnackbar();
+            calculateTPA();
+        } else {
+            alert('Harap kerjakan semua soal.');
+        }
+    }
+
+    function checkAllOptionsSelected() {
+        var questions = document.querySelectorAll('.question');
+        for (var i = 0; i < questions.length; i++) {
+            var question = questions[i];
+            var selectedOption = question.querySelector('input[type="radio"]:checked');
+            if (!selectedOption) {
+                return false; // Ada pertanyaan yang belum terisi
             }
-            document.getElementById('question' + questionNumber).classList.add('active');
         }
+        return true; // Semua pertanyaan terisi
+    }
 
-        function submitForm() {
-            var answers = [];
-            var questions = document.getElementsByClassName('question');
-            for (var i = 0; i < questions.length; i++) {
-                var questionNumber = i + 1;
-                var answer = document.querySelector('input[name="answer' + questionNumber + '"]:checked');
-                if (answer) {
-                    answers.push(answer.value);
-                } else {
-                    answers.push('');
-                }
-            }
+    function showSnackbar() {
+        var snackbar = document.getElementById('snackbar');
+        snackbar.textContent = 'Terima kasih telah mengerjakan tes potensi akademik';
+        snackbar.classList.add('show');
+        setTimeout(function () {
+            snackbar.classList.remove('show');
+        }, 3000);
+    }
 
-            // Send the answers to the server for processing
-            // You can use AJAX to send the data to a PHP script
-            // and process it on the server side.
-
-            // For example:
-            // var xhr = new XMLHttpRequest();
-            // xhr.open('POST', 'process_answers.php');
-            // xhr.setRequestHeader('Content-Type', 'application/json');
-            // xhr.onload = function () {
-            //     if (xhr.status === 200) {
-            //         // Process the response from the server
-            //         var response = JSON.parse(xhr.responseText);
-            //         // Do something with the response
-            //     }
-            // };
-            // xhr.send(JSON.stringify(answers));
+    function calculateTPA() {
+		var answers = {};
+    var questions = document.getElementsByClassName('question');
+    for (var i = 0; i < questions.length; i++) {
+        var questionNumber = i + 1;
+        var answer = document.querySelector('input[name="answer' + questionNumber + '"]:checked');
+        if (answer) {
+            var isCorrect = answer.getAttribute('data-correct') === '1' ? 1 : 0;
+            answers[questionNumber] = isCorrect;
         }
-    </script>
+    }
+	
+		var xhr = new XMLHttpRequest();
+	xhr.open('POST', 'save_tpa_score.php');
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.onload = function () {
+		if (xhr.status === 200) {
+			// Process the response from the server
+			var response = JSON.parse(xhr.responseText);
+			// Do something with the response
+			var nilaiTPA = response.nilaiTPA;
+			var kategori = determineCategory(nilaiTPA);
+			saveTPAScore(id_calabar, nilaiTPA); // Simpan nilai TPA ke database
+			// Lakukan tindakan yang sesuai berdasarkan respons dari server
+		}
+	};
+	xhr.send(JSON.stringify(answers));
+
+
+    function determineCategory(nilaiTPA) {
+        var totalSoal = 50;
+        var persentaseBenar = (nilaiTPA / totalSoal) * 100;
+
+        if (persentaseBenar === 100) {
+            return "Sangat Baik";
+        } else if (persentaseBenar >= 80) {
+            return "Baik";
+        } else if (persentaseBenar >= 50) {
+            return "Cukup";
+        } else if (persentaseBenar >= 30) {
+            return "Kurang Baik";
+        } else {
+            return "Kategori Tidak Tersedia";
+        }
+    }
+
+    function saveTPAScore(id_calabar, nilaiTPA) {
+        // Send the data to the server to save the TPA score
+        // You can use AJAX to send the data to a PHP script
+        // and process it on the server side.
+
+        // For example:
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('POST', 'save_tpa_score.php');
+        // xhr.setRequestHeader('Content-Type', 'application/json');
+        // xhr.onload = function () {
+        //     if (xhr.status === 200) {
+        //         // Process the response from the server
+        //         var response = JSON.parse(xhr.responseText);
+        //         // Do something with the response
+        //     }
+        // };
+        // xhr.send(JSON.stringify({ id_calabar: id_calabar, nilaiTPA: nilaiTPA }));
+    }
+}
+</script>
+
 </body>
 </html>
