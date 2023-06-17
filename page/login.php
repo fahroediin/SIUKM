@@ -184,26 +184,26 @@ if (mysqli_num_rows($result) > 0) {
 		color: #ccc;
 		}
 		 .button-group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
 
-  .button-group .button-login {
-    width: 150px;
-    background-color: #007bff;
-    color: white;
-  }
+		.button-group .button-login {
+			width: 150px;
+			background-color: #007bff;
+			color: white;
+		}
 
-  .button-group .button-batal {
-    width: 150px;
-    background-color: #f44336;
-    color: white;
-  }
+		.button-group .button-batal {
+			width: 150px;
+			background-color: #f44336;
+			color: white;
+		}
 
-  .forgot-password-link {
-    font-size: 15px;
-  }
+		.forgot-password-link {
+			font-size: 15px;
+		}
     </style>
 	<script>
   function resetForm() {

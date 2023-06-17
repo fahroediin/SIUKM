@@ -47,38 +47,48 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Mengambil data dari form
-    $id_calabar = $_POST['id_calabar'];
-    $id_user = $_POST['id_user'];
-    $nama_depan = $_POST['nama_depan'];
-    $nama_belakang = $_POST['nama_belakang'];
-    $nim = $_POST['nim'];
-    $semester = $_POST['semester'];
-    $prodi = $_POST['prodi'];
-    $id_ukm = $_POST['id_ukm'];
-    $nama_ukm = $_POST['nama_ukm'];
-    $email = $_POST['email'];
-    $no_hp = $_POST['no_hp'];
-    $pasfoto = $_POST['pasfoto'];
-    $foto_ktm = $_POST['foto_ktm'];
-    $alasan = $_POST['alasan'];
-    
+  // Mengambil data dari form
+  $id_user = $_POST['id_user'];
+  $nama_depan = $_POST['nama_depan'];
+  $nama_belakang = $_POST['nama_belakang'];
+  $nim = $_POST['nim'];
+  $semester = $_POST['semester'];
+  $prodi = $_POST['prodi'];
+  $id_ukm = $_POST['id_ukm'];
+  $nama_ukm = $_POST['nama_ukm'];
+  $email = $_POST['email'];
+  $no_hp = $_POST['no_hp'];
+  $pasfoto = $_POST['pasfoto'];
+  $foto_ktm = $_POST['foto_ktm'];
+  $alasan = $_POST['alasan'];
 
-    // Generate 4 digit angka acak
-    $randomDigits = rand(1000, 9999);
+ // Validasi NIM
+if (strlen($nim) < 9) {
+  // Jika NIM kurang dari 9 digit angka, tampilkan pesan error
+  echo '<script>alert("NIM harus terdiri dari minimal 9 digit angka")</script>';
+  // Redirect kembali ke halaman form pendaftaran
+  header("Location: register-ukm.php");
+  echo '<script>showSnackbar();</script>';
+  exit();
+}
 
-    // Menggabungkan NIM dengan angka acak
-    $id_calabar = $nim . $randomDigits;
+  // Generate 4 digit angka acak
+  $randomDigits = rand(1000, 9999);
 
-    // Menyimpan data pendaftaran ke tabel tab_pacab
-    $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-             VALUES ('$id_calabar','$id_user', '$nama_depan', '$nama_belakang', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+  // Menggabungkan NIM dengan angka acak
+  $id_calabar = $nim . $randomDigits;
 
-    // Menjalankan query
-    if (mysqli_query($conn, $query)) {
+  // Menyimpan data pendaftaran ke tabel tab_pacab
+  $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+           VALUES ('$id_calabar','$id_user', '$nama_depan', '$nama_belakang', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+
+  // Menjalankan query
+  if (mysqli_query($conn, $query)) {
       // Pendaftaran berhasil, simpan id_calabar ke dalam session
       $_SESSION['id_calabar'] = $id_calabar;
-
+      echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
+      // Show the alert message
+      echo '<script>showSnackbar();</script>';
       // Redirect ke halaman test-calabar.php
       header("Location: test-calabar.php");
       exit();
@@ -99,6 +109,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
   <script src="../assets/js/script.js"></script>
+  <script>
+    // Function to show snackbar
+    function showSnackbar() {
+        var snackbar = document.getElementById("snackbar");
+        snackbar.className = "show";
+        setTimeout(function() {
+            snackbar.className = snackbar.className.replace("show", "");
+        }, 3000);
+    }
+</script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -328,13 +348,6 @@ button[type=reset]:hover {
       xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
       xhttp.send();
     }
-
-       // Function to show snackbar
-       function showSnackbar() {
-      var snackbar = document.getElementById("snackbar");
-      snackbar.className = "show";
-      setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
-    }
   </script>
 </head>
 <body>
@@ -492,7 +505,7 @@ button[type=reset]:hover {
   <button type="submit">DAFTAR</button>
   <button type="reset">CLEAR</button>
 </div>
-
+    </div>
 </div>
 </div>
 <div id="myModal" class="modal">
@@ -538,9 +551,42 @@ button[type=reset]:hover {
           lingkungan yang kondusif untuk pengembangan anggotanya. Anggota diharapkan mematuhi ketentuan-ketentuan ini agar UKM dapat 
           berjalan dengan baik dan memberikan manfaat yang optimal bagi anggotanya dan masyarakat.
         </p>
+        <p><b>Kebeneran Data</b></p>
+        <p>Persetujuan untuk mengisi form pendaftaran dengan data yang sebenarnya dan mengakui sebagai pemilik data tersebut adalah langkah yang penting dalam proses pendaftaran. Dengan memberikan persetujuan ini, calon anggota UKM di STMIK Komputama Majenang menyatakan bahwa informasi yang mereka berikan adalah akurat dan valid. Mereka juga menegaskan tanggung jawab mereka sebagai pemilik data yang disampaikan.
+
+Hal ini penting untuk menjaga kepercayaan dan integritas dalam pengelolaan data. Dalam hal terbukti bahwa calon anggota telah menyalahi persetujuan tersebut dan menggunakan data orang lain secara tidak sah, konsekuensi sanksi akan diberlakukan. Sanksi ini bertujuan sebagai tindakan disipliner yang mendorong calon anggota untuk bertanggung jawab atas tindakan mereka dan mencegah penyalahgunaan data.
+
+Sanksi yang dikenakan dapat bervariasi tergantung pada kebijakan dan peraturan yang berlaku di STMIK Komputama Majenang. Beberapa kemungkinan sanksi dapat mencakup teguran tertulis, larangan partisipasi dalam kegiatan UKM, atau bahkan pembatalan pendaftaran calon anggota tersebut. Dengan menerapkan sanksi ini, diharapkan calon anggota UKM menjadi lebih sadar akan pentingnya menjaga keamanan dan privasi data, serta mendorong mereka untuk bertindak dengan integritas dan kejujuran.
+
+Dengan demikian, persetujuan untuk mengisi form pendaftaran dengan data yang sebenarnya dan pengakuan sebagai pemilik data yang disampaikan adalah langkah yang penting untuk memastikan transparansi dan keamanan dalam pengelolaan data. Sanksi yang dikenakan atas penyalahgunaan data orang lain bertujuan untuk mencegah pelanggaran dan mempromosikan sikap bertanggung jawab dalam penggunaan informasi pribadi.</p>
+        <p><b>Keamanan Data</b></p>
+        <p>Kami ingin menekankan bahwa keamanan data menjadi prioritas utama dalam proses pendaftaran di STMIK Komputama Majenang. Kami menjamin bahwa data yang diisi dalam form pendaftaran akan disimpan dengan baik dan tidak akan disebarluaskan dengan cara yang melanggar aturan yang berlaku. Kami menjunjung tinggi prinsip privasi dan keamanan data, serta berkomitmen untuk mematuhi UU ITE (Undang-Undang Informasi dan Transaksi Elektronik) yang berlaku di Indonesia.
+
+Menurut UU ITE, setiap individu memiliki hak privasi terhadap data pribadinya. Oleh karena itu, data yang diungkapkan dalam form pendaftaran akan dikelola secara rahasia dan hanya digunakan untuk tujuan yang relevan dengan proses pendaftaran anggota UKM. Data tersebut tidak akan disebarkan kepada pihak ketiga tanpa izin atau melanggar aturan yang berlaku.
+
+Kami juga melaksanakan langkah-langkah keamanan yang tepat untuk melindungi data yang disimpan. Penggunaan sistem keamanan yang mutakhir dan pengaturan akses yang ketat merupakan bagian dari upaya kami untuk menjaga kerahasiaan dan integritas data yang dikumpulkan. Kami berkomitmen untuk mengambil tindakan yang diperlukan guna mencegah akses tidak sah, penggunaan yang tidak diizinkan, atau perubahan data yang melanggar privasi calon anggota UKM.
+
+Dalam hal terjadi pelanggaran atau penyalahgunaan data yang melanggar UU ITE, kami akan mengikuti prosedur hukum yang berlaku dan melibatkan pihak berwenang yang berkompeten untuk menindaklanjuti. Kami mengimbau kepada calon anggota UKM untuk bertanggung jawab atas informasi yang mereka berikan dan menghormati hak privasi serta keamanan data diri sendiri dan orang lain.
+
+Dengan demikian, kami memastikan bahwa keamanan data menjadi prioritas utama, dan segala langkah yang kami ambil bertujuan untuk mematuhi aturan dan regulasi, termasuk UU ITE, serta melindungi kepentingan dan privasi calon anggota UKM di STMIK Komputama Majenang.</p>
+<p><b>Mengerjakan Soal Tes Potensi Akademik</b></p>
+        <p>Ketersediaan calon anggota UKM di STMIK Komputama Majenang harus memenuhi persyaratan penting, yaitu mengisi dan mengerjakan soal tes potensi akademik. Tes potensi akademik ini dijadikan sebagai salah satu langkah dalam proses pendaftaran agar dapat menjadi calon anggota UKM. Hal ini dilakukan sebagai upaya untuk mengidentifikasi kemampuan dan potensi calon anggota dalam bidang akademik, sehingga dapat memastikan bahwa mereka memiliki dasar pengetahuan yang cukup untuk aktif berpartisipasi dalam kegiatan UKM yang berfokus pada bidang komputer dan teknologi informasi.
+
+Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampuan mereka dalam menganalisis, berpikir logis, serta memecahkan masalah secara efektif. Soal-soal yang diajukan dalam tes ini mencakup berbagai aspek seperti logika, matematika, pemahaman teks, dan pengetahuan umum. Dengan mengisi dan mengerjakan soal tes potensi akademik, pihak UKM dapat mengidentifikasi calon anggota yang memiliki potensi dan kemampuan yang sesuai dengan kebutuhan UKM tersebut.</p>
   </div>
 </div>
- <div id="snackbar">Pendaftaran berhasil!</div>
+
+<div id="snackbar">NIM harus terdiri dari minimal 9 digit angka</div>
+
+ <script>
+  function showSnackbar() {
+    var snackbar = document.getElementById("snackbar");
+    snackbar.className = "show";
+    setTimeout(function() {
+      snackbar.className = snackbar.className.replace("show", "");
+    }, 3000);
+  }
+</script>
 </body>
 <footer>SIUKM @2023 | Visit our <a href="https://stmikkomputama.ac.id/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
   <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>

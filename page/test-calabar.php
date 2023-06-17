@@ -117,10 +117,8 @@ if (isset($_POST['submit_jawaban'])) {
     // Menampilkan kategori berdasarkan nilai TPA
     $kategori = determineCategory($nilaiTPA);
 }
+
 ?>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,6 +129,13 @@ if (isset($_POST['submit_jawaban'])) {
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<link rel="stylesheet" href="../assets/css/style.css">
+	  <!-- Pustaka MathJax -->
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+      <!-- Pustaka KaTeX -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -497,10 +502,12 @@ h5 {
             <h3>Selamat datang, <?php echo $nama_depan . ' ' . $nama_belakang; ?></h3>
         </div>
 		<div class="logout-container">
-  <button class="logout-button">
-    <span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
+		<a href="?logout=true" class="logout-button">
+			<span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
     Logout
-  </button>
+  </a>
+</div>
+
 </div>
 </div>
 </div>
@@ -1407,47 +1414,47 @@ h5 {
 					</div>
 				</div>
 				<div class="question" id="question39">
-					<h5>Soal 39</h5>
-					<p>Pecahan yang nilainya terletak antara $\frac{3}{5}$ dan $\frac{9}{10}$ adalah ....</p>
-					<div class="options">
-						<label>
-							<input type="radio" name="answer39" value="A"> $\frac{3}{8}$
-						</label>
-						<label>
-							<input type="radio" name="answer39" value="B"> $\frac{1}{2}$
-						</label>
-						<label>
-							<input type="radio" name="answer39" value="C"> $\frac{4}{7}$
-						</label>
-						<label>
-							<input type="radio" name="answer39" value="D" data-correct> $\frac{3}{4}$
-						</label>
-						<label>
-							<input type="radio" name="answer39" value="E"> $\frac{5}{11}$
-						</label>
-					</div>
+				<h5>Soal 39</h5>
+				<p>Pecahan yang nilainya terletak antara \(\frac{3}{5}\) dan \(\frac{9}{10}\) adalah ....</p>
+				<div class="options">
+					<label>
+						<input type="radio" name="answer39" value="A"> \(\frac{3}{8}\)
+					</label>
+					<label>
+						<input type="radio" name="answer39" value="B"> \(\frac{1}{2}\)
+					</label>
+					<label>
+						<input type="radio" name="answer39" value="C"> \(\frac{4}{7}\)
+					</label>
+					<label>
+						<input type="radio" name="answer39" value="D" data-correct> \(\frac{3}{4}\)
+					</label>
+					<label>
+						<input type="radio" name="answer39" value="E"> \(\frac{5}{11}\)
+					</label>
 				</div>
-				<div class="question" id="question40">
-					<h5>Soal 40</h5>
-					<p>$\frac{5}{8} - 1 + \frac{2}{3} =$</p>
-					<div class="options">
-						<label>
-							<input type="radio" name="answer40" value="A"> 7/48
-						</label>
-						<label>
-							<input type="radio" name="answer40" value="B"> 23/48
-						</label>
-						<label>
-							<input type="radio" name="answer40" value="C" data-correct> 7/24
-						</label>
-						<label>
-							<input type="radio" name="answer40" value="D"> 23/24
-						</label>
-						<label>
-							<input type="radio" name="answer40" value="E"> 7/12
-						</label>
-					</div>
+			</div>
+			<div class="question" id="question40">
+				<h5>Soal 40</h5>
+				<p>\(\frac{5}{8} - 1 + \frac{2}{3} =\)</p>
+				<div class="options">
+					<label>
+						<input type="radio" name="answer40" value="A"> \(\frac{7}{48}\)
+					</label>
+					<label>
+						<input type="radio" name="answer40" value="B"> \(\frac{23}{48}\)
+					</label>
+					<label>
+						<input type="radio" name="answer40" value="C" data-correct> \(\frac{7}{24}\)
+					</label>
+					<label>
+						<input type="radio" name="answer40" value="D"> \(\frac{23}{24}\)
+					</label>
+					<label>
+						<input type="radio" name="answer40" value="E"> \(\frac{7}{12}\)
+					</label>
 				</div>
+			</div>
 				<div class="question" id="question41">
 					<h5>Soal 41</h5>
 					<p>Jika 4 adalah x% dari 160 maka nilai x adalah ....</p>
@@ -1469,70 +1476,69 @@ h5 {
 						</label>
 					</div>
 				</div>
-				<div class="question" id="question42">
-					<h5>Soal 42</h5>
-					<p>Jika $15 \times \frac{2}{8} = 8 \times \frac{2}{5} + \frac{2}{5} + \frac{2}{5} + \frac{2}{5} \times a$, maka nilai $a$ adalah ...</p>
-					<div class="options">
-						<label>
-							<input type="radio" name="answer42" value="A"> 3
-						</label>
-						<label>
-							<input type="radio" name="answer42" value="B"> 4
-						</label>
-						<label>
-							<input type="radio" name="answer42" value="C" data-correct> 5
-						</label>
-						<label>
-							<input type="radio" name="answer42" value="D"> 6
-						</label>
-						<label>
-							<input type="radio" name="answer42" value="E"> 7
-						</label>
+						<div class="question" id="question42">
+				<h5>Soal 42</h5>
+				<p>Jika \(15 \times \frac{2}{8} = 8 \times \frac{2}{5} + \frac{2}{5} + \frac{2}{5} + \frac{2}{5} \times a\), maka nilai \(a\) adalah ...</p>
+				<div class="options">
+					<label>
+						<input type="radio" name="answer42" value="A"> 3
+					</label>
+					<label>
+						<input type="radio" name="answer42" value="B"> 4
+					</label>
+					<label>
+						<input type="radio" name="answer42" value="C" data-correct> 5
+					</label>
+					<label>
+						<input type="radio" name="answer42" value="D"> 6
+					</label>
+					<label>
+						<input type="radio" name="answer42" value="E"> 7
+					</label>
+						</div>
 					</div>
-				</div>
 				<div class="question" id="question43">
 					<h5>Soal 43</h5>
-					<p>Jika $\frac{5}{9}$ dari $\frac{27}{35}$ sama dengan $\frac{x}{1/14}$, maka nilai $x$ adalah ...</p>
+					<p>Jika \(\frac{5}{9}\) dari \(\frac{27}{35}\) sama dengan \(\frac{x}{1/14}\), maka nilai \(x\) adalah ...</p>
 					<div class="options">
 						<label>
-							<input type="radio" name="answer43" value="A"> 2
-						</label>
-						<label>
-							<input type="radio" name="answer43" value="B"> 4
-						</label>
-						<label>
-							<input type="radio" name="answer43" value="C" data-correct> 6
-						</label>
-						<label>
-							<input type="radio" name="answer43" value="D"> 8
-						</label>
-						<label>
-							<input type="radio" name="answer43" value="E"> 10
-						</label>
-					</div>
+						<input type="radio" name="answer43" value="A"> 2
+					</label>
+					<label>
+						<input type="radio" name="answer43" value="B"> 4
+					</label>
+					<label>
+						<input type="radio" name="answer43" value="C" data-correct> 6
+					</label>
+					<label>
+						<input type="radio" name="answer43" value="D"> 8
+					</label>
+					<label>
+						<input type="radio" name="answer43" value="E"> 10
+					</label>
 				</div>
-				<div class="question" id="question44">
-					<h5>Soal 44</h5>
-					<p>Ibu membeli 4 $\frac{3}{5}$ kg jeruk di sebuah supermarket. Jika harga satu kg jeruk adalah Rp15.000,00 dan ibu menyerahkan 2 lembar uang Rp50.000,00 ke kasir, maka uang kembalian yang diterima ibu adalah ...</p>
-					<div class="options">
-						<label>
-							<input type="radio" name="answer44" value="A"> Rp 19.000,00
-						</label>
-						<label>
-							<input type="radio" name="answer44" value="B" data-correct> Rp 31.000,00
-						</label>
-						<label>
-							<input type="radio" name="answer44" value="C"> Rp 36.000,00
-						</label>
-						<label>
-							<input type="radio" name="answer44" value="D"> Rp 63.000,00
-
-						</label>
-						<label>
-							<input type="radio" name="answer44" value="E"> Rp 69.000,00
-						</label>
-					</div>
+			</div>
+			<div class="question" id="question44">
+				<h5>Soal 44</h5>
+				<p>Ibu membeli 4 \(\frac{3}{5}\) kg jeruk di sebuah supermarket. Jika harga satu kg jeruk adalah Rp15.000,00 dan ibu menyerahkan 2 lembar uang Rp50.000,00 ke kasir, maka uang kembalian yang diterima ibu adalah ...</p>
+				<div class="options">
+					<label>
+						<input type="radio" name="answer44" value="A"> Rp 19.000,00
+					</label>
+					<label>
+						<input type="radio" name="answer44" value="B" data-correct> Rp 31.000,00
+					</label>
+					<label>
+						<input type="radio" name="answer44" value="C"> Rp 36.000,00
+					</label>
+					<label>
+						<input type="radio" name="answer44" value="D"> Rp 63.000,00
+					</label>
+					<label>
+						<input type="radio" name="answer44" value="E"> Rp 69.000,00
+					</label>
 				</div>
+			</div>
 				<div class="question" id="question45">
 					<h5>Soal 45</h5>
 					<p>Tabel berikut menunjukan hasil dua kali tes matematika.</p>
