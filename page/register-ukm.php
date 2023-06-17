@@ -40,12 +40,10 @@ $options = "";
 // Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
 $namaUKM = array();
 while ($row = mysqli_fetch_assoc($result)) {
-  $id_ukm = $row['id_ukm'];
-  $nama_ukm = $row['nama_ukm'];
-  $namaUKM[$id_ukm] = $nama_ukm;
-  echo '<option value="' . $id_ukm . '">' . $nama_ukm . '</option>';
+    $id_ukm = $row['id_ukm'];
+    $nama_ukm = $row['nama_ukm'];
+    $namaUKM[$id_ukm] = $nama_ukm;
 }
-
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
