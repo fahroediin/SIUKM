@@ -35,7 +35,6 @@ $currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
 // Mendapatkan total jumlah soal
 $totalQuestions = 50;
 
-// Fungsi untuk menghitung nilai TPA berdasarkan jawaban
 function calculateTPAScore($jawaban)
 {
     $skorBenar = 1; // Skor untuk jawaban benar
@@ -43,11 +42,29 @@ function calculateTPAScore($jawaban)
     $nilaiTPA = 0; // Nilai total TPA
 
     // Jawaban benar dan data-correct untuk setiap nomor soal
-    $jawabanBenar = array(
-        1 => 1, // Jawaban benar untuk soal 1
-        2 => 0, // Jawaban benar untuk soal 2
-        // Tambahkan jawaban benar untuk setiap nomor soal
-    );
+    $jawabanBenar = array();
+
+    // Iterasi untuk setiap nomor soal
+    for ($nomorSoal = 1; $nomorSoal <= 50; $nomorSoal++) {
+        // Ambil nilai jawaban yang dipilih oleh pengguna
+        $jawabanPengguna = $jawaban[$nomorSoal];
+
+        // Periksa apakah jawaban yang dipilih memiliki atribut data-correct
+        if (isset($_POST["data_correct_" . $nomorSoal])) {
+            // Jawaban yang dipilih memiliki atribut data-correct, maka nilai benar adalah 1
+            $jawabanBenar[$nomorSoal] = 1;
+        } else {
+            // Jawaban yang dipilih tidak memiliki atribut data-correct, maka nilai benar adalah 0
+            $jawabanBenar[$nomorSoal] = 0;
+        }
+    }
+
+    // Menginisialisasi array jawabanBenar untuk nomor soal yang tidak memiliki jawaban benar
+    for ($nomorSoal = 1; $nomorSoal <= $totalQuestions; $nomorSoal++) {
+        if (!isset($jawabanBenar[$nomorSoal])) {
+            $jawabanBenar[$nomorSoal] = 0;
+        }
+    }
 
     // Menghitung nilai TPA berdasarkan jawaban
     foreach ($jawaban as $nomorSoal => $jawabanPengguna) {
@@ -57,6 +74,8 @@ function calculateTPAScore($jawaban)
             } else {
                 $nilaiTPA += $skorSalah;
             }
+        } else {
+            $nilaiTPA += $skorSalah; // Menambahkan skor salah jika nomor soal tidak memiliki jawaban benar
         }
     }
 
@@ -82,22 +101,22 @@ function determineCategory($nilaiTPA)
     }
 }
 
-function saveTPAScore($userId, $nilaiTPA)
+function saveTPAScore($id_calabar, $nilaiTPA)
 {
     // Memasukkan file db_connect.php
     require_once "db_connect.php";
 
     // Menyimpan nilai TPA ke database berdasarkan id_calabar
-    $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_calabar = $userId";
+    $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_calabar = $id_calabar";
 
-    if ($conn->query($sql) === true) {
+    if (mysqli_query($conn, $sql)) {
         echo "Nilai TPA berhasil disimpan.";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
 
     // Menutup koneksi database
-    $conn->close();
+    mysqli_close($conn);
 }
 
 // Memeriksa apakah pengguna sudah mengisi jawaban TPA
@@ -108,17 +127,17 @@ if (isset($_POST['submit_jawaban'])) {
     // Menghitung nilai TPA
     $nilaiTPA = calculateTPAScore($jawaban);
 
-    // Mendapatkan id_calabar dari session
-    $userId = $_SESSION["id_calabar"];
-
     // Menyimpan nilai TPA ke database
-    saveTPAScore($userId, $nilaiTPA);
+    saveTPAScore($id_calabar, $nilaiTPA);
 
     // Menampilkan kategori berdasarkan nilai TPA
     $kategori = determineCategory($nilaiTPA);
-}
 
+    // Memperbarui nilai_tpa di sesi dengan nilai terbaru
+    $_SESSION['nilai_tpa'] = $nilaiTPA;
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -141,117 +160,117 @@ if (isset($_POST['submit_jawaban'])) {
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 	<style>
-body {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+	body {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	}
 
-.card {
-  margin-top: 40px;
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-}
+	.card {
+	margin-top: 40px;
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	}
 
-.welcome-container {
-  background-color: #F6F1F1;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-}
+	.welcome-container {
+	background-color: #F6F1F1;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 10px;
+	}
 
-.welcome-text {
-  font-size: 20px;
-  color: #212A3E;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
+	.welcome-text {
+	font-size: 20px;
+	color: #212A3E;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	}
 
-.logout-container {
-  display: flex;
-  align-items: center;
-}
+	.logout-container {
+	display: flex;
+	align-items: center;
+	}
 
-.logout-button {
-  margin-left: 30px;
-  align-items: center;
-  justify-content: center;
-  color: #212A3E;
-  font-size: 20px;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: background-color 0.3s ease;
-}
+	.logout-button {
+	margin-left: 30px;
+	align-items: center;
+	justify-content: center;
+	color: #212A3E;
+	font-size: 20px;
+	padding: 10px 15px;
+	border-radius: 5px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	transition: background-color 0.3s ease;
+	}
 
-.logout-button:hover {
-  background-color: #6DA9E4;
-}
+	.logout-button:hover {
+	background-color: #6DA9E4;
+	}
 
-.logout-icon {
-  margin-right: 5px;
-}
+	.logout-icon {
+	margin-right: 5px;
+	}
 
-.timer-container {
-  display: flex;
-  align-items: flex-end;
-  font-size: 24px;
-  font-weight: bold;
-}
+	.timer-container {
+	display: flex;
+	align-items: flex-end;
+	font-size: 24px;
+	font-weight: bold;
+	}
 
-.timer-label {
+	.timer-label {
 	margin-left: 540px;
-  font-weight: bold;
-  font-size: 24px;
-  margin-top: 5px;
-}
+	font-weight: bold;
+	font-size: 24px;
+	margin-top: 5px;
+	}
 
-h3 {
-  margin: 0;
-}
+	h3 {
+	margin: 0;
+	}
 
-h4 {
-  font-size: 24px;
-}
+	h4 {
+	font-size: 24px;
+	}
 
-h5 {
-  color: #333;
-  font-size: 20px;
-  text-align: start;
-  background-color: #AFD3E2;
-  padding: 10px;
-  border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  display: inline-block;
-}
+	h5 {
+	color: #333;
+	font-size: 20px;
+	text-align: start;
+	background-color: #AFD3E2;
+	padding: 10px;
+	border-radius: 3px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	display: inline-block;
+	}
 
-.question {
-  display: none;
-}
+	.question {
+	display: none;
+	}
 
-.question.active {
-  display: block;
-}
+	.question.active {
+	display: block;
+	}
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #146C94;
-  color: #fff;
-  padding: 10px;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
+	.card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: #146C94;
+	color: #fff;
+	padding: 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
 	.card-body {
 		border-top: 1px solid #ccc;
 		padding-top: 10px;
@@ -271,100 +290,100 @@ h5 {
         }
 
 
-.divider {
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
-}
+	.divider {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
+	}
 
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 10px;
-}
+	.button-container {
+	display: flex;
+	justify-content: space-between;
+	padding-top: 10px;
+	}
 
-.button-container button {
-  width: 100px;
-  margin-right: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
+	.button-container button {
+	width: 100px;
+	margin-right: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
 
-#previousBtn {
-  background-color: #F39C12;
-}
+	#previousBtn {
+	background-color: #F39C12;
+	}
 
-#submitBtn {
-  background-color: #27AE60;
-  margin-left: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
+	#submitBtn {
+	background-color: #27AE60;
+	margin-left: auto;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+	}
 
-#nextBtn {
-  background-color: #3498DB;
-}
+	#nextBtn {
+	background-color: #3498DB;
+	}
 
-.page-link {
-  display: inline-block;
-  padding: 8px 12px;
-  margin: 0 5px;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
-  color: #333;
-  text-decoration: none;
-  border-radius: 4px;
-}
+	.page-link {
+	display: inline-block;
+	padding: 8px 12px;
+	margin: 0 5px;
+	border: 1px solid #ccc;
+	background-color: #f0f0f0;
+	color: #333;
+	text-decoration: none;
+	border-radius: 4px;
+	}
 
-.page-link:hover {
-  background-color: #e0e0e0;
-}
+	.page-link:hover {
+	background-color: #e0e0e0;
+	}
 
-.page-link.active {
-  background-color: #333;
-  color: #fff;
-}
+	.page-link.active {
+	background-color: #333;
+	color: #fff;
+	}
 
-/* Snackbar style */
-#snackbar {
-  visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-  font-size: 17px;
-}
+	/* Snackbar style */
+	#snackbar {
+	visibility: hidden;
+	min-width: 250px;
+	margin-left: -125px;
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	border-radius: 2px;
+	padding: 16px;
+	position: fixed;
+	z-index: 1;
+	left: 50%;
+	bottom: 30px;
+	font-size: 17px;
+	}
 
-#snackbar.show {
-  visibility: visible;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
+	#snackbar.show {
+	visibility: visible;
+	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	}
 
-@keyframes fadein {
-  from {
-    bottom: 0;
-    opacity: 0;
-  }
-  to {
-    bottom: 30px;
-    opacity: 1;
-  }
-}
+	@keyframes fadein {
+	from {
+		bottom: 0;
+		opacity: 0;
+	}
+	to {
+		bottom: 30px;
+		opacity: 1;
+	}
+	}
 
-@keyframes fadeout {
-  from {
-    bottom: 30px;
-    opacity: 1;
-  }
-  to {
-    bottom: 0;
-    opacity: 0;
-  }
-}
+	@keyframes fadeout {
+	from {
+		bottom: 30px;
+		opacity: 1;
+	}
+	to {
+		bottom: 0;
+		opacity: 0;
+	}
+	}
 
   </style>
   <script>
@@ -504,9 +523,9 @@ h5 {
 		<div class="logout-container">
 		<a href="?logout=true" class="logout-button">
 			<span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
-    Logout
-  </a>
-</div>
+			Logout
+			</a>
+		</div>
 
 </div>
 </div>
