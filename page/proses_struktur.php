@@ -63,6 +63,13 @@ if (isset($_POST['submit'])) {
         exit();
     }
 }
+
+// Query to retrieve data from the tab_strukm table based on selected id_ukm
+if (isset($_POST['id_ukm'])) {
+    $selected_id_ukm = $_POST['id_ukm'];
+    $sql_strukm = "SELECT * FROM tab_strukm WHERE id_ukm = '$selected_id_ukm'";
+    $result_strukm = $conn->query($sql_strukm);
+}
 ?>
 
 <!DOCTYPE html>
@@ -116,7 +123,6 @@ if (isset($_POST['submit'])) {
     <h2>Manajemen Struktur</h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-    <a href="update.php" class="btn btn-primary <?php if($active_page == 'update') echo 'active'; ?>">Update</a>
     <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
     <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
@@ -125,10 +131,38 @@ if (isset($_POST['submit'])) {
     <a href="kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
 </div>
+
+
     <!-- Konten -->
     <div class="content">
     <div class="card">
         <h2>Kelola Struktur Organisasi</h2>
+         <!-- Display data in a table -->
+         <?php if (isset($_POST['id_ukm'])) { ?>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nama UKM</th>
+                        <th>ID Jabatan</th>
+                        <th>Nama Lengkap</th>
+                        <th>NIM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Loop through each row of the tab_strukm table and display the data in the table rows
+                    while ($row_strukm = $result_strukm->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $row_strukm['id_ukm'] . "</td>";
+                        echo "<td>" . $row_strukm['id_jabatan'] . "</td>";
+                        echo "<td>" . $row_strukm['nama_lengkap'] . "</td>";
+                        echo "<td>" . $row_strukm['nim'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        <?php } ?>
         <form method="post" action="proses_struktur.php">
             <div class="form-group">
                 <label for="id_ukm">Nama UKM:</label>

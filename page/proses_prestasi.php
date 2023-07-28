@@ -106,33 +106,25 @@ if (isset($_POST['action'])) {
     $action = $_POST['action'];
 
     if ($action === 'edit') {
-        // Aksi edit, tampilkan data prestasi dalam form input
-        // Query untuk mengambil data prestasi berdasarkan id_prestasi
-        $sql = "SELECT * FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
+        // Redirect to the edit_prestasi.php page with the id_prestasi as a query parameter
+        header("Location: edit_prestasi.php?id_prestasi=$id_prestasi");
+        exit();
+    } elseif ($action === 'delete') {
+        // Query dan perintah SQL untuk menghapus data prestasi berdasarkan id_prestasi
+        $sql = "DELETE FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
         $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            // Mengambil data prestasi dari hasil query
-            $prestasi = $result->fetch_assoc();
+
+        if ($result) {
+            // Redirect ke halaman daftar prestasi setelah penghapusan berhasil
+            header("Location: proses_prestasi.php");
+            exit();
         } else {
-            // Jika data prestasi tidak ditemukan
-            echo "Data prestasi tidak ditemukan";
+            // Jika terjadi kesalahan saat menghapus prestasi
+            echo "Error: " . $conn->error;
             exit();
         }
-            // Query dan perintah SQL untuk menghapus data prestasi berdasarkan id_prestasi
-            $sql = "DELETE FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
-            $result = $conn->query($sql);
-        
-            if ($result) {
-                // Redirect ke halaman daftar prestasi setelah penghapusan berhasil
-                header("Location: proses_prestasi.php");
-                exit();
-            } else {
-                // Jika terjadi kesalahan saat menghapus prestasi
-                echo "Error: " . $conn->error;
-                exit();
-            }
-        }
     }
+}
 
     // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm, logo_ukm, nama_ketua, nim_ketua, sejarah, visi, misi FROM tab_ukm";
@@ -254,6 +246,16 @@ $conn->close();
       xhttp.send();
     }
     </script>
+    <script>
+    function confirmDelete() {
+        if (confirm("Apakah yakin ingin menghapus prestasi?")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
 <body>
     
     <!-- Sidebar -->
@@ -261,7 +263,6 @@ $conn->close();
     <h2>Manajemen Prestasi</h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-    <a href="update.php" class="btn btn-primary <?php if($active_page == 'update') echo 'active'; ?>">Update</a>
     <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
     <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
@@ -271,49 +272,52 @@ $conn->close();
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
     </div>
     
-    <!-- Data Prestasi -->
-    <div class="content">
-        <h2>Data Prestasi</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID Prestasi</th>
-                    <th>Nama Prestasi</th>
-                    <th>Penyelenggara</th>
-                    <th>Tanggal Prestasi</th>
-                    <th>ID UKM</th>
-                    <th>Nama UKM</th>
-                    <th>Edit</th>
-                    <th>Hapus</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($prestasi_data as $prestasi) : ?>
-                    <tr>
-                        <td><?php echo $prestasi['id_prestasi']; ?></td>
-                        <td><?php echo $prestasi['nama_prestasi']; ?></td>
-                        <td><?php echo $prestasi['penyelenggara']; ?></td>
-                        <td><?php echo $prestasi['tgl_prestasi']; ?></td>
-                        <td><?php echo $prestasi['id_ukm']; ?></td>
-                        <td><?php echo $prestasi['nama_ukm']; ?></td>
-                        <td>
-                        <form method="post" action="proses_prestasi.php">
-                                <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                                <input type="hidden" name="action" value="edit">
-                                <button type="submit" class="btn btn-primary btn-sm" name="submit">Edit</button>
+   <!-- Data Prestasi -->
+<div class="content">
+    <h2>Data Prestasi</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Prestasi</th>
+                <th>Nama Prestasi</th>
+                <th>Penyelenggara</th>
+                <th>Tanggal Prestasi</th>
+                <th>ID UKM</th>
+                <th>Nama UKM</th>
+                <th>Edit</th>
+                <th>Hapus</th>
+            </tr>
+        </thead>
+        <tbody>
+    <?php foreach ($prestasi_data as $prestasi) : ?>
+        <tr>
+            <td><?php echo $prestasi['id_prestasi']; ?></td>
+            <td><?php echo $prestasi['nama_prestasi']; ?></td>
+            <td><?php echo $prestasi['penyelenggara']; ?></td>
+            <td><?php echo $prestasi['tgl_prestasi']; ?></td>
+            <td><?php echo $prestasi['id_ukm']; ?></td>
+            <td><?php echo $prestasi['nama_ukm']; ?></td>
+            <td>
+                <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->
+                <form method="get" action="edit_prestasi.php">
+                    <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+                    <input type="hidden" name="action" value="edit">
+                            <button type="submit" class="btn btn-primary btn-sm" name="submit">Edit</button>
                         </form>
-                        </td>
-                        <td>
-                            <form method="post" action="proses_delete_prestasi.php">
-                                <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                                <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+            </td>
+            <td>
+                <!-- Menggunakan form dengan method POST untuk menghapus prestasi -->
+                <form method="post" action="proses_delete_prestasi.php" onsubmit="return confirmDelete();">
+                    <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
+    </table>
+</div>
     
     <!-- Form Tambah Prestasi -->
     <div class="content">
