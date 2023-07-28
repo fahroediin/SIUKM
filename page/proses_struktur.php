@@ -49,9 +49,11 @@ if (isset($_POST['submit'])) {
     $nama_lengkap = $_POST['nama_lengkap'];
     $nim = $_POST['nim'];
 
-    // Menyimpan data ke database
-    $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim) VALUES ('$id_ukm', '$id_jabatan', '$nama_lengkap', '$nim')";
-    $result = $conn->query($sql);
+    // Menyimpan data ke database menggunakan prepared statements
+    $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $id_ukm, $id_jabatan, $nama_lengkap, $nim);
+    $result = $stmt->execute();
 
     if ($result) {
         // Redirect ke halaman daftar struktur setelah penyimpanan berhasil
@@ -59,16 +61,9 @@ if (isset($_POST['submit'])) {
         exit();
     } else {
         // Jika terjadi kesalahan saat menyimpan struktur
-        echo "Error: " . $conn->error;
+        echo "Error: " . $stmt->error;
         exit();
     }
-}
-
-// Query to retrieve data from the tab_strukm table based on selected id_ukm
-if (isset($_POST['id_ukm'])) {
-    $selected_id_ukm = $_POST['id_ukm'];
-    $sql_strukm = "SELECT * FROM tab_strukm WHERE id_ukm = '$selected_id_ukm'";
-    $result_strukm = $conn->query($sql_strukm);
 }
 ?>
 
@@ -137,32 +132,73 @@ if (isset($_POST['id_ukm'])) {
     <div class="content">
     <div class="card">
         <h2>Kelola Struktur Organisasi</h2>
-         <!-- Display data in a table -->
-         <?php if (isset($_POST['id_ukm'])) { ?>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nama UKM</th>
-                        <th>ID Jabatan</th>
-                        <th>Nama Lengkap</th>
-                        <th>NIM</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Loop through each row of the tab_strukm table and display the data in the table rows
-                    while ($row_strukm = $result_strukm->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $row_strukm['id_ukm'] . "</td>";
-                        echo "<td>" . $row_strukm['id_jabatan'] . "</td>";
-                        echo "<td>" . $row_strukm['nama_lengkap'] . "</td>";
-                        echo "<td>" . $row_strukm['nim'] . "</td>";
-                        echo "</tr>";
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nama UKM</th>
+                    <th>Jabatan</th>
+                    <th>Nama Lengkap</th>
+                    <th>NIM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Query untuk mendapatkan data tab_strukm
+                $sql_strukm = "SELECT * FROM tab_strukm";
+                $result_strukm = $conn->query($sql_strukm);
+
+                // Menampilkan data struktur dalam bentuk baris tabel
+                while ($row_strukm = $result_strukm->fetch_assoc()) {
+                    $id_ukm = $row_strukm['id_ukm'];
+                    $id_jabatan = $row_strukm['id_jabatan'];
+                    $nama_lengkap = $row_strukm['nama_lengkap'];
+                    $nim = $row_strukm['nim'];
+
+                    // Mendapatkan nama UKM berdasarkan id_ukm dari tabel tab_ukm
+                    $sql_ukm_name = "SELECT nama_ukm FROM tab_ukm WHERE id_ukm = $id_ukm";
+                    $result_ukm_name = $conn->query($sql_ukm_name);
+                    $ukm_name = $result_ukm_name->fetch_assoc()['nama_ukm'];
+
+                    // Mengonversi id_jabatan menjadi teks jabatan
+                    $jabatan = "";
+                    switch ($id_jabatan) {
+                        case 0:
+                            $jabatan = "Pembimbing";
+                            break;
+                        case 1:
+                            $jabatan = "Ketua";
+                            break;
+                        case 2:
+                            $jabatan = "Wakil Ketua";
+                            break;
+                        case 3:
+                            $jabatan = "Sekretaris";
+                            break;
+                        case 4:
+                            $jabatan = "Bendahara";
+                            break;
+                        case 5:
+                            $jabatan = "Koordinator";
+                            break;
+                        case 6:
+                            $jabatan = "Anggota";
+                            break;
+                        default:
+                            $jabatan = "Tidak diketahui";
+                            break;
                     }
-                    ?>
-                </tbody>
-            </table>
-        <?php } ?>
+
+                    // Menampilkan data dalam baris tabel
+                    echo "<tr>";
+                    echo "<td>$ukm_name</td>";
+                    echo "<td>$jabatan</td>";
+                    echo "<td>$nama_lengkap</td>";
+                    echo "<td>$nim</td>";
+                    echo "</tr>";
+                }
+                ?>
+            </tbody>
+        </table>
         <form method="post" action="proses_struktur.php">
             <div class="form-group">
                 <label for="id_ukm">Nama UKM:</label>

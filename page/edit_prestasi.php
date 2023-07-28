@@ -36,6 +36,7 @@ if (!isset($_GET['id_prestasi'])) {
 
 $id_prestasi = $_GET['id_prestasi'];
 
+
 // Query untuk mengambil data prestasi berdasarkan id_prestasi
 $sql = "SELECT * FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
 $result = $conn->query($sql);
@@ -63,31 +64,32 @@ while ($row = mysqli_fetch_assoc($result)) {
     $namaUKM[$id_ukm] = $nama_ukm;
 }
 
-// Memeriksa apakah form edit prestasi telah di-submit
-if (isset($_POST['submit'])) {
+// Check if form is submitted for update
+if (isset($_POST['update'])) {
     // Mengambil data dari form dan melakukan sanitasi
     $id_prestasi = $_POST['id_prestasi'];
-    $nama_prestasi = mysqli_real_escape_string($conn, $_POST['nama_prestasi']);
-    $penyelenggara = mysqli_real_escape_string($conn, $_POST['penyelenggara']);
+    $nama_prestasi = $_POST['nama_prestasi'];
+    $penyelenggara = $_POST['penyelenggara'];
     $tgl_prestasi = $_POST['tgl_prestasi'];
     $id_ukm = $_POST['id_ukm'];
-    $nama_ukm = mysqli_real_escape_string($conn, $_POST['nama_ukm']);
+
+    // Get the corresponding 'nama_ukm' based on 'id_ukm' from the $namaUKM array
+    $nama_ukm = $namaUKM[$id_ukm];
 
     // Memperbarui data prestasi di database
-    $sql = "UPDATE tab_prestasi SET nama_prestasi = '$nama_prestasi', penyelenggara = '$penyelenggara', tgl_prestasi = '$tgl_prestasi', id_ukm = '$id_ukm', nama_ukm = '$nama_ukm' WHERE id_prestasi = '$id_prestasi'";
-    $result = mysqli_query($conn, $sql);
-
-    if ($result) {
+    $sql = "UPDATE tab_prestasi SET nama_prestasi = ?, penyelenggara = ?, tgl_prestasi = ?, id_ukm = ?, nama_ukm = ? WHERE id_prestasi = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssssss", $nama_prestasi, $penyelenggara, $tgl_prestasi, $id_ukm, $nama_ukm, $id_prestasi);
+    if ($stmt->execute()) {
         // Redirect back to the user list after update
         header("Location: proses_prestasi.php");
         exit();
     } else {
         // If an error occurs during the update
-        echo "Error: " . mysqli_error($conn);
+        echo "Error: " . $conn->error;
         exit();
     }
 }
-
 // Define the logout() function if not already defined
 function logout() {
     // Add your logout logic here, such as clearing session data, etc.
@@ -200,7 +202,7 @@ function logout() {
 <div class="content">
     <div class="card">
         <h2>Edit Prestasi</h2>
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+        <form method="POST" onsubmit="return validateForm();">
             <!-- Menambahkan input field hidden untuk id_prestasi -->
             <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
             <div class="form-group">
@@ -232,7 +234,7 @@ function logout() {
                 <label for="nama_ukm">Nama UKM:</label>
                 <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $prestasi['nama_ukm']; ?>" readonly>
             </div>
-            <button type="submit" class="btn btn-primary" name="submit">Update</button>
+            <button type="submit" class="btn btn-primary" name="update">Update</button>
         </form>
     </div>
 </div>
