@@ -100,6 +100,7 @@ if (isset($_POST['submit'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
@@ -137,6 +138,22 @@ if (isset($_POST['submit'])) {
     .btn:hover {
         background-color: #0056b3;
     }
+    
+    .password-input {
+    position: relative;
+    }
+
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
+
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
 </style>
 <body>
 <div class="sidebar">
@@ -153,8 +170,9 @@ if (isset($_POST['submit'])) {
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
 </div>
 
- <!-- Data User -->
- <div class="content">
+
+<!-- Data User -->
+<div class="content">
     <h2>Daftar User</h2>
     <table class="table">
         <thead>
@@ -169,41 +187,69 @@ if (isset($_POST['submit'])) {
             </tr>
         </thead>
         <tbody>
-            <?php
-            // Fetch users from the database
-            $sql = "SELECT * FROM tab_user";
-            $result = $conn->query($sql);
+    <?php
+    // Fetch users from the database
+    $sql = "SELECT * FROM tab_user";
+    $result = $conn->query($sql);
 
-            if ($result->num_rows > 0) {
-                // Output data of each row
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>" . $row["id_user"] . "</td>";
-                    echo "<td>" . $row["nama_depan"] . "</td>";
-                    echo "<td>" . $row["nama_belakang"] . "</td>";
-                    echo "<td>" . $row["email"] . "</td>";
-                    echo "<td>" . $row["no_hp"] . "</td>";
-                    echo "<td>" . $row["level"] . "</td>";
+    if ($result->num_rows > 0) {
+        // Output data of each row
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row["id_user"] . "</td>";
+            echo "<td>" . $row["nama_depan"] . "</td>";
+            echo "<td>" . $row["nama_belakang"] . "</td>";
+            echo "<td>" . $row["email"] . "</td>";
+            echo "<td>" . $row["no_hp"] . "</td>";
+            echo "<td>" . $row["level"] . "</td>"; // Display the level's name based on the value in the $userLevels array
 
-                    // Menambahkan kondisi jika ID user adalah "admin"
-                    if ($row["id_user"] == "admin") {
-                        echo "<td>Tidak dapat dihapus</td>";
-                    } else {
-                        echo "<td><a href='edit.php?id=" . $row["id_user"] . "'>Edit</a> | <a href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a></td>";
-                    }
-
-                    echo "</tr>";
-                }
+            // Menambahkan kondisi jika ID user adalah "admin"
+            if ($row["id_user"] == "admin") {
+                echo "<td>Tidak dapat dihapus</td>";
             } else {
-                echo "<tr><td colspan='5'>Tidak ada data user.</td></tr>";
-            }
+                // Update link to open edit_user.php with the user ID as a query parameter
+                echo "<td><a href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a> | <a href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a></td>";
 
-            // Close the database connection
-            $conn->close();
-            ?>
-        </tbody>
+                echo "</tr>";
+            }
+        }
+    }
+    ?>
+</tbody>
     </table>
 </div>
+
+<!-- Add a script to handle level dropdown updates -->
+<script>
+    // Function to handle level dropdown updates
+    document.querySelectorAll('.level-dropdown').forEach(function (dropdown) {
+        dropdown.addEventListener('change', function () {
+            var userId = this.getAttribute('data-user-id');
+            var newLevel = this.value;
+
+            // Perform an AJAX request to update the user's level in the database
+            // You can use fetch or jQuery.ajax to make the request
+
+            // Example using fetch:
+            fetch('update_user_level.php', {
+                method: 'POST',
+                body: JSON.stringify({ userId: userId, level: newLevel }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle any errors if they occur
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
 
 <script>
     function confirmDelete() {
@@ -221,12 +267,17 @@ if (isset($_POST['submit'])) {
                 <input type="text" class="form-control" id="id_user" name="id_user" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
+            <label for="password">Password:</label>
+            <div class="password-input">
                 <input type="password" class="form-control" id="password" name="password" required>
+                <i class="fas fa-eye" id="passwordToggle"></i>
+            </div>
             </div>
             <div class="form-group">
                 <label for="konfirmasi_password">Konfirmasi Password:</label>
+                <div class="password-input">
                 <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password" required>
+                <i class="fas fa-eye" id="passwordToggle"></i>
             </div>
             <div class="form-group">
                 <label for="nama_depan">Nama Depan:</label>
@@ -241,8 +292,8 @@ if (isset($_POST['submit'])) {
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="form-group">
-                <label for="no_hp">No. HP:</label>
-                <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+            <label for="no_hp">No. HP:</label>
+            <input type="text" class="form-control" id="no_hp" name="no_hp" required>
             </div>
             <div class="form-group">
                 <label for="level">Level:</label>
@@ -257,6 +308,42 @@ if (isset($_POST['submit'])) {
             </div>
         </form>
     </div>
+    
+    <script>
+    const passwordInput = document.getElementById("password");
+    const passwordToggle = document.getElementById("passwordToggle");
+
+    passwordToggle.addEventListener("click", function () {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordToggle.classList.remove("fa-eye");
+            passwordToggle.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            passwordToggle.classList.remove("fa-eye-slash");
+            passwordToggle.classList.add("fa-eye");
+        }
+    });
+</script>
+
+
+    <script>
+    // Function to allow only numeric input in the phone number field and limit to 13 digits
+    document.getElementById("no_hp").addEventListener("input", function (e) {
+        var value = e.target.value;
+        var numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
+        var maxLength = 13; // Maximum length for the phone number
+
+        // Limit the input to the maximum length
+        if (numericValue.length > maxLength) {
+            numericValue = numericValue.slice(0, maxLength);
+        }
+
+        e.target.value = numericValue;
+    });
+</script>
+
+
 
 <script>
     function validateForm() {
