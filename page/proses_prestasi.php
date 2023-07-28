@@ -203,26 +203,59 @@ $conn->close();
     .delete-button {
         background-color: red;
     }
+        /* Tambahkan gaya CSS berikut untuk mengatur tata letak tombol */
+        .action-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .action-buttons button {
+        flex: 1;
+        margin-right: 5px;
+    }
 </style>
 <script>
-  function generateIdPrestasi() {
-    var namaPrestasi = document.getElementById("nama_prestasi").value;
-    var akronim = "";
-    
-    // Mengambil akronim dari nama prestasi
-    var words = namaPrestasi.split(" ");
-    for (var i = 0; i < words.length; i++) {
-      akronim += words[i].charAt(0);
-    }
-    
-    // Mendapatkan 3 digit angka acak
-    var angka = Math.floor(Math.random() * 1000);
-    var angkaStr = ("000" + angka).slice(-3);
-    
-    // Mengisi textfield id_prestasi dengan hasil generate
-    var idPrestasi = akronim.toUpperCase() + angkaStr;
-    document.getElementById("id_prestasi").value = idPrestasi;
-  }
+ function generateIdPrestasi($nama_prestasi, $tgl_prestasi)
+{
+    global $conn; // Assuming $conn is the database connection object
+
+    // Menghapus karakter non-alfanumerik dari nama prestasi
+    $clean_nama_prestasi = preg_replace("/[^a-zA-Z0-9]/", "", $nama_prestasi);
+
+    // Mengambil 6 digit pertama dari nama prestasi
+    $id_prestasi = substr($clean_nama_prestasi, 0, 6);
+
+    // Mengubah format tanggal prestasi menjadi Ymd (misal: 2023-06-15 menjadi 20230615)
+    $tanggal_prestasi = date('Ymd', strtotime($tgl_prestasi));
+
+    // Mengambil 6 digit terakhir dari tanggal prestasi
+    $id_prestasi .= substr($tanggal_prestasi, -6);
+
+    // Generate ID Prestasi until it is unique
+    do {
+        // Jika panjang ID Prestasi kurang dari 12 digit, tambahkan digit acak
+        while (strlen($id_prestasi) < 12) {
+            $id_prestasi .= mt_rand(0, 9);
+        }
+
+        // Check if ID Prestasi already exists in the database
+        $check_query = "SELECT COUNT(*) AS count FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
+        $check_result = $conn->query($check_query);
+        $check_data = $check_result->fetch_assoc();
+
+        if ($check_data['count'] > 0) {
+            // ID Prestasi already exists, reset the ID and generate again
+            $id_prestasi = substr($id_prestasi, 0, -6); // Remove the last 6 digits
+            $id_prestasi .= mt_rand(0, 9);
+        } else {
+            // ID Prestasi is unique, exit the loop
+            break;
+        }
+    } while (true);
+
+    return $id_prestasi;
+}
+
 </script>
 
 <script>
@@ -272,7 +305,7 @@ $conn->close();
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
     </div>
     
-   <!-- Data Prestasi -->
+  <!-- Data Prestasi -->
 <div class="content">
     <h2>Data Prestasi</h2>
     <table class="table">
@@ -284,50 +317,44 @@ $conn->close();
                 <th>Tanggal Prestasi</th>
                 <th>ID UKM</th>
                 <th>Nama UKM</th>
-                <th>Edit</th>
-                <th>Hapus</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-    <?php foreach ($prestasi_data as $prestasi) : ?>
-        <tr>
-            <td><?php echo $prestasi['id_prestasi']; ?></td>
-            <td><?php echo $prestasi['nama_prestasi']; ?></td>
-            <td><?php echo $prestasi['penyelenggara']; ?></td>
-            <td><?php echo $prestasi['tgl_prestasi']; ?></td>
-            <td><?php echo $prestasi['id_ukm']; ?></td>
-            <td><?php echo $prestasi['nama_ukm']; ?></td>
-            <td>
-                <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->
-                <form method="get" action="edit_prestasi.php">
-                    <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                    <input type="hidden" name="action" value="edit">
+            <?php foreach ($prestasi_data as $prestasi) : ?>
+                <tr>
+                    <td><?php echo $prestasi['id_prestasi']; ?></td>
+                    <td><?php echo $prestasi['nama_prestasi']; ?></td>
+                    <td><?php echo $prestasi['penyelenggara']; ?></td>
+                    <td><?php echo date('d-m-Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
+                    <td><?php echo $prestasi['id_ukm']; ?></td>
+                    <td><?php echo $prestasi['nama_ukm']; ?></td>
+                    <td class="action-buttons">
+                        <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->
+                        <form method="get" action="edit_prestasi.php">
+                            <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+                            <input type="hidden" name="action" value="edit">
                             <button type="submit" class="btn btn-primary btn-sm" name="submit">Edit</button>
                         </form>
-            </td>
-            <td>
-                <!-- Menggunakan form dengan method POST untuk menghapus prestasi -->
-                <form method="post" action="proses_delete_prestasi.php" onsubmit="return confirmDelete();">
-                    <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                    <input type="hidden" name="action" value="delete">
-                    <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
-                </form>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-</tbody>
+                        <!-- Menggunakan form dengan method POST untuk menghapus prestasi -->
+                        <form method="post" action="proses_delete_prestasi.php" onsubmit="return confirmDelete();">
+                            <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
 </div>
-    
     <!-- Form Tambah Prestasi -->
     <div class="content">
     <div class="card">
     <h2>Tambah Prestasi</h2>
         <form method="post" action="proses_prestasi.php">
-            <div class="form-group">
-                <label for="id_prestasi">ID Prestasi:</label>
-                <input type="text" class="form-control" id="id_prestasi" placeholder="Kolom akan terisi otomatis" name="id_prestasi" readonly>
-            </div>
+              <!-- Menambahkan input field hidden untuk id_prestasi -->
+              <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
             <div class="form-group">
                 <label for="nama_prestasi">Nama Prestasi:</label>
                 <input type="text" class="form-control" id="nama_prestasi" name="nama_prestasi" required>
@@ -338,7 +365,7 @@ $conn->close();
             </div>
             <div class="form-group">
                 <label for="tgl_prestasi">Tanggal Prestasi:</label>
-                <input type="date" class="form-control" id="tgl_prestasi" name="tgl_prestasi" required>
+                <input type="date" class="form-control" id="tgl_prestasi" name="tgl_prestasi" value="<?php echo $prestasi['tgl_prestasi']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>

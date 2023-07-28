@@ -154,6 +154,29 @@ if (isset($_POST['submit'])) {
     transform: translateY(-50%);
     cursor: pointer;
     }
+     /* Update the Edit button styles */
+     .btn.btn-edit {
+        padding: 8px 12px;
+        background-color: #007bff; /* Blue color */
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none; /* Remove underline from links */
+        margin-right: 8px; /* Add a little space between the buttons */
+    }
+
+    /* Update the Delete button styles */
+    .btn.btn-delete {
+        padding: 8px 12px;
+        background-color: red;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none; /* Remove underline from links */
+    }
+    
 </style>
 <body>
 <div class="sidebar">
@@ -203,13 +226,17 @@ if (isset($_POST['submit'])) {
             echo "<td>" . $row["level"] . "</td>"; // Display the level's name based on the value in the $userLevels array
 
             // Menambahkan kondisi jika ID user adalah "admin"
-            if ($row["id_user"] == "admin") {
-                echo "<td>Tidak dapat dihapus</td>";
-            } else {
+    // Update link to open edit_user.php with the user ID as a query parameter
+        if ($row["id_user"] == "admin") {
+            // For the admin user, show only the Edit button
+            echo "<td><a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a></td>";
+        } else {
+            // For other users, show both Edit and Hapus (Delete) buttons
                 // Update link to open edit_user.php with the user ID as a query parameter
-                echo "<td><a href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a> | <a href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a></td>";
-
-                echo "</tr>";
+                echo "<td>
+                <a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>
+                <a class='btn btn-delete' href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a>
+              </td>";
             }
         }
     }
