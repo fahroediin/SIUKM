@@ -51,39 +51,53 @@ function isJabatanExists($conn, $id_ukm, $id_jabatan)
     $row = $result->fetch_assoc();
     return $row['count'] > 0;
 }
+function updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim)
+{
+    $sql = "UPDATE tab_strukm SET nama_lengkap = ?, nim = ? WHERE id_ukm = ? AND id_jabatan = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $nama_lengkap, $nim, $id_ukm, $id_jabatan);
+    $result = $stmt->execute();
 
-// Check if "nama_ukm" is selected
+    return $result;
+}
+
 if (isset($_POST['submit'])) {
     $id_ukm = $_POST['id_ukm'];
     $id_jabatan = $_POST['id_jabatan'];
     $nama_lengkap = $_POST['nama_lengkap'];
     $nim = $_POST['nim'];
 
- // Check if the selected id_jabatan already exists for the chosen id_ukm
-if ($id_jabatan != '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
-    // Use JavaScript to display the alert message
-    echo '<script>alert("Jabatan Sudah ada");</script>';
-    // Use JavaScript to reset the form fields
-    echo '<script>resetFormFields();</script>';
-    // Exit to prevent further processing
-    exit();
-}
-
-
-    // Menyimpan data ke database menggunakan prepared statements
-    $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $id_ukm, $id_jabatan, $nama_lengkap, $nim);
-    $result = $stmt->execute();
-
-    if ($result) {
-        // Redirect ke halaman daftar struktur setelah penyimpanan berhasil
-        header("Location: proses_struktur.php");
-        exit();
+    // Check if the selected id_jabatan already exists for the chosen id_ukm
+    if ($id_jabatan !== '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
+        // Show a confirmation message to the user asking whether they want to update or not
+        $confirmation = confirm("Jabatan Sudah ada. Apakah Anda ingin memperbarui data?");
+        if ($confirmation) {
+            // If the user confirms, proceed with the update
+            if (updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim)) {
+                // Redirect to the page after successful update
+                header("Location: proses_struktur.php");
+                exit();
+            } else {
+                // If there's an error during update
+                echo "Error updating data";
+                exit();
+            }
+        } else {
+            // If the user cancels, reset the form fields and prevent form submission
+            echo '<script>resetFormFields();</script>';
+            exit();
+        }
     } else {
-        // Jika terjadi kesalahan saat menyimpan struktur
-        echo "Error: " . $stmt->error;
-        exit();
+        // Insert the data into the database
+        $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssss", $id_ukm, $id_jabatan, $nama_lengkap, $nim);
+        $result = $stmt->execute();
+
+        if (!$result) {
+            echo "Error inserting data: " . $stmt->error;
+            exit();
+        }
     }
 }
 
@@ -141,6 +155,7 @@ if ($id_jabatan != '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
     <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
+    <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
     <a href="proses_visimisi.php" class="btn btn-primary <?php if($active_page == 'visi_misi') echo 'active'; ?>">Data UKM</a>
@@ -180,7 +195,7 @@ if ($id_jabatan != '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
                     <th>ID UKM</th>
                     <th>Jabatan</th>
                     <th>Nama Lengkap</th>
-                    <th>NIM</th>
+                    <th>NIM/NIDN</th>
                 </tr>
             </thead>
             <tbody>
@@ -285,9 +300,10 @@ if ($id_jabatan != '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
                 <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
             </div>
             <div class="form-group">
-                <label for="nim">NIM:</label>
-                <input type="text" class="form-control" id="nim" name="nim" required>
+                <label for="nim">NIM/NIDN:</label>
+                <input type="text" class="form-control" id="nim" name="nim" required maxlength="20" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
             </div>
@@ -304,41 +320,34 @@ if ($id_jabatan != '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
             });
         });
     </script>
-    <script>
+   <script>
     function checkJabatan() {
         // Get the selected id_jabatan value from the form
         var idJabatan = document.getElementById('id_jabatan').value;
 
-        // Check if the selected id_jabatan is not 'Anggota' (value '6') and show the alert
+        // Check if the selected id_jabatan is not 'Anggota' (value '6')
         if (idJabatan !== '6') {
-            alert("Jabatan Sudah ada");
-            return false; // Return false to prevent form submission
+            // Show the alert
+            var confirmation = confirm("Jabatan Sudah ada. Apakah Anda ingin memperbarui data?");
+            if (confirmation) {
+                // If the user confirms, proceed with form submission
+                return true;
+            } else {
+                // If the user cancels, reset the form fields and prevent form submission
+                resetFormFields();
+                return false;
+            }
         }
 
-        return true; // Return true to allow form submission
+        return true; // Return true to allow form submission if id_jabatan is 'Anggota'
     }
-</script>
-<script>
+
     function resetFormFields() {
         // Reset the value of id_jabatan dropdown to '6' (Anggota)
         document.getElementById('id_jabatan').value = '6';
         // Reset the values of nama_lengkap and nim fields to empty
         document.getElementById('nama_lengkap').value = '';
         document.getElementById('nim').value = '';
-    }
-
-    function checkJabatan() {
-        // Get the selected id_jabatan value from the form
-        var idJabatan = document.getElementById('id_jabatan').value;
-
-        // Check if the selected id_jabatan is not 'Anggota' (value '6') and show the alert
-        if (idJabatan !== '6') {
-            alert("Jabatan Sudah ada");
-            resetFormFields(); // Reset the form fields
-            return false; // Return false to prevent form submission
-        }
-
-        return true; // Return true to allow form submission
     }
 </script>
 </body>

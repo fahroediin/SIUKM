@@ -247,6 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
             <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
+            <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
             <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
             <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
             <a href="proses_visimisi.php" class="btn btn-primary <?php if($active_page == 'visi_misi') echo 'active'; ?>">Data UKM</a>
@@ -259,16 +260,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Dashboard Admin</h1>
             <hr class="divider">
             <div class="user-info">
-                <div class="profile-container">
-                    <img src="../assets/images/sanji.jpg" alt="Foto Profil" class="profil-picture">
-                </div>
-                <div class="profile-details">
-                    <p><span class="label">Nama Depan:</span> <span class="value"><?php echo $_SESSION['nama_depan']; ?></span></p>
-                    <p><span class="label">Nama Belakang:</span> <span class="value"><?php echo $_SESSION['nama_belakang']; ?></span></p>
-                    <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
-                    <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $_SESSION['no_hp']; ?></span></p>
-                </div>
-            </div>
+    <div class="profile-container">
+        <img src="../assets/images/sanji.jpg" alt="Foto Profil" class="profil-picture">
+    </div>
+    <div class="profile-details">
+        <p><span class="label">Nama Depan:</span> <span class="value"><?php echo $_SESSION['nama_depan']; ?></span></p>
+        <p><span class="label">Nama Belakang:</span> <span class="value"><?php echo $_SESSION['nama_belakang']; ?></span></p>
+        <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
+        <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $_SESSION['no_hp']; ?></span></p>
+        <!-- Add the "Update Data" button here -->
+        <a href="update_data.php" class="btn btn-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <path d="M6.146 13.354a.5.5 0 0 0 .708 0l8-8a.5.5 0 0 0 0-.708l-1.5-1.5a.5.5 0 0 0-.708 0L6 10.293 2.854 7.146a.5.5 0 1 0-.708.708l3 3zM2 14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4.414l-2 2V13a.5.5 0 0 1-1 0V6.414l-8-8L3.414 1H2v12z"/>
+            </svg>
+            Update Data
+        </a>
+        <!-- End of "Update Data" button -->
+    </div>
+</div>
     </div>
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="script.js"></script>
