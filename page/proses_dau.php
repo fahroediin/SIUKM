@@ -34,7 +34,7 @@ if (isset($_GET['logout'])) {
 $active_page = 'data_anggota_ukm';
 
 // Memperoleh data anggota UKM dari tabel tab_dau
-$query = "SELECT id_anggota, id_user, nama_depan, nama_belakang, nim, no_hp, email, prodi, semester, pasfoto, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
+$query = "SELECT id_anggota, id_user, nama_depan, nama_belakang, no_hp, email, prodi, semester, pasfoto, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
 $result = mysqli_query($conn, $query);
 
 // Memeriksa apakah form telah disubmit
@@ -44,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_user = $_POST["id_user"];
     $nama_depan = $_POST["nama_depan"];
     $nama_belakang = $_POST["nama_belakang"];
-    $nim = $_POST["nim"];
     $no_hp = $_POST["no_hp"];
     $email = $_POST["email"];
     $prodi = $_POST["prodi"];
@@ -53,12 +52,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sjk_bergabung = $_POST["sjk_bergabung"];
 
     // Simpan data ke database
-    $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_depan, nama_belakang, nim, no_hp, email, prodi, semester, id_ukm, sjk_bergabung) 
-            VALUES ('$id_anggota', '$id_user', '$nama_depan', '$nama_belakang', '$nim', '$no_hp', '$email', '$prodi', '$semester', '$id_ukm', '$sjk_bergabung')";
-    
+    $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_depan, nama_belakang, no_hp, email, prodi, semester, id_ukm, sjk_bergabung) 
+            VALUES ('$id_anggota', '$id_user', '$nama_depan', '$nama_belakang', '$no_hp', '$email', '$prodi', '$semester', '$id_ukm', '$sjk_bergabung')";
+
     if (mysqli_query($conn, $sql)) {
         // Redirect ke halaman data anggota setelah penyimpanan berhasil
-        header("Location: data_anggota_ukm.php?success=1");
+        header("Location: proses_dau.php");
         exit();
     } else {
         // Jika terjadi kesalahan saat menyimpan data
@@ -66,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -77,8 +77,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
+<style>
+        /* Tambahkan gaya CSS berikut untuk mengatur layout sidebar dan konten */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            flex: 0 0 20%; /* Lebar sidebar 20% dari container */
+        }
+
+        .content {
+            flex: 0 0 80%; /* Lebar konten 80% dari container */
+
+        }
+
+        /* Gaya CSS tambahan untuk mengatur tampilan tabel dan form */
+        .table {
+            width: 100%;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-control {
+            flex: 1;
+            margin-right: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+
 <body>
-    
  <!-- Sidebar -->
  <div class="sidebar">
     <h2>Manajemen Data UKM</h2>
@@ -93,16 +129,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <a href="kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
 </div>
-
-    <h1>Data Anggota UKM</h1>
-    <table>
+<div class="content">
+    <h2>Data Anggota UKM</h2>
+    <div class="form-group">
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>ID Anggota</th>
                 <th>ID User</th>
                 <th>Nama Depan</th>
                 <th>Nama Belakang</th>
-                <th>NIM</th>
                 <th>No. HP</th>
                 <th>Email</th>
                 <th>Program Studi</th>
@@ -122,12 +158,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<td>" . $row['id_user'] . "</td>";
                 echo "<td>" . $row['nama_depan'] . "</td>";
                 echo "<td>" . $row['nama_belakang'] . "</td>";
-                echo "<td>" . $row['nim'] . "</td>";
                 echo "<td>" . $row['no_hp'] . "</td>";
                 echo "<td>" . $row['email'] . "</td>";
                 echo "<td>" . $row['prodi'] . "</td>";
                 echo "<td>" . $row['semester'] . "</td>";
-                echo "<td><img src='" . $row['pasfoto'] . "' alt='Pasfoto'></td>";
+                echo "<td><img src='" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
                 echo "<td>" . $row['id_ukm'] . "</td>";
                 echo "<td>" . $row['nama_ukm'] . "</td>";
                 echo "<td>" . $row['sjk_bergabung'] . "</td>";
@@ -136,45 +171,165 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
         </tbody>
     </table>
+        </div>
     
-    <h1>Data Anggota UKM</h1>
-    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <!-- Tambahkan input fields untuk data anggota -->
-        <label for="id_anggota">ID Anggota:</label>
-        <input type="text" name="id_anggota" required>
+            <div class="card">
+            <h2>Tambah Data Anggota UKM</h2>
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label for="id_anggota">ID Anggota:</label>
+                        <input type="text" class="form-control" name="id_anggota" required>
+                    </div>
+                    <div class="col-md-6">
+                    <label for="id_user">ID User:</label>
+                    <select class="form-control" name="id_user" id="id_user_dropdown" required>
+    <option value="">------------Pilih ID User------------</option>
+    <?php
+    // Fetch data from the tab_user table and populate the dropdown options
+    $userQuery = "SELECT id_user FROM tab_user"; // Select only the id_user column
+    $userResult = mysqli_query($conn, $userQuery);
 
-        <label for="id_user">ID User:</label>
-        <input type="text" name="id_user" required>
+    while ($userRow = mysqli_fetch_assoc($userResult)) {
+        // Use a regular expression to check if the id_user contains only digits (numbers)
+        if (preg_match('/^\d+$/', $userRow['id_user'])) {
+            echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . '</option>';
+        }
+    }
+    ?>
+</select>
 
-        <label for="nama_depan">Nama Depan:</label>
-        <input type="text" name="nama_depan" required>
+<script>
+    // Event listener for the dropdown (id_user)
+    document.getElementById("id_user_dropdown").addEventListener("change", function () {
+        var selectedUserId = this.value;
+        var namaDepanField = document.getElementsByName("nama_depan")[0];
+        var namaBelakangField = document.getElementsByName("nama_belakang")[0];
+        var noHpField = document.getElementsByName("no_hp")[0];
+        var emailField = document.getElementsByName("email")[0];
 
-        <label for="nama_belakang">Nama Belakang:</label>
-        <input type="text" name="nama_belakang" required>
+        if (selectedUserId === "") {
+            // Reset the text fields
+            namaDepanField.value = "";
+            namaBelakangField.value = "";
+            noHpField.value = "";
+            emailField.value = "";
 
-        <label for="nim">NIM:</label>
-        <input type="text" name="nim" required>
+            // Disable the text fields
+            namaDepanField.disabled = true;
+            namaBelakangField.disabled = true;
+            noHpField.disabled = true;
+            emailField.disabled = true;
+        } else {
+        }
+    });
+</script>
+        </div>
 
-        <label for="no_hp">No. HP:</label>
-        <input type="text" name="no_hp" required>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            // Function to fetch user data based on the selected id_user
+            function fetchUserData(userId) {
+                $.ajax({
+                    type: "POST",
+                    url: "get_user_data.php", // Create a separate PHP file to handle AJAX request and database query
+                    data: { id_user: userId },
+                    dataType: "json",
+                    success: function (data) {
+                        // Update the text fields with the fetched data
+                        $("input[name='nama_depan']").val(data.nama_depan);
+                        $("input[name='nama_belakang']").val(data.nama_belakang);
+                        $("input[name='no_hp']").val(data.no_hp);
+                        $("input[name='email']").val(data.email);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" required>
+            // Event listener for the dropdown (id_user)
+            $("select[name='id_user']").on("change", function () {
+                var selectedUserId = $(this).val();
+                fetchUserData(selectedUserId);
+            });
+        </script>
+        </div>
 
-        <label for="prodi">Program Studi:</label>
-        <input type="text" name="prodi" required>
+        <div class="form-row">
+        <div class="col-md-6">
+            <label for="nama_depan">Nama Depan:</label>
+            <input type="text" class="form-control" name="nama_depan" required readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="nama_belakang">Nama Belakang:</label>
+            <input type="text" class="form-control" name="nama_belakang" readonly>
+        </div>
+        </div>
 
-        <label for="semester">Semester:</label>
-        <input type="text" name="semester" required>
 
+        <div class="form-row">
+            <div class="col-md-6">
+                <label for="no_hp">No. HP:</label>
+                <input type="text" class="form-control" name="no_hp" required readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" name="email" required readonly>
+            </div>
+        </div>
+
+
+        <div class="form-row">
+        <div class="col-md-6">
+            <label for="prodi">Program Studi:</label>
+            <select class="form-control" name="prodi" required>
+                <option value="">Pilih Program Studi</option>
+                <option value="Teknik Informatika">Teknik Informatika</option>
+                <option value="Sistem Informasi">Sistem Informasi</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="semester">Semester:</label>
+            <select class="form-control" name="semester" required>
+                <option value="">Pilih Semester</option>
+                <?php
+                // Generate options for semester from 1 to 14
+                for ($i = 1; $i <= 14; $i++) {
+                    echo '<option value="' . $i . '">' . $i . '</option>';
+                }
+                ?>
+            </select>
+            </div>
+        </div>
+
+
+        <div class="form-row">
+        <div class="col-md-6">
         <label for="id_ukm">ID UKM:</label>
-        <input type="text" name="id_ukm" required>
+        <select class="form-control" name="id_ukm" required>
+            <option value="">Pilih ID UKM</option>
+        <?php
+        // Fetch data from the tab_ukm table and populate the dropdown options
+        $ukmQuery = "SELECT id_ukm FROM tab_ukm";
+        $ukmResult = mysqli_query($conn, $ukmQuery);
 
+        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
+        }
+        ?>
+    </select>
+</div>
+
+            <div class="col-md-6">
         <label for="sjk_bergabung">SJK Bergabung:</label>
-        <input type="text" name="sjk_bergabung" required>
+        <input type="datetime-local" class="form-control" name="sjk_bergabung" required>
+    </div>
+        </div>
 
-        <button type="submit">Simpan Data</button>
+        <button type="submit" class="btn btn-primary">Simpan Data</button>
     </form>
+</div>
 
 </body>
 </html>
