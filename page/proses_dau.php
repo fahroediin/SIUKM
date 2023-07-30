@@ -53,23 +53,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tahun_bergabung = substr($_POST["sjk_bergabung"], 2, 2); // Ambil 2 digit terakhir tahun
 
     // Generate the ID Anggota based on the rules
-    $id_anggota = substr($id_user, 0, 4) . substr($id_ukm, 0, 3);
+    $randomDigits = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT); // 4-digit random number
+    $tahun_bergabung = substr($sjk_bergabung, 2, 2); // Extract the last 2 digits of the year
 
     // Determine the abbreviation for the program based on the prodi value
     if ($prodi == "Teknik Informatika") {
-        $id_anggota .= "ti";
+        $programAbbreviation = "01";
     } elseif ($prodi == "Sistem Informasi") {
-        $id_anggota .= "si";
+        $programAbbreviation = "02";
+    } else {
+        $programAbbreviation = "00"; // Default if not Teknik Informatika or Sistem Informasi
     }
 
-    // Append the last 2 digits of the year
-    $id_anggota .= $tahun_bergabung;
+    // Get the current semester
+    $currentSemester = intval($semester);
+
+    // Get the current month in 2-digit format
+    $currentMonth = date("m");
+
+    // Combine the parts to create the ID Anggota
+    $id_anggota = substr($id_user, -2) . $programAbbreviation . $currentSemester . $currentMonth . substr($tahun_bergabung, -2) . $randomDigits;
+
     // Simpan data ke database
     $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, id_ukm, nama_ukm, sjk_bergabung) 
     VALUES ('$id_anggota', '$id_user', '$nama_lengkap', '$no_hp', '$email', '$prodi', '$semester', '$id_ukm', '$nama_ukm', '$sjk_bergabung')";
 
 
     if (mysqli_query($conn, $sql)) {
+        echo "Berhasil menambahkan anggota";
         // Redirect ke halaman data anggota setelah penyimpanan berhasil
         header("Location: proses_dau.php");
         exit();
@@ -111,7 +122,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .table {
             width: 100%;
         }
-
+        th {
+        white-space: nowrap;
+        }
+        .delete-button {
+        background-color: red;
+        }
         .form-row {
             display: flex;
             flex-wrap: wrap;
@@ -160,6 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <th>ID UKM</th>
                 <th>Nama UKM</th>
                 <th>Bergabung</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -178,6 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<td>" . $row['id_ukm'] . "</td>";
                 echo "<td>" . $row['nama_ukm'] . "</td>";
                 echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
+                echo "<td><a href='delete_anggota.php?id_anggota=" . $row['id_anggota'] . "' class='btn btn-danger btn-sm delete-button' onclick='return confirmDelete()'>Hapus</a></td>";
                 echo "</tr>";
             }
             ?>
@@ -335,22 +353,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-    // Function to fetch "Nama UKM" based on the selected "ID UKM"
-    function fetchNamaUKM(id_ukm) {
-        $.ajax({
-            type: "POST",
-            url: "get_nama_ukm.php", // The PHP file created in Step 1
-            data: { id_ukm: id_ukm },
-            dataType: "json",
-            success: function (data) {
-                // Update the "Nama UKM" textfield with the fetched data
-                $("#nama_ukm").val(data.nama_ukm);
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
+        function confirmDelete() {
+                return confirm("Apakah yakin ingin menghapus data anggota ini?");
             }
-        });
-    }
+
+        // Function to fetch "Nama UKM" based on the selected "ID UKM"
+        function fetchNamaUKM(id_ukm) {
+            $.ajax({
+                type: "POST",
+                url: "get_nama_ukm.php", // The PHP file created in Step 1
+                data: { id_ukm: id_ukm },
+                dataType: "json",
+                success: function (data) {
+                    // Update the "Nama UKM" textfield with the fetched data
+                    $("#nama_ukm").val(data.nama_ukm);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
 
     // Event listener for the dropdown (id_ukm)
     $("#id_ukm_dropdown").on("change", function () {

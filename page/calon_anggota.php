@@ -41,6 +41,9 @@ if (!isset($_SESSION['id_user'])) {
             border: none;
             cursor: pointer;
         }
+        th {
+        white-space: nowrap;
+    }
     </style>
 </head>
 <body>
@@ -159,7 +162,7 @@ if (!isset($_SESSION['id_user'])) {
             }
         });
     }
-    
+
     // Fungsi untuk menghapus data calabar
     function deleteData(id) {
         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {

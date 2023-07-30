@@ -187,6 +187,9 @@ $conn->close();
         border-radius: 4px;
         box-sizing: border-box;
     }
+    th {
+        white-space: nowrap;
+    }
 
     .btn {
         padding: 8px 12px;
