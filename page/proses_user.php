@@ -70,15 +70,17 @@ if (isset($_POST['submit'])) {
     // Mengambil data dari form
     $id_user = $_POST['id_user'];
     $password = $_POST['password'];
-    $nama_depan = $_POST['nama_depan'];
-    $nama_belakang = $_POST['nama_belakang'];
+    $nama_lengkap = $_POST['nama_lengkap'];
     $email = $_POST['email'];
     $no_hp = $_POST['no_hp'];
     $level = $_POST['level'];
+    $prodi = $_POST['prodi']; 
+    $semester = $_POST['semester']; 
 
     // Menyimpan data ke database
-    $sql = "INSERT INTO tab_user (id_user, password, nama_depan, nama_belakang, email, no_hp, level) VALUES ('$id_user', '$password', '$nama_depan', '$nama_belakang', '$email', '$no_hp', '$level')";
-    $result = $conn->query($sql);
+    $sql = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level, prodi, semester)
+    VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', '$prodi', $semester)";
+        $result = $conn->query($sql);
 
     if ($result) {
         // Redirect ke halaman daftar user setelah penyimpanan berhasil
@@ -201,8 +203,9 @@ if (isset($_POST['submit'])) {
         <thead>
             <tr>
                 <th>ID User</th>
-                <th>Nama Depan</th>
-                <th>Nama Belakang</th>
+                <th>Nama Lengkap</th>
+                <th>Prodi</th>
+                <th>Semester</th>
                 <th>Email</th>
                 <th>No HP</th>
                 <th>Level</th>
@@ -220,12 +223,12 @@ if (isset($_POST['submit'])) {
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . $row["id_user"] . "</td>";
-            echo "<td>" . $row["nama_depan"] . "</td>";
-            echo "<td>" . $row["nama_belakang"] . "</td>";
+            echo "<td>" . $row["nama_lengkap"] . "</td>";
+            echo "<td>" . $row["prodi"] . "</td>";
+            echo "<td>" . $row["semester"] . "</td>";
             echo "<td>" . $row["email"] . "</td>";
             echo "<td>" . $row["no_hp"] . "</td>";
-            echo "<td>" . $row["level"] . "</td>"; // Display the level's name based on the value in the $userLevels array
-
+            echo "<td>" . $row["level"] . "</td>";
             // Menambahkan kondisi jika ID user adalah "admin"
     // Update link to open edit_user.php with the user ID as a query parameter
         if ($row["id_user"] == "admin") {
@@ -297,22 +300,38 @@ if (isset($_POST['submit'])) {
             <label for="password">Password:</label>
             <div class="password-input">
                 <input type="password" class="form-control" id="password" name="password" required>
-                <i class="fas fa-eye" id="passwordToggle"></i>
+                <i class="fas fa-eye" id="passwordToggle1"></i>
             </div>
             </div>
             <div class="form-group">
                 <label for="konfirmasi_password">Konfirmasi Password:</label>
                 <div class="password-input">
                 <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password" required>
-                <i class="fas fa-eye" id="passwordToggle"></i>
+                <i class="fas fa-eye" id="passwordToggle2"></i>
             </div>
             <div class="form-group">
-                <label for="nama_depan">Nama Depan:</label>
-                <input type="text" class="form-control" id="nama_depan" name="nama_depan" required>
+                <label for="nama_lengkap">Nama Lengkap:</label>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
             </div>
             <div class="form-group">
-                <label for="nama_belakang">Nama Belakang:</label>
-                <input type="text" class="form-control" id="nama_belakang" name="nama_belakang">
+                <label for="prodi">Program Studi:</label>
+                <select id="prodi" name="prodi" class="form-control" required>
+                    <option value="" selected>Pilih Program Studi</option>
+                    <option value="Teknik Informatika">Teknik Informatika</option>
+                    <option value="Sistem Informasi">Sistem Informasi</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <select id="semester" name="semester" class="form-control" required>
+                    <option value="" selected>Pilih Semester</option>
+                    <?php
+                    for ($i = 1; $i <= 14; $i++) {
+                        echo '<option value="' . $i . '">' . $i . '</option>';
+                    }
+                    ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
@@ -337,21 +356,35 @@ if (isset($_POST['submit'])) {
     </div>
     
     <script>
-    const passwordInput = document.getElementById("password");
-    const passwordToggle = document.getElementById("passwordToggle");
+    const passwordInput1 = document.getElementById("password");
+    const passwordToggle1 = document.getElementById("passwordToggle1");
+    const passwordInput2 = document.getElementById("konfirmasi_password");
+    const passwordToggle2 = document.getElementById("passwordToggle2");
 
-    passwordToggle.addEventListener("click", function () {
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            passwordToggle.classList.remove("fa-eye");
-            passwordToggle.classList.add("fa-eye-slash");
+    passwordToggle1.addEventListener("click", function () {
+        if (passwordInput1.type === "password") {
+            passwordInput1.type = "text";
+            passwordToggle1.classList.remove("fa-eye");
+            passwordToggle1.classList.add("fa-eye-slash");
         } else {
-            passwordInput.type = "password";
-            passwordToggle.classList.remove("fa-eye-slash");
-            passwordToggle.classList.add("fa-eye");
+            passwordInput1.type = "password";
+            passwordToggle1.classList.remove("fa-eye-slash");
+            passwordToggle1.classList.add("fa-eye");
         }
     });
-</script>
+
+    passwordToggle2.addEventListener("click", function () {
+        if (passwordInput2.type === "password") {
+            passwordInput2.type = "text";
+            passwordToggle2.classList.remove("fa-eye");
+            passwordToggle2.classList.add("fa-eye-slash");
+        } else {
+            passwordInput2.type = "password";
+            passwordToggle2.classList.remove("fa-eye-slash");
+            passwordToggle2.classList.add("fa-eye");
+        }
+    });
+    </script>
 
 
     <script>

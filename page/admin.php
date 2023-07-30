@@ -52,8 +52,7 @@ if ($result) {
     $user = mysqli_fetch_assoc($result);
 
     // Menyimpan data pengguna ke dalam variabel session
-    $_SESSION['nama_depan'] = $user['nama_depan'];
-    $_SESSION['nama_belakang'] = $user['nama_belakang'];
+    $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['no_hp'] = $user['no_hp'];
 } else {
@@ -68,8 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
     $email = $_POST['email'];
-    $namaDepan = $_POST['nama_depan'];
-    $namaBelakang = $_POST['nama_belakang'];
+    $namaLengkap = $_POST['nama_lengkap'];
     $noHp = $_POST['no_hp'];
 
     // Memeriksa apakah password baru dan konfirmasi password cocok
@@ -81,8 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
         $password = mysqli_real_escape_string($conn, $password);
         $email = mysqli_real_escape_string($conn, $email);
-        $namaDepan = mysqli_real_escape_string($conn, $namaDepan);
-        $namaBelakang = mysqli_real_escape_string($conn, $namaBelakang);
+        $namaLengkap = mysqli_real_escape_string($conn, $namaLengkap);
         $noHp = mysqli_real_escape_string($conn, $noHp);
 
         // Mengecek kebenaran password lama
@@ -95,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Error: Password lama tidak cocok.";
         } else {
             // Membuat query update
-            $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_depan = '$namaDepan', nama_belakang = '$namaBelakang', no_hp = '$noHp' WHERE id_user = '$userId'";
+            $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_lengkap = '$namaLengkap', no_hp = '$noHp' WHERE id_user = '$userId'";
 
             // Mengeksekusi query update
             $updateResult = mysqli_query($conn, $query);
@@ -105,8 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Mengupdate data di dalam session
                 $_SESSION['password'] = $password;
                 $_SESSION['email'] = $email;
-                $_SESSION['nama_depan'] = $namaDepan;
-                $_SESSION['nama_belakang'] = $namaBelakang;
+                $_SESSION['nama_lengkap'] = $namaLengkap;
                 $_SESSION['no_hp'] = $noHp;
 
                 // Tampilkan snackbar jika data berhasil diubah
@@ -264,8 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <img src="../assets/images/sanji.jpg" alt="Foto Profil" class="profil-picture">
     </div>
     <div class="profile-details">
-        <p><span class="label">Nama Depan:</span> <span class="value"><?php echo $_SESSION['nama_depan']; ?></span></p>
-        <p><span class="label">Nama Belakang:</span> <span class="value"><?php echo $_SESSION['nama_belakang']; ?></span></p>
+        <p><span class="label">Nama:</span> <span class="value"><?php echo $_SESSION['nama_lengkap']; ?></span></p>
         <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
         <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $_SESSION['no_hp']; ?></span></p>
         <!-- Add the "Update Data" button here -->

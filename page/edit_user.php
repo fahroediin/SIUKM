@@ -33,14 +33,15 @@ if (isset($_POST['update'])) {
     // Memeriksa apakah parameter id_user telah diberikan
     if (isset($_POST['id_user'])) {
         $id_user = $_POST['id_user'];
-        $nama_depan = $_POST['nama_depan'];
-        $nama_belakang = $_POST['nama_belakang'];
+        $nama_lengkap = $_POST['nama_lengkap'];
+        $prodi = $_POST['prodi'];
+        $semester = $_POST['semester'];
         $email = $_POST['email'];
         $no_hp = $_POST['no_hp'];
         $level = $_POST['level'];
 
         // Update user data in the database
-        $sql = "UPDATE tab_user SET nama_depan = '$nama_depan', nama_belakang = '$nama_belakang', email = '$email', no_hp = '$no_hp', level = '$level' WHERE id_user = '$id_user'";
+        $sql = "UPDATE tab_user SET nama_lengkap = '$nama_lengkap', prodi = '$prodi', semester = '$semester', email = '$email', no_hp = '$no_hp', level = '$level' WHERE id_user = '$id_user'";
         $result = $conn->query($sql);
 
         if ($result) {
@@ -179,12 +180,27 @@ if (isset($_POST['update'])) {
         <form method="POST" onsubmit="return validateForm();">
             <input type="hidden" name="id_user" value="<?php echo $row['id_user']; ?>">
             <div class="form-group">
-                <label for="nama_depan">Nama Depan:</label>
-                <input type="text" class="form-control" id="nama_depan" name="nama_depan" value="<?php echo $row['nama_depan']; ?>" required>
+                <label for="nama_lengkap">Nama Lengkap:</label>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="<?php echo $row['nama_lengkap']; ?>" required>
             </div>
             <div class="form-group">
-                <label for="nama_belakang">Nama Belakang:</label>
-                <input type="text" class="form-control" id="nama_belakang" name="nama_belakang" value="<?php echo $row['nama_belakang']; ?>">
+                <label for="prodi">Program Studi:</label>
+                <select id="prodi" name="prodi" class="form-control" required>
+                    <option value="" <?php if ($row['prodi'] === '') echo 'selected'; ?>>Pilih Program Studi</option>
+                    <option value="Teknik Informatika" <?php if ($row['prodi'] === 'Teknik Informatika') echo 'selected'; ?>>Teknik Informatika</option>
+                    <option value="Sistem Informasi" <?php if ($row['prodi'] === 'Sistem Informasi') echo 'selected'; ?>>Sistem Informasi</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <select id="semester" name="semester" class="form-control" required>
+                    <option value="" <?php if ($row['semester'] === '') echo 'selected'; ?>>Pilih Semester</option>
+                    <?php
+                    for ($i = 1; $i <= 14; $i++) {
+                        echo '<option value="' . $i . '" ' . ($row['semester'] == $i ? 'selected' : '') . '>' . $i . '</option>';
+                    }
+                    ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
@@ -263,14 +279,15 @@ if (isset($_POST['update'])) {
         cells[0].innerHTML = '<input type="text" class="form-control" value="' + cells[0].textContent + '">';
         cells[1].innerHTML = '<input type="text" class="form-control" value="' + cells[1].textContent + '">';
         cells[2].innerHTML = '<input type="text" class="form-control" value="' + cells[2].textContent + '">';
-        cells[3].innerHTML = '<input type="text" class="form-control" value="' + cells[3].textContent + '">';
-        cells[4].innerHTML = '<input type="text" class="form-control" value="' + cells[4].textContent + '">';
-        cells[5].innerHTML = '<select class="form-control">' +
-                                '<option value="3" ' + (cells[5].textContent === 'User' ? 'selected' : '') + '>User</option>' +
-                                '<option value="2" ' + (cells[5].textContent === 'Kemahasiswaan' ? 'selected' : '') + '>Kemahasiswaan</option>' +
-                                '<option value="1" ' + (cells[5].textContent === 'Admin' ? 'selected' : '') + '>Admin</option>' +
+        cells[3].innerHTML = '<input type="text" class="form-control" value="' + cells[1].textContent + '">';
+        cells[4].innerHTML = '<input type="text" class="form-control" value="' + cells[2].textContent + '">';
+        cells[5].innerHTML = '<input type="text" class="form-control" value="' + cells[3].textContent + '">';
+        cells[6].innerHTML = '<select class="form-control">' +
+                                '<option value="3" ' + (cells[4].textContent === 'User' ? 'selected' : '') + '>User</option>' +
+                                '<option value="2" ' + (cells[4].textContent === 'Kemahasiswaan' ? 'selected' : '') + '>Kemahasiswaan</option>' +
+                                '<option value="1" ' + (cells[4].textContent === 'Admin' ? 'selected' : '') + '>Admin</option>' +
                              '</select>';
-        cells[6].innerHTML = '<button class="btn btn-primary btn-sm" onclick="updateUser(this)">Update</button> ' +
+        cells[7].innerHTML = '<button class="btn btn-primary btn-sm" onclick="updateUser(this)">Update</button> ' +
                              '<button class="btn btn-secondary btn-sm" onclick="cancelEdit(this)">Cancel</button>';
     }
 
@@ -298,16 +315,17 @@ if (isset($_POST['update'])) {
 
         // Get the updated values from the input fields
         const idUser = cells[0].querySelector('input').value;
-        const namaDepan = cells[1].querySelector('input').value;
-        const namaBelakang = cells[2].querySelector('input').value;
-        const email = cells[3].querySelector('input').value;
-        const noHp = cells[4].querySelector('input').value;
-        const level = cells[5].querySelector('select').value;
+        const namaLengkap = cells[1].querySelector('input').value;
+        const prodi = cells[2].querySelector('input').value;
+        const semester = cells[3].querySelector('input').value;
+        const email = cells[4].querySelector('input').value;
+        const noHp = cells[5].querySelector('input').value;
+        const level = cells[6].querySelector('select').value;
 
         // Perform an AJAX request to update the user data in the database
         fetch('edit_user.php', {
             method: 'POST',
-            body: JSON.stringify({ id_user: idUser, nama_depan: namaDepan, nama_belakang: namaBelakang, email: email, no_hp: noHp, level: level }),
+            body: JSON.stringify({ id_user: idUser, nama_lengkap: namaLengkap, prodi, semester, email: email, no_hp: noHp, level: level }),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -319,11 +337,12 @@ if (isset($_POST['update'])) {
             // Exit edit mode and update the row with the new data
             cancelEdit(row);
             cells[0].textContent = idUser;
-            cells[1].textContent = namaDepan;
-            cells[2].textContent = namaBelakang;
-            cells[3].textContent = email;
-            cells[4].textContent = noHp;
-            cells[5].textContent = level === '3' ? 'User' : level === '2' ? 'Kemahasiswaan' : 'Admin';
+            cells[1].textContent = namaLengkap;
+            cells[2].textContent = prodi;
+            cells[3].textContent = semester;
+            cells[4].textContent = email;
+            cells[5].textContent = noHp;
+            cells[6].textContent = level === '3' ? 'User' : level === '2' ? 'Kemahasiswaan' : 'Admin';
         })
         .catch(error => {
             // Handle any errors if they occur

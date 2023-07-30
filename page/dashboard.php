@@ -29,8 +29,7 @@ if ($result) {
     $user = mysqli_fetch_assoc($result);
 
     // Menyimpan data pengguna ke dalam variabel session
-    $_SESSION['nama_depan'] = $user['nama_depan'];
-    $_SESSION['nama_belakang'] = $user['nama_belakang'];
+    $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['no_hp'] = $user['no_hp'];
 } else {
@@ -110,8 +109,7 @@ if (isset($_GET['logout'])) {
         <img src="../assets/images/sanji.jpg" alt="Foto Profil" class="profil-picture">
     </div>
     <div class="profile-details">
-        <p><span class="label">Nama Depan:</span> <span class="value"><?php echo $_SESSION['nama_depan']; ?></span></p>
-        <p><span class="label">Nama Belakang:</span> <span class="value"><?php echo $_SESSION['nama_belakang']; ?></span></p>
+        <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $_SESSION['nama_lengkap']; ?></span></p>
         <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
         <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $_SESSION['no_hp']; ?></span></p>
     </div>

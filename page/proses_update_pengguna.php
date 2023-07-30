@@ -29,8 +29,7 @@ if ($result) {
 
     // Menyimpan data pengguna ke dalam variabel session
     $_SESSION['id_user'] = $user['id_user']; // Perubahan: Menyimpan ID User
-    $_SESSION['nama_depan'] = $user['nama_depan'];
-    $_SESSION['nama_belakang'] = $user['nama_belakang'];
+    $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['no_hp'] = $user['no_hp'];
 } else {
@@ -60,20 +59,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Mengambil data dari form
     $id_user = $_POST['id_user'];
     $password = $_POST['password'];
-    $nama_depan = $_POST['nama_depan'];
-    $nama_belakang = $_POST['nama_belakang'];
+    $nama_lengkap = $_POST['nama_lengkap'];
     $email = $_POST['email'];
     $no_hp = $_POST['no_hp'];
 
     // Update data pengguna di tabel tab_user
-    $query = "UPDATE tab_user SET password='$password', nama_depan='$nama_depan', nama_belakang='$nama_belakang', email='$email', no_hp='$no_hp' WHERE id_user='$id_user'";
+    $query = "UPDATE tab_user SET password='$password', nama_lengkap='$nama_lengkap', email='$email', no_hp='$no_hp' WHERE id_user='$id_user'";
     $updateResult = mysqli_query($conn, $query);
 
     // Memeriksa apakah query update berhasil dieksekusi
     if ($updateResult) {
         // Mengupdate data pengguna di session
-        $_SESSION['nama_depan'] = $nama_depan;
-        $_SESSION['nama_belakang'] = $nama_belakang;
+        $_SESSION['nama_lengkap'] = $nama_lengkap;
         $_SESSION['email'] = $email;
         $_SESSION['no_hp'] = $no_hp;
 
@@ -92,8 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
     $email = $_POST['email'];
-    $namaDepan = $_POST['nama_depan'];
-    $namaBelakang = $_POST['nama_belakang'];
+    $namaLengkap = $_POST['nama_lengkap'];
     $noHp = $_POST['no_hp'];
 
     // Memeriksa apakah password baru dan konfirmasi password cocok
@@ -105,8 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
         $password = mysqli_real_escape_string($conn, $password);
         $email = mysqli_real_escape_string($conn, $email);
-        $namaDepan = mysqli_real_escape_string($conn, $namaDepan);
-        $namaBelakang = mysqli_real_escape_string($conn, $namaBelakang);
+        $namaLengkap = mysqli_real_escape_string($conn, $namaLengkap);
         $noHp = mysqli_real_escape_string($conn, $noHp);
 
         // Mengecek kebenaran password lama
@@ -119,7 +114,7 @@ if (mysqli_num_rows($result) === 0) {
     echo "<script>alert('Password lama salah.');</script>";
 } else {
     // Membuat query update
-    $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_depan = '$namaDepan', nama_belakang = '$namaBelakang', no_hp = '$noHp' WHERE id_user = '$userId'";
+    $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_lengkap = '$namaLengkap', no_hp = '$noHp' WHERE id_user = '$userId'";
 
     // Mengeksekusi query update
     $updateResult = mysqli_query($conn, $query);
@@ -129,8 +124,7 @@ if (mysqli_num_rows($result) === 0) {
         // Mengupdate data di dalam session
         $_SESSION['password'] = $password;
         $_SESSION['email'] = $email;
-        $_SESSION['nama_depan'] = $namaDepan;
-        $_SESSION['nama_belakang'] = $namaBelakang;
+        $_SESSION['nama_lengkap'] = $namaLengkap;
         $_SESSION['no_hp'] = $noHp;
 
         // Tampilkan snackbar jika data berhasil diubah
@@ -281,12 +275,8 @@ if (mysqli_num_rows($result) === 0) {
             <input type="email" class="form-control" id="email" name="email" required value="<?php echo $_SESSION['email']; ?>">
         </div>
         <div class="form-group">
-            <label for="nama_depan">Nama Depan:</label>
-            <input type="text" class="form-control" id="nama_depan" name="nama_depan" required value="<?php echo $_SESSION['nama_depan']; ?>">
-        </div>
-        <div class="form-group">
-            <label for="nama_belakang">Nama Belakang:</label>
-            <input type="text" class="form-control" id="nama_belakang" name="nama_belakang" required value="<?php echo $_SESSION['nama_belakang']; ?>">
+            <label for="nama_lengkap">Nama Lengkap:</label>
+            <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required value="<?php echo $_SESSION['nama_lengkap']; ?>">
         </div>
         <div class="form-group">
             <label for="no_hp">Nomor Telepon:</label>

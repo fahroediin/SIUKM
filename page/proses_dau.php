@@ -34,7 +34,7 @@ if (isset($_GET['logout'])) {
 $active_page = 'data_anggota_ukm';
 
 // Memperoleh data anggota UKM dari tabel tab_dau
-$query = "SELECT id_anggota, id_user, nama_depan, nama_belakang, no_hp, email, prodi, semester, pasfoto, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
+$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
 $result = mysqli_query($conn, $query);
 
 // Memeriksa apakah form telah disubmit
@@ -42,18 +42,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil nilai-nilai dari form
     $id_anggota = $_POST["id_anggota"];
     $id_user = $_POST["id_user"];
-    $nama_depan = $_POST["nama_depan"];
-    $nama_belakang = $_POST["nama_belakang"];
+    $nama_lengkap = $_POST["nama_lengkap"];
     $no_hp = $_POST["no_hp"];
     $email = $_POST["email"];
     $prodi = $_POST["prodi"];
     $semester = $_POST["semester"];
     $id_ukm = $_POST["id_ukm"];
+    $nama_ukm = $_POST["nama_ukm"];
     $sjk_bergabung = $_POST["sjk_bergabung"];
+    $tahun_bergabung = substr($_POST["sjk_bergabung"], 2, 2); // Ambil 2 digit terakhir tahun
 
+    // Generate the ID Anggota based on the rules
+    $id_anggota = substr($id_user, 0, 4) . substr($id_ukm, 0, 3);
+
+    // Determine the abbreviation for the program based on the prodi value
+    if ($prodi == "Teknik Informatika") {
+        $id_anggota .= "ti";
+    } elseif ($prodi == "Sistem Informasi") {
+        $id_anggota .= "si";
+    }
+
+    // Append the last 2 digits of the year
+    $id_anggota .= $tahun_bergabung;
     // Simpan data ke database
-    $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_depan, nama_belakang, no_hp, email, prodi, semester, id_ukm, sjk_bergabung) 
-            VALUES ('$id_anggota', '$id_user', '$nama_depan', '$nama_belakang', '$no_hp', '$email', '$prodi', '$semester', '$id_ukm', '$sjk_bergabung')";
+    $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, id_ukm, nama_ukm, sjk_bergabung) 
+    VALUES ('$id_anggota', '$id_user', '$nama_lengkap', '$no_hp', '$email', '$prodi', '$semester', '$id_ukm', '$nama_ukm', '$sjk_bergabung')";
+
 
     if (mysqli_query($conn, $sql)) {
         // Redirect ke halaman data anggota setelah penyimpanan berhasil
@@ -137,8 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <tr>
                 <th>ID Anggota</th>
                 <th>ID User</th>
-                <th>Nama Depan</th>
-                <th>Nama Belakang</th>
+                <th>Nama Lengkap</th>
                 <th>No. HP</th>
                 <th>Email</th>
                 <th>Program Studi</th>
@@ -146,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <th>Pasfoto</th>
                 <th>ID UKM</th>
                 <th>Nama UKM</th>
-                <th>SJK Bergabung</th>
+                <th>Bergabung</th>
             </tr>
         </thead>
         <tbody>
@@ -156,8 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<tr>";
                 echo "<td>" . $row['id_anggota'] . "</td>";
                 echo "<td>" . $row['id_user'] . "</td>";
-                echo "<td>" . $row['nama_depan'] . "</td>";
-                echo "<td>" . $row['nama_belakang'] . "</td>";
+                echo "<td>" . $row['nama_lengkap'] . "</td>";
                 echo "<td>" . $row['no_hp'] . "</td>";
                 echo "<td>" . $row['email'] . "</td>";
                 echo "<td>" . $row['prodi'] . "</td>";
@@ -165,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<td><img src='" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
                 echo "<td>" . $row['id_ukm'] . "</td>";
                 echo "<td>" . $row['nama_ukm'] . "</td>";
-                echo "<td>" . $row['sjk_bergabung'] . "</td>";
+                echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
                 echo "</tr>";
             }
             ?>
@@ -179,51 +191,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form-row">
                     <div class="col-md-6">
                         <label for="id_anggota">ID Anggota:</label>
-                        <input type="text" class="form-control" name="id_anggota" required>
+                        <input type="text" class="form-control" placeholder="Akan terisi secara otomatis" name="id_anggota" readonly>
                     </div>
                     <div class="col-md-6">
                     <label for="id_user">ID User:</label>
                     <select class="form-control" name="id_user" id="id_user_dropdown" required>
-    <option value="">------------Pilih ID User------------</option>
-    <?php
-    // Fetch data from the tab_user table and populate the dropdown options
-    $userQuery = "SELECT id_user FROM tab_user"; // Select only the id_user column
-    $userResult = mysqli_query($conn, $userQuery);
+            <option value="">------------Pilih ID User------------</option>
+            <?php
+            // Fetch data from the tab_user table and populate the dropdown options
+            $userQuery = "SELECT id_user FROM tab_user"; // Select only the id_user column
+            $userResult = mysqli_query($conn, $userQuery);
 
-    while ($userRow = mysqli_fetch_assoc($userResult)) {
-        // Use a regular expression to check if the id_user contains only digits (numbers)
-        if (preg_match('/^\d+$/', $userRow['id_user'])) {
-            echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . '</option>';
-        }
-    }
-    ?>
-</select>
+            while ($userRow = mysqli_fetch_assoc($userResult)) {
+                // Use a regular expression to check if the id_user contains only digits (numbers)
+                if (preg_match('/^\d+$/', $userRow['id_user'])) {
+                    echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . '</option>';
+                }
+            }
+            ?>
+        </select>
 
-<script>
-    // Event listener for the dropdown (id_user)
-    document.getElementById("id_user_dropdown").addEventListener("change", function () {
-        var selectedUserId = this.value;
-        var namaDepanField = document.getElementsByName("nama_depan")[0];
-        var namaBelakangField = document.getElementsByName("nama_belakang")[0];
-        var noHpField = document.getElementsByName("no_hp")[0];
-        var emailField = document.getElementsByName("email")[0];
+        <script>
+            // Event listener for the dropdown (id_user)
+            document.getElementById("id_user_dropdown").addEventListener("change", function () {
+                var selectedUserId = this.value;
+                var namaLengkapField = document.getElementsByName("nama_lengkap")[0];
+                var prodiField = document.getElementsByName("prodi")[0];
+                var semesterField = document.getElementsByName("semester")[0];
+                var noHpField = document.getElementsByName("no_hp")[0];
+                var emailField = document.getElementsByName("email")[0];
 
-        if (selectedUserId === "") {
-            // Reset the text fields
-            namaDepanField.value = "";
-            namaBelakangField.value = "";
-            noHpField.value = "";
-            emailField.value = "";
+                if (selectedUserId === "") {
+                    // Reset the text fields
+                    namaLengkapField.value = "";
+                    prodiField.disabled = "";
+                    semesterField.disabled = "";
+                    noHpField.value = "";
+                    emailField.value = "";
 
-            // Disable the text fields
-            namaDepanField.disabled = true;
-            namaBelakangField.disabled = true;
-            noHpField.disabled = true;
-            emailField.disabled = true;
-        } else {
-        }
-    });
-</script>
+                    // Disable the text fields
+                    namaLengkapField.disabled = true;
+                    prodiField.disabled = true;
+                    semesterField.disabled = true;
+                    noHpField.disabled = true;
+                    emailField.disabled = true;
+                } else {
+                }
+            });
+        </script>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -237,8 +252,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     dataType: "json",
                     success: function (data) {
                         // Update the text fields with the fetched data
-                        $("input[name='nama_depan']").val(data.nama_depan);
-                        $("input[name='nama_belakang']").val(data.nama_belakang);
+                        $("input[name='nama_lengkap']").val(data.nama_lengkap);
+                        $("input[name='prodi']").val(data.prodi);
+                        $("input[name='semester']").val(data.semester);
                         $("input[name='no_hp']").val(data.no_hp);
                         $("input[name='email']").val(data.email);
                     },
@@ -258,78 +274,89 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="form-row">
         <div class="col-md-6">
-            <label for="nama_depan">Nama Depan:</label>
-            <input type="text" class="form-control" name="nama_depan" required readonly>
+            <label for="nama_lengkap">Nama Lengkap:</label>
+            <input type="text" class="form-control" name="nama_lengkap" required readonly>
         </div>
         <div class="col-md-6">
-            <label for="nama_belakang">Nama Belakang:</label>
-            <input type="text" class="form-control" name="nama_belakang" readonly>
-        </div>
-        </div>
-
-
-        <div class="form-row">
-            <div class="col-md-6">
                 <label for="no_hp">No. HP:</label>
                 <input type="text" class="form-control" name="no_hp" required readonly>
             </div>
+        </div>
+
+
+        <div class="form-row">
+                <div class="col-md-6">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" name="email" required readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="prodi">Prodi:</label>
+                    <input type="prodi" class="form-control" name="prodi" required readonly>
+                </div>
+            </div>
+
+                <div class="form-row">
             <div class="col-md-6">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" name="email" required readonly>
+                <label for="semester">Semester:</label>
+                <input type="semester" class="form-control" name="semester" required readonly>
             </div>
-        </div>
-
-
-        <div class="form-row">
-        <div class="col-md-6">
-            <label for="prodi">Program Studi:</label>
-            <select class="form-control" name="prodi" required>
-                <option value="">Pilih Program Studi</option>
-                <option value="Teknik Informatika">Teknik Informatika</option>
-                <option value="Sistem Informasi">Sistem Informasi</option>
-            </select>
-        </div>
-        <div class="col-md-6">
-            <label for="semester">Semester:</label>
-            <select class="form-control" name="semester" required>
-                <option value="">Pilih Semester</option>
-                <?php
-                // Generate options for semester from 1 to 14
-                for ($i = 1; $i <= 14; $i++) {
-                    echo '<option value="' . $i . '">' . $i . '</option>';
-                }
-                ?>
-            </select>
+            <div class="col-md-6">
+                <label for="sjk_bergabung">SJK Bergabung:</label>
+                <input type="date" class="form-control" id="sjk_bergabung"  name="sjk_bergabung" required>
             </div>
-        </div>
-
-
-        <div class="form-row">
-        <div class="col-md-6">
+                </div>
+                <div class="form-row">
+                <div class="col-md-6">
         <label for="id_ukm">ID UKM:</label>
-        <select class="form-control" name="id_ukm" required>
+        <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
             <option value="">Pilih ID UKM</option>
-        <?php
-        // Fetch data from the tab_ukm table and populate the dropdown options
-        $ukmQuery = "SELECT id_ukm FROM tab_ukm";
-        $ukmResult = mysqli_query($conn, $ukmQuery);
+            <?php
+            // Fetch data from the tab_ukm table and populate the dropdown options
+            $ukmQuery = "SELECT id_ukm FROM tab_ukm";
+            $ukmResult = mysqli_query($conn, $ukmQuery);
 
-        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
-            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
-        }
-        ?>
-    </select>
-</div>
-
-            <div class="col-md-6">
-        <label for="sjk_bergabung">SJK Bergabung:</label>
-        <input type="datetime-local" class="form-control" name="sjk_bergabung" required>
+            while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+                echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
+            }
+            ?>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="nama_ukm">Nama UKM:</label>
+        <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" required readonly>
     </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Simpan Data</button>
-    </form>
-</div>
 
+        <div class="form-row">
+            <button type="submit" class="btn btn-primary">Tambah Anggota</button>
+        </div>
+        </form>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+    // Function to fetch "Nama UKM" based on the selected "ID UKM"
+    function fetchNamaUKM(id_ukm) {
+        $.ajax({
+            type: "POST",
+            url: "get_nama_ukm.php", // The PHP file created in Step 1
+            data: { id_ukm: id_ukm },
+            dataType: "json",
+            success: function (data) {
+                // Update the "Nama UKM" textfield with the fetched data
+                $("#nama_ukm").val(data.nama_ukm);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    // Event listener for the dropdown (id_ukm)
+    $("#id_ukm_dropdown").on("change", function () {
+        var selectedUKMId = $(this).val();
+        fetchNamaUKM(selectedUKMId);
+    });
+</script>
 </body>
 </html>

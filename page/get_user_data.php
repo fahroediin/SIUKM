@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id_user"])) {
     $id_user = $_POST["id_user"];
 
     // Fetch user data based on the selected id_user
-    $query = "SELECT nama_depan, nama_belakang, no_hp, email FROM tab_user WHERE id_user = $id_user";
+    $query = "SELECT nama_lengkap, no_hp, email, prodi, semester FROM tab_user WHERE id_user = $id_user";
     $result = mysqli_query($conn, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {

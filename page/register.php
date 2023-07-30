@@ -13,17 +13,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mendapatkan data dari form
     $id_user = $_POST['id_user'];
     $password = $_POST['password'];
-    $nama_depan = $_POST['nama_depan'];
-    $nama_belakang = $_POST['nama_belakang'];
+    $confirmPassword = $_POST['confirmPassword']; // Add this line to get the value of "Konfirmasi Password"
+    $nama_lengkap = $_POST['nama_lengkap'];
     $email = $_POST['email'];
     $no_hp = $_POST['no_hp'];
 
-    // Memeriksa apakah password dan konfirmasi password cocok
-    $password = $_POST['password'];
-    $confirmPassword = $_POST['confirmPassword'];
+    // Validate email
+    if (empty($email)) {
+        $error = "Email harus diisi.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Format email tidak benar. Masukkan email yang valid.";
+    } else {
+        // Other validation and database operations here
+    }
 
+    // Memeriksa apakah password dan konfirmasi password cocok
     if ($password !== $confirmPassword) {
-        $error = "Password dan konfirmasi password tidak cocok";
+        $_SESSION['form_data'] = array(
+            'id_user' => $id_user,
+            'nama_lengkap' => $nama_lengkap,
+            'email' => $email,
+            'no_hp' => $no_hp
+        );
+        $_SESSION['error_message'] = "Password dan konfirmasi password tidak cocok";
     } else {
         // Memeriksa apakah ID User (NIM) sudah digunakan
         $query = "SELECT * FROM tab_user WHERE id_user = '$id_user'";
@@ -32,11 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "ID User (NIM) sudah digunakan. Silakan gunakan ID User (NIM) lain.";
         } else {
             // Memasukkan data pengguna ke dalam tabel tab_user
-            $query = "INSERT INTO tab_user (id_user, password, nama_depan, nama_belakang, email, no_hp, level) VALUES ('$id_user', '$password', '$nama_depan', '$nama_belakang', '$email', '$no_hp', '3')";
+            $query = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level) VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '3')";
             if (mysqli_query($conn, $query)) {
                 // Pendaftaran berhasil, simpan session dan redirect ke beranda
                 $_SESSION['id_user'] = $id_user;
-                $_SESSION['nama_depan'] = $nama_depan;
+                $_SESSION['nama_lengkap'] = $nama_lengkap;
                 $_SESSION['level'] = '3';
                 header("Location: beranda.php");
                 exit();
@@ -120,10 +132,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Registrasi Pengguna</h1>
 
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <div>
-            <label for="id_user">ID User (NIM):</label>
-            <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)">
-        </div>
+    <div>
+        <label for="id_user">ID User (NIM):</label>
+        <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validateIDUser()">
+    </div>
         <div>
             <label for="password">Password:</label>
             <input type="text" id="password" name="password" required placeholder="Masukkan password">
@@ -131,14 +143,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div>
             <label for="confirmPassword">Konfirmasi Password:</label>
             <input type="text" id="confirmPassword" name="confirmPassword" required placeholder="Ulangi password">
+            <?php if ($error && $password !== $confirmPassword) : ?>
+                <p class="error-message">Password dan Konfirmasi Password tidak sesuai.</p>
+            <?php endif; ?>
         </div>
         <div>
-            <label for="nama_depan">Nama Depan:</label>
-            <input type="text" id="nama_depan" name="nama_depan" required placeholder="Masukkan Nama Depan">
-        </div>
-        <div>
-            <label for="nama_belakang">Nama Belakang:</label>
-            <input type="text" id="nama_belakang" name="nama_belakang" placeholder="Masukkan Nama Belakang">
+            <label for="nama_lengkap">Nama Lengkap:</label>
+            <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Masukkan Nama Lengkap">
         </div>
         <div>
             <label for="email">Email:</label>
@@ -173,6 +184,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 snackbar.className = snackbar.className.replace("show", "");
             }, 3000);
         }
+        function validateIDUser() {
+        var idUserInput = document.getElementById('id_user');
+        var idUserValue = idUserInput.value.trim();
+        var numericRegex = /^[0-9]+$/;
+
+        if (idUserValue === '') {
+            idUserInput.setCustomValidity('ID User (NIM) harus diisi.');
+        } else if (!numericRegex.test(idUserValue)) {
+            idUserInput.setCustomValidity('ID User (NIM) hanya dapat diisi dengan angka.');
+        } else if (idUserValue.length > 11) {
+            idUserInput.setCustomValidity('ID User (NIM) maksimal 11 digit.');
+        } else {
+            idUserInput.setCustomValidity('');
+        }
+    }
+      // Set focus to the appropriate field on page load
+      window.onload = function() {
+            <?php
+            if (isset($_POST['confirmPassword']) && $password !== $confirmPassword) {
+                echo 'document.getElementById("confirmPassword").focus();';
+            } elseif (isset($_POST['email']) && (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL))) {
+                echo 'document.getElementById("email").focus();';
+            }
+            ?>
+        };
+
+    // Check if there is any form data to populate
+    <?php if (isset($_SESSION['form_data'])) : ?>
+        var formData = <?php echo json_encode($_SESSION['form_data']); ?>;
+        document.getElementById("id_user").value = formData.id_user;
+        document.getElementById("nama_lengkap").value = formData.nama_lengkap;
+        document.getElementById("email").value = formData.email;
+        document.getElementById("no_hp").value = formData.no_hp;
+        <?php unset($_SESSION['form_data']); ?>
+    <?php endif; ?>
     </script>
 
     <?php if (isset($_SESSION['registration_success'])) : ?>
