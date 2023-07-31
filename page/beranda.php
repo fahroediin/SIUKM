@@ -10,7 +10,7 @@ error_reporting(0);
 
 
 // Mendapatkan nama depan dan level dari session
-$nama_depan = $_SESSION["nama_lengkap"];
+$nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 
 
@@ -80,13 +80,13 @@ $level = $_SESSION["level"];
 					// Jika sudah login, cek level pengguna
 					if ($_SESSION['level'] == "3") {
 						// Jika level 3, arahkan ke halaman dashboard.php
-						echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					} elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
 						// Jika level 1 atau admin, arahkan ke halaman admin.php
-						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					} elseif ($_SESSION['level'] == "2") {
 						// Jika level 2, arahkan ke halaman kemahasiswaan.php
-						echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					}
 				}
 			?>
