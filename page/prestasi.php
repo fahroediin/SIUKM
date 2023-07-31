@@ -149,7 +149,7 @@ $result = mysqli_query($conn, $query);
                 echo "<td>" . $no . "</td>";
                 echo "<td>" . $row['nama_prestasi'] . "</td>";
                 echo "<td>" . $row['penyelenggara'] . "</td>";
-                echo "<td>" . $row['tgl_prestasi'] . "</td>";
+                echo "<td>" . date("d-m-Y", strtotime($row['tgl_prestasi'])) . "</td>";
                 echo "<td>" . $row['nama_ukm'] . "</td>";
                 if ($level == 'admin') {
                     echo "<td><a href='edit_prestasi.php?id=" . $row['id_prestasi'] . "'>Edit</a> | <a href='hapus_prestasi.php?id=" . $row['id_prestasi'] . "' onclick='return confirm(\"Apakah Anda yakin ingin menghapus prestasi ini?\")'>Hapus</a></td>";

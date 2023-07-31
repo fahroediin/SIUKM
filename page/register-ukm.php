@@ -23,13 +23,61 @@ $result = mysqli_query($conn, $query);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form
     $id_user = $_POST['id_user'];
-}
+    $nama_lengkap = $_POST['nama_lengkap'];
+    $nim = $_POST['nim'];
+    $semester = $_POST['semester'];
+    $prodi = $_POST['prodi'];
+    $id_ukm = $_POST['id_ukm'];
+    $nama_ukm = $_POST['nama_ukm'];
+    $email = $_POST['email'];
+    $no_hp = $_POST['no_hp'];
+    $pasfoto = $_POST['pasfoto'];
+    $foto_ktm = $_POST['foto_ktm'];
+    $alasan = $_POST['alasan'];
 
-// Retrieve the nama_depan and nama_belakang values from the tab_user table
-$row = mysqli_fetch_assoc($result);
-$nama_depan = $row['nama_depan'];
-$nama_belakang = $row['nama_belakang'];
+    // Validasi NIM
+    if (strlen($nim) < 9) {
+        // Jika NIM kurang dari 9 digit angka, tampilkan pesan error
+        echo '<script>alert("NIM harus terdiri dari minimal 9 digit angka")</script>';
+        // Redirect kembali ke halaman form pendaftaran
+        header("Location: register-ukm.php");
+        echo '<script>showSnackbar();</script>';
+        exit();
+    }
 
+    // Generate 4 digit angka acak
+    $randomDigits = rand(1000, 9999);
+
+    // Menggabungkan NIM dengan angka acak
+    $id_calabar = $nim . $randomDigits;
+
+    // Menyimpan data pendaftaran ke tabel tab_pacab
+    $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+           VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+
+    // Menjalankan query
+    if (mysqli_query($conn, $query)) {
+        // Pendaftaran berhasil, simpan id_calabar ke dalam session
+        $_SESSION['id_calabar'] = $id_calabar;
+        echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
+        // Show the alert message
+        echo '<script>showSnackbar();</script>';
+        // Redirect ke halaman test-calabar.php
+        header("Location: test-calabar.php");
+        exit();
+    } else {
+        echo "Error: " . $query . "<br>" . mysqli_error($conn);
+    }
+
+    // Menutup koneksi database
+    mysqli_close($conn);
+} else {
+    // Retrieve the nama_depan and nama_belakang values from the tab_user table
+    $row = mysqli_fetch_assoc($result);
+    $nama_lengkap = $row['nama_lengkap'];
+
+    // Menampilkan nilai nama_lengkap ke dalam form field
+    $nama_lengkap_value = $nama_lengkap;
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result = mysqli_query($conn, $query);
@@ -49,8 +97,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Mengambil data dari form
   $id_user = $_POST['id_user'];
-  $nama_depan = $_POST['nama_depan'];
-  $nama_belakang = $_POST['nama_belakang'];
+  $nama_lengkap = $_POST['nama_lengkap'];
   $nim = $_POST['nim'];
   $semester = $_POST['semester'];
   $prodi = $_POST['prodi'];
@@ -79,8 +126,8 @@ if (strlen($nim) < 9) {
   $id_calabar = $nim . $randomDigits;
 
   // Menyimpan data pendaftaran ke tabel tab_pacab
-  $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_depan, nama_belakang, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-           VALUES ('$id_calabar','$id_user', '$nama_depan', '$nama_belakang', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+  $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+           VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
 
   // Menjalankan query
   if (mysqli_query($conn, $query)) {
@@ -98,6 +145,7 @@ if (strlen($nim) < 9) {
 
   // Menutup koneksi database
   mysqli_close($conn);
+}
 }
 ?>
 <!DOCTYPE html>
@@ -404,11 +452,11 @@ button[type=reset]:hover {
 						echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
 					}
 				}
-			?>
-      </li>
-    </ul>
-  </div>
-</nav>
+          ?>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
   <div class="container" style="margin-top: 75px;">
   <h1>Form Pendaftaran Anggota UKM Baru</h1>
@@ -419,12 +467,8 @@ button[type=reset]:hover {
           <input type="text" name="id_user" value="<?php echo $_SESSION['id_user']; ?>" readonly>
                 </div>
                 <div>
-                    <label for="nama_depan">Nama Depan:</label>
-                    <input type="text" name="nama_depan" value="<?php echo $nama_depan; ?>" required readonly>
-                <div>
-                    <label for="nama_belakang">Nama Belakang:</label>
-                    <input type="text" name="nama_belakang" value="<?php echo $nama_belakang; ?>" readonly>
-                </div>
+                    <label for="nama_lengkap">Nama Lengkap:</label>
+                    <input type="text" name="nama_lengkap" value="<?php echo $nama_lengkap; ?>" required readonly>
                 <div>
                     <label for="nim">Masukkan NIM:</label>
                     <input type="text" id="nim" name="nim" required placeholder="Masukkan NIM">

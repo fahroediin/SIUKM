@@ -49,8 +49,9 @@ if (isset($_POST['submit'])) {
     $id_ukm = $_POST['id_ukm'];
     $nama_ukm = $_POST['nama_ukm'];
 
-    // Generate ID Prestasi
-    $id_prestasi = generateIdPrestasi($nama_prestasi, $tgl_prestasi);
+   // Generate ID Prestasi
+    $id_prestasi = generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi);
+
 
     // Memeriksa apakah ID Prestasi sudah ada di database
     $check_query = "SELECT COUNT(*) AS count FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
@@ -77,27 +78,41 @@ if (isset($_POST['submit'])) {
     }
 }
 
-function generateIdPrestasi($nama_prestasi, $tgl_prestasi)
+function generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi)
 {
+    // Menghapus karakter non-alfanumerik dari id_ukm
+    $clean_id_ukm = preg_replace("/[^a-zA-Z0-9]/", "", $id_ukm);
+
+    // Mengambil 4 huruf pertama dari id_ukm
+    $id_prestasi = substr($clean_id_ukm, 0, 3);
+
     // Menghapus karakter non-alfanumerik dari nama prestasi
     $clean_nama_prestasi = preg_replace("/[^a-zA-Z0-9]/", "", $nama_prestasi);
 
-    // Mengambil 6 digit pertama dari nama prestasi
-    $id_prestasi = substr($clean_nama_prestasi, 0, 6);
+    // Mengambil 4 huruf pertama dari nama prestasi
+    $id_prestasi .= substr($clean_nama_prestasi, 0, 4);
 
-    // Mengubah format tanggal prestasi menjadi Ymd (misal: 2023-06-15 menjadi 20230615)
-    $tanggal_prestasi = date('Ymd', strtotime($tgl_prestasi));
+    // Menghapus karakter non-alfanumerik dari penyelenggara
+    $clean_penyelenggara = preg_replace("/[^a-zA-Z0-9]/", "", $penyelenggara);
 
-    // Mengambil 6 digit terakhir dari tanggal prestasi
-    $id_prestasi .= substr($tanggal_prestasi, -6);
+    // Mengambil 4 huruf pertama dari penyelenggara
+    $id_prestasi .= substr($clean_penyelenggara, 0, 4);
 
-    // Jika panjang ID Prestasi kurang dari 12 digit, tambahkan digit acak
-    while (strlen($id_prestasi) < 12) {
-        $id_prestasi .= mt_rand(0, 9);
-    }
+    // Mengubah format tanggal prestasi menjadi Y
+    $tahun_prestasi = date('Y', strtotime($tgl_prestasi));
+
+    // Mengambil tahun dari tanggal prestasi
+    $id_prestasi .= $tahun_prestasi;
+
+    // Generate 4 digit angka acak
+    $random_digits = mt_rand(1000, 9999);
+
+    // Append the 4 random digits to the ID Prestasi
+    $id_prestasi .= $random_digits;
 
     return $id_prestasi;
 }
+
 
 
 // Memeriksa apakah form edit atau hapus telah di-submit
@@ -164,19 +179,20 @@ $conn->close();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
 <style>
     .card {
-        width: 50%;
+        width: 100%; /* Set the width to 100% to make the card responsive */
+        max-width: 400px; /* Add max-width to limit the card's width */
         margin: 0 auto;
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-
     .form-group {
         margin-bottom: 15px;
     }
@@ -200,7 +216,6 @@ $conn->close();
         border-radius: 4px;
         cursor: pointer;
     }
-
     .btn:hover {
         background-color: #0056b3;
     }
@@ -217,29 +232,48 @@ $conn->close();
         flex: 1;
         margin-right: 5px;
     }
+    
 </style>
 <script>
- function generateIdPrestasi($nama_prestasi, $tgl_prestasi)
+function generateIdPrestasi($nama_prestasi, $id_ukm, $penyelenggara, $tgl_prestasi)
 {
-    global $conn; // Assuming $conn is the database connection object
-
     // Menghapus karakter non-alfanumerik dari nama prestasi
     $clean_nama_prestasi = preg_replace("/[^a-zA-Z0-9]/", "", $nama_prestasi);
 
-    // Mengambil 6 digit pertama dari nama prestasi
+    // Mengambil 6 huruf pertama dari nama prestasi
     $id_prestasi = substr($clean_nama_prestasi, 0, 6);
+
+    // Menghapus karakter non-alfanumerik dari id_ukm
+    $clean_id_ukm = preg_replace("/[^a-zA-Z0-9]/", "", $id_ukm);
+
+    // Mengambil 6 huruf pertama dari id_ukm
+    $id_prestasi .= substr($clean_id_ukm, 0, 6);
+
+    // Mengambil 6 huruf pertama dari nama penyelenggara
+    $clean_penyelenggara = preg_replace("/[^a-zA-Z0-9]/", "", $penyelenggara);
+    $id_prestasi .= substr($clean_penyelenggara, 0, 6);
 
     // Mengubah format tanggal prestasi menjadi Ymd (misal: 2023-06-15 menjadi 20230615)
     $tanggal_prestasi = date('Ymd', strtotime($tgl_prestasi));
 
-    // Mengambil 6 digit terakhir dari tanggal prestasi
-    $id_prestasi .= substr($tanggal_prestasi, -6);
+    // Mengambil 4 digit terakhir dari tahun tanggal prestasi
+    $id_prestasi .= substr($tanggal_prestasi, -4);
+
+    // Generate 4 random alphanumeric characters
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $random_chars = '';
+    for ($i = 0; $i < 4; $i++) {
+        $random_chars .= $characters[rand(0, strlen($characters) - 1)];
+    }
+
+    // Append the 4 random characters to the ID Prestasi
+    $id_prestasi .= $random_chars;
 
     // Generate ID Prestasi until it is unique
     do {
-        // Jika panjang ID Prestasi kurang dari 12 digit, tambahkan digit acak
-        while (strlen($id_prestasi) < 12) {
-            $id_prestasi .= mt_rand(0, 9);
+        // Jika panjang ID Prestasi kurang dari 26 digit, tambahkan digit acak
+        while (strlen($id_prestasi) < 26) {
+            $id_prestasi .= $characters[rand(0, strlen($characters) - 1)];
         }
 
         // Check if ID Prestasi already exists in the database
@@ -249,8 +283,8 @@ $conn->close();
 
         if ($check_data['count'] > 0) {
             // ID Prestasi already exists, reset the ID and generate again
-            $id_prestasi = substr($id_prestasi, 0, -6); // Remove the last 6 digits
-            $id_prestasi .= mt_rand(0, 9);
+            $id_prestasi = substr($id_prestasi, 0, -4); // Remove the last 4 random characters
+            $id_prestasi .= $characters[rand(0, strlen($characters) - 1)];
         } else {
             // ID Prestasi is unique, exit the loop
             break;
@@ -259,7 +293,6 @@ $conn->close();
 
     return $id_prestasi;
 }
-
 </script>
 <body>
     
@@ -356,7 +389,11 @@ $conn->close();
                 <label for="nama_ukm">Nama UKM:</label>
                 <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" readonly>
             </div>
-            <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
+            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+            <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
+    <i class="fas fa-plus"></i> Tambah Anggota
+</button>
+    </div>
         </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -384,6 +421,11 @@ $conn->close();
         fetchNamaUKM(selectedUKMId);
     });
 </script>
-
+<script>
+    // Function to confirm the delete action
+    function confirmDelete() {
+        return confirm("Apakah Anda yakin akan menghapus data prestasi?");
+    }
+</script>
 </body>
 </html>

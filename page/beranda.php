@@ -10,10 +10,9 @@ error_reporting(0);
 
 
 // Mendapatkan nama depan dan level dari session
-$nama_depan = $_SESSION["nama_depan"];
+$nama_depan = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 
-// ...
 
 ?>
 
@@ -103,7 +102,7 @@ $level = $_SESSION["level"];
 		<h1 class="text-center">SELAMAT DATANG DI (SIUKM)<br> STMIK KOMPUTAMA MAJENANG</h1>
 		<div class="row">
 		<div class="col-md-7">
-   		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+   		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000">
         <ol class="carousel-indicators">
             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -111,13 +110,13 @@ $level = $_SESSION["level"];
         </ol>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img class="d-block img-fluid" src="../assets/images/beranda-1.png" alt="First slide">
+                <img class="d-block img-fluid" src="../assets/images/carousel-1.png" alt="First slide">
             </div>
             <div class="carousel-item">
-                <img class="d-block img-fluid" src="../assets/images/beranda-2.png" alt="Second slide">
+                <img class="d-block img-fluid" src="../assets/images/carousel-2.png" alt="Second slide">
             </div>
             <div class="carousel-item">
-                <img class="d-block img-fluid" src="../assets/images/beranda-3.png" alt="Third slide">
+                <img class="d-block img-fluid" src="../assets/images/carousel-3.png" alt="Third slide">
             </div>
         </div>
         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">

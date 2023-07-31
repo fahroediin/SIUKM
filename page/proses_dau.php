@@ -99,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
@@ -208,10 +209,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="form-row">
                     <div class="col-md-6">
-                        <label for="id_anggota">ID Anggota:</label>
-                        <input type="text" class="form-control" placeholder="Akan terisi secara otomatis" name="id_anggota" readonly>
-                    </div>
-                    <div class="col-md-6">
                     <label for="id_user">ID User:</label>
                     <select class="form-control" name="id_user" id="id_user_dropdown" required>
             <option value="">------------Pilih ID User------------</option>
@@ -288,43 +285,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 fetchUserData(selectedUserId);
             });
         </script>
-        </div>
-
-        <div class="form-row">
-        <div class="col-md-6">
+         <div class="col-md-6">
             <label for="nama_lengkap">Nama Lengkap:</label>
             <input type="text" class="form-control" name="nama_lengkap" required readonly>
         </div>
+        </div>
+        <div class="form-row">
         <div class="col-md-6">
                 <label for="no_hp">No. HP:</label>
                 <input type="text" class="form-control" name="no_hp" required readonly>
             </div>
+            <div class="col-md-6">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" name="email" required readonly>
+                </div>
         </div>
 
 
         <div class="form-row">
                 <div class="col-md-6">
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" name="email" required readonly>
-                </div>
-                <div class="col-md-6">
                     <label for="prodi">Prodi:</label>
                     <input type="prodi" class="form-control" name="prodi" required readonly>
                 </div>
+                <div class="col-md-6">
+                <label for="semester">Semester:</label>
+                <input type="semester" class="form-control" name="semester" required readonly>
+            </div>
             </div>
 
                 <div class="form-row">
             <div class="col-md-6">
-                <label for="semester">Semester:</label>
-                <input type="semester" class="form-control" name="semester" required readonly>
-            </div>
-            <div class="col-md-6">
                 <label for="sjk_bergabung">SJK Bergabung:</label>
                 <input type="date" class="form-control" id="sjk_bergabung"  name="sjk_bergabung" required>
             </div>
-                </div>
-                <div class="form-row">
-                <div class="col-md-6">
+            <div class="col-md-6">
         <label for="id_ukm">ID UKM:</label>
         <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
             <option value="">Pilih ID UKM</option>
@@ -338,17 +332,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             ?>
         </select>
-    </div>
+        </div>
+         </div>
+
+    <div class="form-row">
     <div class="col-md-6">
-        <label for="nama_ukm">Nama UKM:</label>
-        <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" required readonly>
-    </div>
-        </div>
-
-
-        <div class="form-row">
-            <button type="submit" class="btn btn-primary">Tambah Anggota</button>
-        </div>
+    <label for="nama_ukm">Nama UKM:</label>
+    <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" required readonly>
+</div>
+<!-- Move the "Tambah Anggota" button to the right side -->
+<div class="col-md-6 d-flex align-items-end justify-content-end">
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Tambah Anggota
+    </button>
+</div>
+    <input type="text" class="form-control" placeholder="Akan terisi secara otomatis" name="id_anggota" readonly style="display: none;">
         </form>
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
