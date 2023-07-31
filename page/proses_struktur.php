@@ -148,6 +148,39 @@ if (isset($_POST['submit'])) {
         background-color: #0056b3;
     }
 </style>
+<script>
+    // Event listener for the dropdown (id_anggota)
+    document.getElementById("id_anggota").addEventListener("change", function () {
+        var selectedIdAnggota = this.value;
+        var namaLengkapField = document.getElementById("nama_lengkap");
+        var nimField = document.getElementById("id_user");
+
+        if (selectedIdAnggota === "") {
+            // Reset the text fields
+            namaLengkapField.value = "";
+            nimField.value = "";
+        } else {
+            // Make an AJAX request to fetch the details based on the selected id_anggota
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText);
+                    if (data) {
+                        // Update the fields with the retrieved data
+                        namaLengkapField.value = data.nama_lengkap;
+                        nimField.value = data.nim;
+                    } else {
+                        // Reset the fields if data is not found
+                        namaLengkapField.value = "";
+                        nimField.value = "";
+                    }
+                }
+            };
+            xhttp.open("GET", "get_anggota_details.php?id_anggota=" + selectedIdAnggota, true);
+            xhttp.send();
+        }
+    });
+    </script>
 <body>
    <!-- Sidebar -->
 <div class="sidebar">
@@ -296,13 +329,32 @@ if (isset($_POST['submit'])) {
                 </select>
             </div>
             <div class="form-group">
+                <label for="id_anggota">ID Anggota:</label>
+                <select class="form-control" id="id_anggota" name="id_anggota" required onchange="fetchAnggotaDetails()">
+                    <option value="">-- Pilih ID Anggota --</option>
+                    <?php
+                    // Query to get data from tab_dau
+                    $sql_anggota = "SELECT id_anggota FROM tab_dau";
+                    $result_anggota = $conn->query($sql_anggota);
+
+                    // Display options for each row of data
+                    while ($row_anggota = $result_anggota->fetch_assoc()) {
+                        $id_anggota = $row_anggota['id_anggota'];
+                        echo "<option value='$id_anggota'>$id_anggota</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="nama_lengkap">Nama Lengkap:</label>
-                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required readonly>
             </div>
             <div class="form-group">
                 <label for="nim">NIM/NIDN:</label>
-                <input type="text" class="form-control" id="nim" name="nim" required maxlength="20" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="text" class="form-control" id="nim" name="nim" required maxlength="20" readonly>
             </div>
+
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" name="submit">Tambah</button>

@@ -126,7 +126,7 @@ if (isset($_POST['action'])) {
     }
 }
 
-    // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
+   // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm, logo_ukm, nama_ketua, nim_ketua, sejarah, visi, misi FROM tab_ukm";
 $result = mysqli_query($conn, $query);
 
@@ -136,10 +136,11 @@ $options = "";
 // Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
 $namaUKM = array();
 while ($row = mysqli_fetch_assoc($result)) {
-  $id_ukm = $row['id_ukm'];
-  $nama_ukm = $row['nama_ukm'];
-  $namaUKM[$id_ukm] = $nama_ukm;
+    $id_ukm = $row['id_ukm'];
+    $nama_ukm = $row['nama_ukm'];
+    $namaUKM[$id_ukm] = $nama_ukm;
 }
+
 // Mengambil data dari tabel tab_prestasi
 $sql = "SELECT * FROM tab_prestasi";
 $result = $conn->query($sql);
@@ -187,7 +188,7 @@ $conn->close();
         border-radius: 4px;
         box-sizing: border-box;
     }
-    th {
+     th {
         white-space: nowrap;
     }
 
@@ -260,38 +261,6 @@ $conn->close();
 }
 
 </script>
-
-<script>
-    // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm
-    function updateNamaUKM(select) {
-      var id_ukm = select.value;
-      var nama_ukmField = document.getElementById("nama_ukm");
-
-      // Mengirim permintaan AJAX ke server
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          // Mengambil respons dari server
-          var nama_ukm = this.responseText;
-
-          // Mengatur nilai field nama_ukm dengan respons dari server
-          nama_ukmField.value = nama_ukm;
-        }
-      };
-      xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
-      xhttp.send();
-    }
-    </script>
-    <script>
-    function confirmDelete() {
-        if (confirm("Apakah yakin ingin menghapus prestasi?")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-</script>
-
 <body>
     
     <!-- Sidebar -->
@@ -373,7 +342,7 @@ $conn->close();
             </div>
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>
-                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
+                <select id="id_ukm_dropdown" class="form-control" name="id_ukm" required>
                     <option value="" selected disabled>Pilih ID UKM</option>
                     <?php
                     // Membuat opsi combobox dari hasil query
@@ -390,6 +359,31 @@ $conn->close();
             <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
         </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Function to fetch "Nama UKM" based on the selected "ID UKM"
+    function fetchNamaUKM(id_ukm) {
+        $.ajax({
+            type: "POST",
+            url: "get_nama_ukm.php", // The PHP file created in Step 1
+            data: { id_ukm: id_ukm },
+            dataType: "json",
+            success: function (data) {
+                // Update the "Nama UKM" textfield with the fetched data
+                $("#nama_ukm").val(data.nama_ukm);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    // Event listener for the dropdown (id_ukm_dropdown)
+    $("#id_ukm_dropdown").on("change", function () {
+        var selectedUKMId = $(this).val();
+        fetchNamaUKM(selectedUKMId);
+    });
+</script>
 
 </body>
 </html>
