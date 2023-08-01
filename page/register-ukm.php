@@ -72,10 +72,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Menutup koneksi database
     mysqli_close($conn);
 } else {
-    // Retrieve the nama_depan and nama_belakang values from the tab_user table
     $row = mysqli_fetch_assoc($result);
     $nama_lengkap = $row['nama_lengkap'];
-
+}
     // Menampilkan nilai nama_lengkap ke dalam form field
     $nama_lengkap_value = $nama_lengkap;
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
@@ -125,26 +124,57 @@ if (strlen($nim) < 9) {
   // Menggabungkan NIM dengan angka acak
   $id_calabar = $nim . $randomDigits;
 
-  // Menyimpan data pendaftaran ke tabel tab_pacab
-  $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-           VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
+// Pastikan form di-submit dan kedua file berhasil di-upload sebelum melanjutkan
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["pasfoto"]) && isset($_FILES["foto_ktm"])) {
+  $pasfoto_dir = "../assets/images/pasfoto/";
+  $ktm_dir = "../assets/images/ktm/";
 
-  // Menjalankan query
-  if (mysqli_query($conn, $query)) {
-      // Pendaftaran berhasil, simpan id_calabar ke dalam session
-      $_SESSION['id_calabar'] = $id_calabar;
-      echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
-      // Show the alert message
-      echo '<script>showSnackbar();</script>';
-      // Redirect ke halaman test-calabar.php
-      header("Location: test-calabar.php");
-      exit();
-  } else {
-      echo "Error: " . $query . "<br>" . mysqli_error($conn);
+  // Pastikan folder penyimpanan tersedia, jika belum maka buat folder tersebut
+  if (!file_exists($pasfoto_dir)) {
+      mkdir($pasfoto_dir, 0777, true);
+  }
+  if (!file_exists($ktm_dir)) {
+      mkdir($ktm_dir, 0777, true);
   }
 
-  // Menutup koneksi database
-  mysqli_close($conn);
+  $pasfoto_file = $pasfoto_dir . basename($_FILES["pasfoto"]["name"]);
+  $ktm_file = $ktm_dir . basename($_FILES["foto_ktm"]["name"]);
+
+  // Pindahkan file yang di-upload ke folder tujuan
+  if (move_uploaded_file($_FILES["pasfoto"]["tmp_name"], $pasfoto_file) &&
+      move_uploaded_file($_FILES["foto_ktm"]["tmp_name"], $ktm_file)) {
+
+      // Simpan nama file ke dalam tab_pacab
+      $nama_pasfoto = basename($_FILES["pasfoto"]["name"]);
+      $nama_foto_ktm = basename($_FILES["foto_ktm"]["name"]);
+
+      // Menggunakan Prepared Statements untuk menghindari SQL Injection
+      $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+      $stmt = mysqli_prepare($conn, $query);
+      mysqli_stmt_bind_param($stmt, "sssssssssssss", $id_calabar, $id_user, $nama_lengkap, $nim, $semester, $prodi, $id_ukm, $nama_ukm, $email, $no_hp, $nama_pasfoto, $nama_foto_ktm, $alasan);
+
+      // Menjalankan query dengan prepared statement
+      if (mysqli_stmt_execute($stmt)) {
+          // Pendaftaran berhasil, simpan id_calabar ke dalam session
+          $_SESSION['id_calabar'] = $id_calabar;
+          echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
+          // Show the alert message
+          echo '<script>showSnackbar();</script>';
+          // Redirect ke halaman test-calabar.php
+          header("Location: test-calabar.php");
+          exit();
+      } else {
+          echo "Error: " . mysqli_error($conn);
+      }
+
+      // Tutup prepared statement
+      mysqli_stmt_close($stmt);
+  } else {
+      // Tampilkan pesan error jika terjadi masalah saat meng-upload
+      echo "Terjadi kesalahan saat meng-upload file.";
+  }
 }
 }
 ?>
@@ -441,16 +471,16 @@ button[type=reset]:hover {
 					echo '<a class="nav-link btn btn-signin" href="login.php">Sign In</a>';
 				} else {
 					// Jika sudah login, cek level pengguna
-					if ($_SESSION['level'] == "3") {
-						// Jika level 3, arahkan ke halaman dashboard.php
-						echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
-					} elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
-						// Jika level 1 atau admin, arahkan ke halaman admin.php
-						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
-					} elseif ($_SESSION['level'] == "2") {
-						// Jika level 2, arahkan ke halaman kemahasiswaan.php
-						echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_depan'] . '</p></a>';
-					}
+          if ($_SESSION['level'] == "3") {
+            // Jika level 3, arahkan ke halaman dashboard.php
+            echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+          } elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
+            // Jika level 1 atau admin, arahkan ke halaman admin.php
+            echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+          } elseif ($_SESSION['level'] == "2") {
+            // Jika level 2, arahkan ke halaman kemahasiswaan.php
+            echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+          }
 				}
           ?>
           </li>
@@ -459,75 +489,57 @@ button[type=reset]:hover {
     </nav>
 
   <div class="container" style="margin-top: 75px;">
-  <h1>Form Pendaftaran Anggota UKM Baru</h1>
-  
-  <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <div>
-        <label for="id_user">ID User</label>
-          <input type="text" name="id_user" value="<?php echo $_SESSION['id_user']; ?>" readonly>
-                </div>
-                <div>
-                    <label for="nama_lengkap">Nama Lengkap:</label>
-                    <input type="text" name="nama_lengkap" value="<?php echo $nama_lengkap; ?>" required readonly>
-                <div>
-                    <label for="nim">Masukkan NIM:</label>
-                    <input type="text" id="nim" name="nim" required placeholder="Masukkan NIM">
-                </div>
-                <div>
-          <label for="semester">Masukkan semester:</label>
-          <select id="semester" name="semester" required>
-          <option value="" selected disabled>Pilih semester</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-          </select>
-        </div>
+  <h2>Form Pendaftaran Anggota UKM Baru</h2>
+        <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+            <div>
+                <label for="id_user">ID User</label>
+                <input type="text" name="id_user" value="<?php echo $_SESSION['id_user']; ?>" readonly>
+            </div>
+            <?php
+            // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
+            $userId = $_SESSION['id_user'];
+            $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
 
-        <div>
-        <label for="prodi">Program studi:</label>
-        <select id="prodi" name="prodi" required>
-        <option value="" selected disabled>Pilih program studi</option>
-          <option value="sistem_informasi">Sistem Informasi</option>
-          <option value="teknik_informatika">Teknik Informatika</option>
-        </select>
-
-        </div>
-        <!-- Tambahkan div untuk combobox ID UKM -->
-        <div>
-    <label for="id_ukm">ID UKM:</label>
-    <select id="id_ukm" name="id_ukm" required onchange="updateNamaUKM(this)">
-      <option value="" selected disabled>Pilih ID UKM</option>
-      <?php
-      // Membuat opsi combobox dari hasil query
-      foreach ($namaUKM as $id_ukm => $nama_ukm) {
-        echo "<option value='$id_ukm'>$id_ukm</option>";
-      }
-      ?>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="nama_ukm">Nama UKM:</label>
-    <input type="text" id="nama_ukm" name="nama_ukm" readonly>
-  </div>
-  <div class="form-group">
+            // Mengeksekusi query
+            $result = mysqli_query($conn, $query);
+            $row = mysqli_fetch_assoc($result);
+            ?>
+            <div>
+                <label for="nama_lengkap">Nama Lengkap:</label>
+                <input type="text" name="nama_lengkap" value="<?php echo $row['nama_lengkap']; ?>" required readonly>
+            </div>
+            <div>
+                <label for="semester">Semester:</label>
+                <input type="text" id="semester" name="semester" value="<?php echo $row['semester']; ?>" required  readonly>
+            </div>
+            <div>
+                <label for="prodi">Program Studi:</label>
+                <input type="text" id="prodi" name="prodi" value="<?php echo $row['prodi']; ?>" required  readonly>
+            </div>
+            <div class="form-group">
             <label for="email">Email:</label>
-            <input type="text" id="email" name="email" required placeholder="Masukkan email">
+            <input type="text" id="email" name="email" value="<?php echo $row['email']; ?>" required  readonly>
         </div>
         <div class="form-group">
             <label for="no_hp">Nomor HP:</label>
-            <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan nomor handphone anda">
+            <input type="text" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required  readonly>
+        </div>
+        <!-- Tambahkan div untuk combobox ID UKM -->
+        <div>
+          <label for="id_ukm">ID UKM:</label>
+          <select id="id_ukm" name="id_ukm" required onchange="updateNamaUKM(this)">
+            <option value="" selected disabled>Pilih ID UKM</option>
+            <?php
+            // Membuat opsi combobox dari hasil query
+            foreach ($namaUKM as $id_ukm => $nama_ukm) {
+              echo "<option value='$id_ukm'>$id_ukm</option>";
+            }
+            ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="nama_ukm">Nama UKM:</label>
+          <input type="text" id="nama_ukm" name="nama_ukm" readonly>
         </div>
         <div class="form-group">
             <label for="pasfoto">Upload pas foto:</label>
@@ -660,6 +672,23 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
       modal.style.display = "none";
     }
   }
+  function updateNamaUKM(select) {
+        var id_ukm = select.value;
+        var nama_ukmField = document.getElementById("nama_ukm");
 
+        // Mengirim permintaan AJAX ke server
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Mengambil respons dari server
+                var nama_ukm = this.responseText;
+
+                // Mengatur nilai field nama_ukm dengan respons dari server
+                nama_ukmField.value = nama_ukm;
+            }
+        };
+        xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
+        xhttp.send();
+    }
 </script>
 </html>

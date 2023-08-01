@@ -34,6 +34,9 @@ if (mysqli_num_rows($result) > 0) {
 	$row = mysqli_fetch_assoc($result);
 	$_SESSION["id_user"] = $row["id_user"];
 	$_SESSION["nama_lengkap"] = $row["nama_lengkap"];
+	$_SESSION["nim"] = $row["nim"];
+	$_SESSION["prodi"] = $row["prodi"];
+	$_SESSION["semester"] = $row["semester"];
 	$_SESSION["level"] = $row["level"];
 	$lowercaseLevel = strtolower($row["level"]);
     
