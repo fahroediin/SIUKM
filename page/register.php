@@ -29,19 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Memeriksa apakah password dan konfirmasi password cocok
     if ($password !== $confirmPassword) {
-        $_SESSION['form_data'] = array(
-            'id_user' => $id_user,
-            'nama_lengkap' => $nama_lengkap,
-            'email' => $email,
-            'no_hp' => $no_hp
-        );
-        $_SESSION['error_message'] = "Password dan konfirmasi password tidak cocok";
+        $error = "Password dan konfirmasi password tidak cocok";
     } else {
         // Memeriksa apakah ID User (NIM) sudah digunakan
         $query = "SELECT * FROM tab_user WHERE id_user = '$id_user'";
         $result = mysqli_query($conn, $query);
         if (mysqli_num_rows($result) > 0) {
-            $error = "ID User (NIM) sudah digunakan. Silakan gunakan ID User (NIM) lain.";
+            $error = "ID User (NIM) sudah terdaftar. Silakan gunakan ID User (NIM) lain.";
         } else {
             // Memasukkan data pengguna ke dalam tabel tab_user
             $query = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level) VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '3')";
@@ -133,9 +127,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <div>
-        <label for="id_user">ID User (NIM):</label>
-        <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validateIDUser()">
-    </div>
+            <label for="id_user">ID User (NIM):</label>
+            <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validateIDUser()">
+        </div>
         <div>
             <label for="password">Password:</label>
             <input type="text" id="password" name="password" required placeholder="Masukkan password">
@@ -162,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if ($error) : ?>
             <p class="error-message"><?php echo $error; ?></p>
             <script>
-                showSnackbar("<?php echo $error; ?>");
+                alert("<?php echo $error; ?>"); // Add this line to display the error in an alert
             </script>
         <?php endif; ?>
         <div>

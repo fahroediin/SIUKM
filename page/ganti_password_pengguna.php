@@ -30,10 +30,6 @@ if ($result) {
     // Menyimpan data pengguna ke dalam variabel session
     $_SESSION['id_user'] = $user['id_user']; // Perubahan: Menyimpan ID User
     $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
-    $_SESSION['email'] = $user['email'];
-    $_SESSION['no_hp'] = $user['no_hp'];
-    $_SESSION['prodi'] = $user['prodi'];
-    $_SESSION['semester'] = $user['semester'];
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
@@ -60,35 +56,77 @@ if (isset($_GET['logout'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Mengambil data dari form
     $id_user = $_POST['id_user'];
-    $nama_lengkap = $_POST['nama_lengkap'];
-    $email = $_POST['email'];
-    $no_hp = $_POST['no_hp'];
-    $prodi = $_POST['prodi'];
-    $semester = $_POST['semester'];
+    $password = $_POST['password'];
 
-    // Menghindari SQL injection dengan prepared statement
-    $query = "UPDATE tab_user SET nama_lengkap=?, email=?, no_hp=?, prodi=?, semester=? WHERE id_user=?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "sssssi", $nama_lengkap, $email, $no_hp, $prodi, $semester, $id_user);
-    $updateResult = mysqli_stmt_execute($stmt);
-    
+    // Update data pengguna di tabel tab_user
+    $query = "UPDATE tab_user SET password='$password' WHERE id_user='$id_user'";
+    $updateResult = mysqli_query($conn, $query);
+
+    // Memeriksa apakah query update berhasil dieksekusi
     if ($updateResult) {
-        // Mengupdate data di dalam session
+        // Mengupdate data pengguna di session
         $_SESSION['nama_lengkap'] = $nama_lengkap;
-        $_SESSION['email'] = $email;
-        $_SESSION['no_hp'] = $no_hp;
-        $_SESSION['prodi'] = $prodi;
-        $_SESSION['semester'] = $semester;
+
 
         // Redirect ke halaman dashboard.php
         header("Location: dashboard.php");
         exit();
+    } else {
+        // Jika query update gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+// Memeriksa apakah form telah disubmit
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Mengambil data dari form
+    $oldPassword = $_POST['old_password'];
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+
+    // Memeriksa apakah password baru dan konfirmasi password cocok
+    if ($password !== $confirmPassword) {
+        // Password baru dan konfirmasi password tidak cocok
+        $error = "Error: Password baru dan konfirmasi password tidak cocok.";
+    } else {
+        // Menghindari SQL injection
+        $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
+        $password = mysqli_real_escape_string($conn, $password);
+        $email = mysqli_real_escape_string($conn, $email);
+        $namaLengkap = mysqli_real_escape_string($conn, $namaLengkap);
+        $noHp = mysqli_real_escape_string($conn, $noHp);
+
+       // Mengecek kebenaran password lama
+$userId = $_SESSION['id_user'];
+$query = "SELECT * FROM tab_user WHERE id_user = '$userId' AND password = '$oldPassword'";
+$result = mysqli_query($conn, $query);
+
+if (mysqli_num_rows($result) === 0) {
+    // Password lama tidak cocok
+    echo "<script>showSnackbar('Password lama salah');</script>";
+} else {
+    // Membuat query update
+    $query = "UPDATE tab_user SET password = '$password' WHERE id_user = '$userId'";
+
+    // Mengeksekusi query update
+    $updateResult = mysqli_query($conn, $query);
+
+    // Tampilkan snackbar jika data berhasil diubah
+    if ($updateResult) {
+        // Mengupdate data di dalam session
+        $_SESSION['password'] = $password;
+
+        $_SESSION['nama_lengkap'] = $namaLengkap;
+     
+        // Tampilkan snackbar jika data berhasil diubah
+        echo "<script>showSnackbar('Data berhasil diubah.');</script>";
     } else {
         // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
         $error = "Error: " . mysqli_error($conn);
         echo "<script>alert('$error');</script>";
     }
 }
+    }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -195,51 +233,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Manajemen Pengguna</h2>
         <a href="dashboard.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
         <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
+        <a href="proses_update_pengguna.php" class="btn btn-primary <?php if($active_page == 'proses_update_pengguna') echo 'active'; ?>">Update</a>
     </div>
     <div class="container">
-<h2 class="text-center">UPDATE DATA</h2>
-<div class="container">
-    <div class="row">
-    <div class="col-md-12">
+        <h2 class="text-center">GANTI PASSWORD</h2>
+        <div class="container">
+            <div class="row">
+            <div class="col-md-12">
 
-</div>
-    </div>
-    <form class="form-container" method="POST" action="">
-        <div class="form-group">
-            <label for="id_user">ID User (NIM):</label>
-            <input type="text" class="form-control" id="id_user" name="id_user" required value="<?php echo $_SESSION['id_user']; ?>" readonly>
         </div>
-        <div class="form-group">
-            <label for="nama_lengkap">Nama Lengkap:</label>
-            <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required value="<?php echo $_SESSION['nama_lengkap']; ?>">
-        </div>
-        <div class="form-group">
-        <label for="prodi">Program Studi:</label>
-        <select class="form-control" id="prodi" name="prodi" required>
-            <option value="Teknik Informatika">Teknik Informatika</option>
-            <option value="Sistem Informasi">Sistem Informasi</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="semester">Semester:</label>
-        <select class="form-control" id="semester" name="semester" required>
-            <?php
-            for ($i = 1; $i <= 14; $i++) {
-                echo "<option value=\"$i\">$i</option>";
-            }
-            ?>
-        </select>
-    </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" required value="<?php echo $_SESSION['email']; ?>">
-        </div>
-        <div class="form-group">
-            <label for="no_hp">Nomor Telepon:</label>
-            <input type="text" class="form-control" id="no_hp" name="no_hp" required value="<?php echo $_SESSION['no_hp']; ?>">
-        </div>
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
             </div>
+            <form class="form-container" method="POST" action="">
+                <div class="form-group">
+                    <label for="id_user">ID User (NIM):</label>
+                    <input type="text" class="form-control" id="id_user" name="id_user" required value="<?php echo $_SESSION['id_user']; ?>" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="old_password">Password Lama:</label>
+                    <input type="password" class="form-control" id="old_password" name="old_password">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password Baru:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Konfirmasi Password:</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
     </form>
     </div>
     <!-- snackbar jika password tidak cocok-->
@@ -248,31 +270,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
 <script src="script.js"></script>
 <script>
-        function showSnackbar(message) {
-            var snackbar = document.getElementById("snackbar");
-            snackbar.innerHTML = message;
-            snackbar.className = "show";
-            setTimeout(function() {
-                snackbar.className = snackbar.className.replace("show", "");
-            }, 3000);
-        }
+           function showSnackbar(message) {
+        var snackbar = document.getElementById("snackbar");
+        snackbar.innerHTML = message;
+        snackbar.classList.add("show");
+        setTimeout(function() {
+            snackbar.classList.remove("show");
+        }, 3000);
+    }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            var form = document.querySelector("form");
-            form.addEventListener("submit", function(event) {
-                var oldPassword = document.getElementById("old_password").value;
-                var password = document.getElementById("password").value;
-                var confirmPassword = document.getElementById("confirm_password").value;
+    document.addEventListener("DOMContentLoaded", function() {
+        var form = document.querySelector("form");
+        form.addEventListener("submit", function(event) {
+            var oldPassword = document.getElementById("old_password").value;
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirm_password").value;
 
-                if (oldPassword !== "" && password !== confirmPassword) {
-                    event.preventDefault();
-                    showSnackbar("Password tidak cocok");
-                }
-            });
+            if (oldPassword !== "" && password !== confirmPassword) {
+                event.preventDefault();
+                showSnackbar("Password tidak cocok");
+            }
         });
+    });
     </script>
-    <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
-    <script src="script.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>

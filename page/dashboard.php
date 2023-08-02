@@ -97,12 +97,14 @@ if (isset($_GET['logout'])) {
     <h2>Dashboard</h2>
     <a href="dashboard.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-    <a href="proses_update_pengguna.php" class="btn btn-primary <?php if($active_page == 'update') echo 'active'; ?>">Update</a>
     <a href="?logout=true" class="btn btn-primary <?php if($active_page == 'logout') echo 'active'; ?>">Logout</a>
 </div>
 
 <div class="content">
     <h1>Informasi Pengguna</h1>
+ <!-- Tombol Ganti Password -->
+ <a href="ganti_password_pengguna.php" class="btn btn-primary">Ganti Password</a>
+ <a href="proses_update_pengguna.php" class="btn btn-primary">Update Data Diri</a>
     <hr class="divider">
     <div class="user-info">
     <div class="profile-container">

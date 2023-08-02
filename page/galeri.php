@@ -8,8 +8,8 @@ session_start();
 // Menonaktifkan pesan error
 error_reporting(0);
 
-// Mendapatkan nama depan dari session
-$nama_depan = $_SESSION["nama_depan"];
+
+$nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 
 // Inisialisasi variabel pesan error
