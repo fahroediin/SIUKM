@@ -98,7 +98,7 @@ if (!isset($_SESSION['id_user'])) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id_calabar'] . "</td>";
                                 echo "<td>" . $row['id_user'] . "</td>";
-                                echo "<td>" . $row['nama_depan'] . " " . $row['nama_belakang'] . "</td>";
+                                echo "<td>" . $row['nama_lengkap'] . "</td>";
                                 echo "<td>" . $row['nim'] . "</td>";
                                 echo "<td>" . $row['prodi'] . "</td>";
                                 echo "<td>" . $row['id_ukm'] . "</td>";

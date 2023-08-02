@@ -157,7 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div>
             <label for="no_hp">Nomor HP:</label>
-            <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP">
+            <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" pattern="[0-9]{1,13}" title="Hanya angka dengan maksimal 13 digit diperbolehkan">
         </div>
         <?php if ($error) : ?>
             <p class="error-message"><?php echo $error; ?></p>

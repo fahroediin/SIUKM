@@ -16,70 +16,10 @@ if (!isset($_SESSION['id_user'])) {
 $userId = $_SESSION['id_user'];
 $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
 
-// Mengeksekusi query
-$result = mysqli_query($conn, $query);
-
-// Memeriksa apakah form telah disubmit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Mengambil data dari form
-    $id_user = $_POST['id_user'];
-    $nama_lengkap = $_POST['nama_lengkap'];
-    $nim = $_POST['nim'];
-    $semester = $_POST['semester'];
-    $prodi = $_POST['prodi'];
-    $id_ukm = $_POST['id_ukm'];
-    $nama_ukm = $_POST['nama_ukm'];
-    $email = $_POST['email'];
-    $no_hp = $_POST['no_hp'];
-    $pasfoto = $_POST['pasfoto'];
-    $foto_ktm = $_POST['foto_ktm'];
-    $alasan = $_POST['alasan'];
-
-    // Validasi NIM
-    if (strlen($nim) < 9) {
-        // Jika NIM kurang dari 9 digit angka, tampilkan pesan error
-        echo '<script>alert("NIM harus terdiri dari minimal 9 digit angka")</script>';
-        // Redirect kembali ke halaman form pendaftaran
-        header("Location: register-ukm.php");
-        echo '<script>showSnackbar();</script>';
-        exit();
-    }
-
-    // Generate 4 digit angka acak
-    $randomDigits = rand(1000, 9999);
-
-    // Menggabungkan NIM dengan angka acak
-    $id_calabar = $nim . $randomDigits;
-
-    // Menyimpan data pendaftaran ke tabel tab_pacab
-    $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-           VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$pasfoto', '$foto_ktm', '$alasan')";
-
-    // Menjalankan query
-    if (mysqli_query($conn, $query)) {
-        // Pendaftaran berhasil, simpan id_calabar ke dalam session
-        $_SESSION['id_calabar'] = $id_calabar;
-        echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
-        // Show the alert message
-        echo '<script>showSnackbar();</script>';
-        // Redirect ke halaman test-calabar.php
-        header("Location: test-calabar.php");
-        exit();
-    } else {
-        echo "Error: " . $query . "<br>" . mysqli_error($conn);
-    }
-
-    // Menutup koneksi database
-    mysqli_close($conn);
-} else {
-    $row = mysqli_fetch_assoc($result);
-    $nama_lengkap = $row['nama_lengkap'];
-}
-    // Menampilkan nilai nama_lengkap ke dalam form field
-    $nama_lengkap_value = $nama_lengkap;
-// Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-$result = mysqli_query($conn, $query);
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 // Inisialisasi variabel untuk opsi combobox
 $options = "";
@@ -104,19 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $nama_ukm = $_POST['nama_ukm'];
   $email = $_POST['email'];
   $no_hp = $_POST['no_hp'];
-  $pasfoto = $_POST['pasfoto'];
-  $foto_ktm = $_POST['foto_ktm'];
   $alasan = $_POST['alasan'];
 
- // Validasi NIM
-if (strlen($nim) < 9) {
-  // Jika NIM kurang dari 9 digit angka, tampilkan pesan error
-  echo '<script>alert("NIM harus terdiri dari minimal 9 digit angka")</script>';
-  // Redirect kembali ke halaman form pendaftaran
-  header("Location: register-ukm.php");
-  echo '<script>showSnackbar();</script>';
-  exit();
-}
 
   // Generate 4 digit angka acak
   $randomDigits = rand(1000, 9999);
@@ -124,57 +53,47 @@ if (strlen($nim) < 9) {
   // Menggabungkan NIM dengan angka acak
   $id_calabar = $nim . $randomDigits;
 
-// Pastikan form di-submit dan kedua file berhasil di-upload sebelum melanjutkan
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["pasfoto"]) && isset($_FILES["foto_ktm"])) {
-  $pasfoto_dir = "../assets/images/pasfoto/";
-  $ktm_dir = "../assets/images/ktm/";
+   // Pastikan form di-submit dan kedua file berhasil di-upload sebelum melanjutkan
+   if (isset($_FILES["pasfoto"]) && isset($_FILES["foto_ktm"])) {
+    $pasfoto_dir = "../assets/images/pasfoto/";
+    $ktm_dir = "../assets/images/ktm/";
 
-  // Pastikan folder penyimpanan tersedia, jika belum maka buat folder tersebut
-  if (!file_exists($pasfoto_dir)) {
-      mkdir($pasfoto_dir, 0777, true);
-  }
-  if (!file_exists($ktm_dir)) {
-      mkdir($ktm_dir, 0777, true);
-  }
+    // Pastikan folder penyimpanan tersedia, jika belum maka buat folder tersebut
+    if (!file_exists($pasfoto_dir)) {
+        mkdir($pasfoto_dir, 0777, true);
+    }
+    if (!file_exists($ktm_dir)) {
+        mkdir($ktm_dir, 0777, true);
+    }
 
-  $pasfoto_file = $pasfoto_dir . basename($_FILES["pasfoto"]["name"]);
-  $ktm_file = $ktm_dir . basename($_FILES["foto_ktm"]["name"]);
+    $nama_pasfoto = $_FILES["pasfoto"]["name"];
+    $nama_foto_ktm = $_FILES["foto_ktm"]["name"];
 
-  // Pindahkan file yang di-upload ke folder tujuan
-  if (move_uploaded_file($_FILES["pasfoto"]["tmp_name"], $pasfoto_file) &&
-      move_uploaded_file($_FILES["foto_ktm"]["tmp_name"], $ktm_file)) {
+    // Pindahkan file yang di-upload ke folder tujuan
+    if (move_uploaded_file($_FILES["pasfoto"]["tmp_name"], $pasfoto_dir . $nama_pasfoto) &&
+        move_uploaded_file($_FILES["foto_ktm"]["tmp_name"], $ktm_dir . $nama_foto_ktm)) {
 
-      // Simpan nama file ke dalam tab_pacab
-      $nama_pasfoto = basename($_FILES["pasfoto"]["name"]);
-      $nama_foto_ktm = basename($_FILES["foto_ktm"]["name"]);
+        // Menyimpan data pendaftaran ke tabel tab_pacab
+        $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+                  VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$nama_pasfoto', '$nama_foto_ktm', '$alasan')";
 
-      // Menggunakan Prepared Statements untuk menghindari SQL Injection
-      $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-      $stmt = mysqli_prepare($conn, $query);
-      mysqli_stmt_bind_param($stmt, "sssssssssssss", $id_calabar, $id_user, $nama_lengkap, $nim, $semester, $prodi, $id_ukm, $nama_ukm, $email, $no_hp, $nama_pasfoto, $nama_foto_ktm, $alasan);
-
-      // Menjalankan query dengan prepared statement
-      if (mysqli_stmt_execute($stmt)) {
-          // Pendaftaran berhasil, simpan id_calabar ke dalam session
-          $_SESSION['id_calabar'] = $id_calabar;
-          echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
-          // Show the alert message
-          echo '<script>showSnackbar();</script>';
-          // Redirect ke halaman test-calabar.php
-          header("Location: test-calabar.php");
-          exit();
-      } else {
-          echo "Error: " . mysqli_error($conn);
-      }
-
-      // Tutup prepared statement
-      mysqli_stmt_close($stmt);
-  } else {
-      // Tampilkan pesan error jika terjadi masalah saat meng-upload
-      echo "Terjadi kesalahan saat meng-upload file.";
-  }
+        // Menjalankan query
+        if (mysqli_query($conn, $query)) {
+            // Pendaftaran berhasil, simpan id_calabar ke dalam session
+            $_SESSION['id_calabar'] = $id_calabar;
+            echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
+            // Show the alert message
+            echo '<script>showSnackbar();</script>';
+            // Redirect ke halaman test-calabar.php
+            header("Location: test-calabar.php");
+            exit();
+        } else {
+            echo "Error: " . mysqli_error($conn);
+        }
+    } else {
+        // Tampilkan pesan error jika terjadi masalah saat meng-upload
+        echo "Terjadi kesalahan saat meng-upload file.";
+    }
 }
 }
 ?>
@@ -488,9 +407,9 @@ button[type=reset]:hover {
       </div>
     </nav>
 
-  <div class="container" style="margin-top: 75px;">
-  <h2>Form Pendaftaran Anggota UKM Baru</h2>
-        <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+    <div class="container" style="margin-top: 75px;">
+        <h2>Form Pendaftaran Anggota UKM Baru</h2>
+        <form method="POST" action="" enctype="multipart/form-data">
             <div>
                 <label for="id_user">ID User</label>
                 <input type="text" name="id_user" value="<?php echo $_SESSION['id_user']; ?>" readonly>

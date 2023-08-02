@@ -6,8 +6,7 @@ require_once "db_connect.php";
 session_start();
 
 // Mendapatkan nama depan dan level dari session
-$nama_depan = $_SESSION["nama_depan"];
-$nama_belakang = $_SESSION["nama_belakang"];
+$nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 $id_calabar = $_SESSION['id_calabar'];
 
@@ -35,6 +34,63 @@ $currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
 // Mendapatkan total jumlah soal
 $totalQuestions = 50;
 
+// Fungsi untuk menentukan kategori berdasarkan nilai TPA
+function determineCategory($nilaiTPA)
+{
+    $totalSoal = 50;
+    $persentaseBenar = ($nilaiTPA / $totalSoal) * 100;
+
+    if ($persentaseBenar == 100) {
+        return "Sangat Baik";
+    } elseif ($persentaseBenar >= 80) {
+        return "Baik";
+    } elseif ($persentaseBenar >= 50) {
+        return "Cukup";
+    } elseif ($persentaseBenar >= 30) {
+        return "Kurang Baik";
+    } else {
+        return "Kategori Tidak Tersedia";
+    }
+}
+
+// Fungsi untuk menyimpan nilai TPA ke database
+function saveTPAScore($id_calabar, $nilaiTPA)
+{
+    // Memasukkan file db_connect.php
+    require_once "db_connect.php";
+
+    // Menyimpan nilai TPA ke database berdasarkan id_calabar
+    $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_calabar = $id_calabar";
+
+    if (mysqli_query($conn, $sql)) {
+        echo "Nilai TPA berhasil disimpan.";
+    } else {
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+    }
+
+    // Menutup koneksi database
+    mysqli_close($conn);
+}
+
+// Memeriksa apakah pengguna sudah mengisi jawaban TPA
+if (isset($_POST['submit_jawaban'])) {
+    // Mendapatkan jawaban pengguna dari form
+    $jawaban = $_POST['jawaban'];
+
+    // Menghitung nilai TPA
+    $nilaiTPA = calculateTPAScore($jawaban);
+
+    // Menyimpan nilai TPA ke database
+    saveTPAScore($id_calabar, $nilaiTPA);
+
+    // Menampilkan kategori berdasarkan nilai TPA
+    $kategori = determineCategory($nilaiTPA);
+
+    // Memperbarui nilai_tpa di sesi dengan nilai terbaru
+    $_SESSION['nilai_tpa'] = $nilaiTPA;
+}
+
+// Fungsi untuk menghitung nilai TPA berdasarkan jawaban
 function calculateTPAScore($jawaban)
 {
     $skorBenar = 1; // Skor untuk jawaban benar
@@ -81,62 +137,8 @@ function calculateTPAScore($jawaban)
 
     return $nilaiTPA;
 }
-
-// Fungsi untuk menentukan kategori berdasarkan nilai TPA
-function determineCategory($nilaiTPA)
-{
-    $totalSoal = 50;
-    $persentaseBenar = ($nilaiTPA / $totalSoal) * 100;
-
-    if ($persentaseBenar == 100) {
-        return "Sangat Baik";
-    } elseif ($persentaseBenar >= 80) {
-        return "Baik";
-    } elseif ($persentaseBenar >= 50) {
-        return "Cukup";
-    } elseif ($persentaseBenar >= 30) {
-        return "Kurang Baik";
-    } else {
-        return "Kategori Tidak Tersedia";
-    }
-}
-
-function saveTPAScore($id_calabar, $nilaiTPA)
-{
-    // Memasukkan file db_connect.php
-    require_once "db_connect.php";
-
-    // Menyimpan nilai TPA ke database berdasarkan id_calabar
-    $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_calabar = $id_calabar";
-
-    if (mysqli_query($conn, $sql)) {
-        echo "Nilai TPA berhasil disimpan.";
-    } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-    }
-
-    // Menutup koneksi database
-    mysqli_close($conn);
-}
-
-// Memeriksa apakah pengguna sudah mengisi jawaban TPA
-if (isset($_POST['submit_jawaban'])) {
-    // Mendapatkan jawaban pengguna dari form
-    $jawaban = $_POST['jawaban'];
-
-    // Menghitung nilai TPA
-    $nilaiTPA = calculateTPAScore($jawaban);
-
-    // Menyimpan nilai TPA ke database
-    saveTPAScore($id_calabar, $nilaiTPA);
-
-    // Menampilkan kategori berdasarkan nilai TPA
-    $kategori = determineCategory($nilaiTPA);
-
-    // Memperbarui nilai_tpa di sesi dengan nilai terbaru
-    $_SESSION['nilai_tpa'] = $nilaiTPA;
-}
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -518,7 +520,7 @@ if (isset($_POST['submit_jawaban'])) {
 <div class="navbar">
     <div class="welcome-container">
         <div class="welcome-text">
-            <h3>Selamat datang, <?php echo $nama_depan . ' ' . $nama_belakang; ?></h3>
+            <h3>Selamat datang, <?php echo $nama_lengkap; ?></h3>
         </div>
 		<div class="logout-container">
 		<a href="?logout=true" class="logout-button">
@@ -1736,7 +1738,8 @@ if (isset($_POST['submit_jawaban'])) {
 			<button id="nextBtn" onclick="nextQuestion()">Next</button>
 			<button id="submitBtn" onclick="submitAnswers()">Submit</button>
 			</div>
-			<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 			<script>
     var currentQuestion = 1;
@@ -1821,21 +1824,7 @@ if (isset($_POST['submit_jawaban'])) {
         }
     }
 	
-		var xhr = new XMLHttpRequest();
-	xhr.open('POST', 'save_tpa_score.php');
-	xhr.setRequestHeader('Content-Type', 'application/json');
-	xhr.onload = function () {
-		if (xhr.status === 200) {
-			// Process the response from the server
-			var response = JSON.parse(xhr.responseText);
-			// Do something with the response
-			var nilaiTPA = response.nilaiTPA;
-			var kategori = determineCategory(nilaiTPA);
-			saveTPAScore(id_calabar, nilaiTPA); // Simpan nilai TPA ke database
-			// Lakukan tindakan yang sesuai berdasarkan respons dari server
-		}
-	};
-	xhr.send(JSON.stringify(answers));
+		
 
 
     function determineCategory(nilaiTPA) {
@@ -1856,22 +1845,21 @@ if (isset($_POST['submit_jawaban'])) {
     }
 
     function saveTPAScore(id_calabar, nilaiTPA) {
-        // Send the data to the server to save the TPA score
-        // You can use AJAX to send the data to a PHP script
-        // and process it on the server side.
-
-        // For example:
-        // var xhr = new XMLHttpRequest();
-        // xhr.open('POST', 'save_tpa_score.php');
-        // xhr.setRequestHeader('Content-Type', 'application/json');
-        // xhr.onload = function () {
-        //     if (xhr.status === 200) {
-        //         // Process the response from the server
-        //         var response = JSON.parse(xhr.responseText);
-        //         // Do something with the response
-        //     }
-        // };
-        // xhr.send(JSON.stringify({ id_calabar: id_calabar, nilaiTPA: nilaiTPA }));
+		var xhr = new XMLHttpRequest();
+	xhr.open('POST', 'save_tpa_score.php');
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.onload = function () {
+		if (xhr.status === 200) {
+			// Process the response from the server
+			var response = JSON.parse(xhr.responseText);
+			// Do something with the response
+			var nilaiTPA = response.nilaiTPA;
+			var kategori = determineCategory(nilaiTPA);
+			saveTPAScore(id_calabar, nilaiTPA); // Simpan nilai TPA ke database
+			// Lakukan tindakan yang sesuai berdasarkan respons dari server
+		}
+	};
+	xhr.send(JSON.stringify(answers));
     }
 }
 
