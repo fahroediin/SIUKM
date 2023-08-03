@@ -41,21 +41,56 @@ if (isset($_GET['logout'])) {
     logout();
 }
 
+function generateLogoFilename($id_ukm, $extension)
+{
+    // Concatenate the id_ukm with the "-logo" suffix and the extension
+    $logoFilename = $id_ukm . "-logo." . $extension;
+    return $logoFilename;
+}
+
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil nilai-nilai dari form
     $id_ukm = $_POST["id_ukm"];
     $nama_ukm = $_POST["nama_ukm"];
     $sejarah = $_POST["sejarah"];
-    $logo_ukm = $_POST["logo_ukm"];
     $nama_ketua = $_POST["nama_ketua"];
     $nim_ketua = $_POST["nim_ketua"];
     $visi = $_POST["visi"];
     $misi = $_POST["misi"];
 
+    // Check if a logo file is uploaded
+    if ($_FILES["logo_ukm"]["name"] != "") {
+        // Define the target directory for the logo file
+        $targetDir = "../assets/images/logoukm/";
+
+        // Get the original filename and extension
+        $logo_ukm_name = $_FILES["logo_ukm"]["name"];
+        $logo_ukm_extension = strtolower(pathinfo($logo_ukm_name, PATHINFO_EXTENSION));
+
+        // Check if the file format is allowed
+        if (!in_array($logo_ukm_extension, ['jpeg', 'jpg', 'png'])) {
+            echo "Sorry, only JPEG, JPG, and PNG files are allowed.";
+            exit();
+        }
+
+        // Generate the logo filename based on id_ukm and the validated extension
+        $logo_ukm_filename = generateLogoFilename($id_ukm, $logo_ukm_extension);
+
+        // Move the uploaded logo file to the target directory
+        if (!move_uploaded_file($_FILES["logo_ukm"]["tmp_name"], $targetDir . $logo_ukm_filename)) {
+            // Handle the error condition, for example:
+            echo "Sorry, there was an error uploading the logo file.";
+            exit();
+        }
+    } else {
+        // If no logo file is uploaded, use the existing logo filename
+        $logo_ukm_filename = $logo_ukm;
+    }
+
      // Menyimpan data ke database
-    $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm', nama_ketua='$nama_ketua', nim_ketua='$nim_ketua', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
-    $result = $conn->query($sql);
+     $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', nama_ketua='$nama_ketua', nim_ketua='$nim_ketua', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
+     $result = $conn->query($sql);
 
     if ($result) {
         // Redirect ke halaman daftar struktur setelah penyimpanan berhasil
@@ -186,7 +221,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <div class="content">
     <div class="card">
     <h2>Edit Data UKM</h2>
-    <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+    <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>
                 <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateFormData(this)">
