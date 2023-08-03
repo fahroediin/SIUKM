@@ -32,6 +32,7 @@ function getImagesFromDir($dir) {
 
 // Get the image files from the 'kegiatan' directory
 $image_files = getImagesFromDir('../assets/images/kegiatan/');
+
 ?>
 
 <!DOCTYPE html>
@@ -66,10 +67,10 @@ $image_files = getImagesFromDir('../assets/images/kegiatan/');
             width: 25%;
             padding: 10px;
         }
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-        }
+		.gallery-item img {
+        max-width: 1280px;
+        height: auto;
+    }
         .gallery-item .caption {
             margin-top: 5px;
         }
@@ -135,21 +136,29 @@ $image_files = getImagesFromDir('../assets/images/kegiatan/');
 	</nav>
 	<div class="container">
         <h1>Galeri</h1>
-        <div class="gallery">
-            <?php
-            // Loop through the image files and display them
-            foreach ($image_files as $index => $image_file) {
-                // Calculate the index of the image to display (0 to 3)
-                $image_index = $index % 4;
-                ?>
-                <div class="gallery-item">
-                    <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" />
-                    <div class="caption">Caption for Image <?php echo ($index + 1); ?></div>
-                </div>
-                <?php
-            }
-            ?>
+		<div class="gallery">
+    <?php
+    // Loop through the image files and display them
+    foreach ($image_files as $index => $image_file) {
+        // Calculate the index of the image to display (0 to 3)
+        $image_index = $index % 4;
+
+        // Get the original dimensions of the image
+        list($width, $height) = getimagesize($image_file);
+
+        // Calculate the proportional height for 1280px width
+        $new_width = 1280;
+        $new_height = $height * ($new_width / $width);
+        ?>
+        <div class="gallery-item">
+            <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" width="<?php echo $new_width; ?>" height="<?php echo $new_height; ?>" />
+            <div class="caption">Caption for Image <?php echo ($index + 1); ?></div>
         </div>
+        <?php
+    }
+    ?>
+</div>
+
     </div>
 
 </body>
