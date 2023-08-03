@@ -307,7 +307,7 @@ function generateIdPrestasi($nama_prestasi, $id_ukm, $penyelenggara, $tgl_presta
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
     <a href="proses_visimisi.php" class="btn btn-primary <?php if($active_page == 'visi_misi') echo 'active'; ?>">Data UKM</a>
     <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-    <a href="kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
     </div>
     
@@ -327,31 +327,40 @@ function generateIdPrestasi($nama_prestasi, $id_ukm, $penyelenggara, $tgl_presta
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($prestasi_data as $prestasi) : ?>
-                <tr>
-                    <td><?php echo $prestasi['id_prestasi']; ?></td>
-                    <td><?php echo $prestasi['nama_prestasi']; ?></td>
-                    <td><?php echo $prestasi['penyelenggara']; ?></td>
-                    <td><?php echo date('d-m-Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
-                    <td><?php echo $prestasi['id_ukm']; ?></td>
-                    <td><?php echo $prestasi['nama_ukm']; ?></td>
-                    <td class="action-buttons">
-                        <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->
-                        <form method="get" action="edit_prestasi.php">
-                            <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                            <input type="hidden" name="action" value="edit">
-                            <button type="submit" class="btn btn-primary btn-sm" name="submit">Edit</button>
-                        </form>
-                        <!-- Menggunakan form dengan method POST untuk menghapus prestasi -->
-                        <form method="post" action="proses_delete_prestasi.php" onsubmit="return confirmDelete();">
-                            <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
-                            <input type="hidden" name="action" value="delete">
-                            <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+    <?php
+    // Define Indonesian month names
+    $indonesianMonths = array(
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    );
+
+    foreach ($prestasi_data as $prestasi) :
+    ?>
+        <tr>
+            <td><?php echo $prestasi['id_prestasi']; ?></td>
+            <td><?php echo $prestasi['nama_prestasi']; ?></td>
+            <td><?php echo $prestasi['penyelenggara']; ?></td>
+            <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
+            <td><?php echo $prestasi['id_ukm']; ?></td>
+            <td><?php echo $prestasi['nama_ukm']; ?></td>
+            <td class="action-buttons">
+                <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->
+                <form method="get" action="edit_prestasi.php">
+                    <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+                    <input type="hidden" name="action" value="edit">
+                    <button type="submit" class="btn btn-primary btn-sm" name="submit">Edit</button>
+                </form>
+                <!-- Menggunakan form dengan method POST untuk menghapus prestasi -->
+                <form method="post" action="proses_delete_prestasi.php" onsubmit="return confirmDelete();">
+                    <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" class="btn btn-danger btn-sm delete-button" name="submit">Hapus</button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
+
     </table>
 </div>
     <!-- Form Tambah Prestasi -->
