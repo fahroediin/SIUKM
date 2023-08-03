@@ -447,7 +447,7 @@ button[type=reset]:hover {
         <div>
           <label for="id_ukm">ID UKM:</label>
           <select id="id_ukm" name="id_ukm" required onchange="updateNamaUKM(this)">
-            <option value="" selected disabled>Pilih ID UKM</option>
+            <option value="" selected disabled>Pilih ID UKM Yang Diminati</option>
             <?php
             // Membuat opsi combobox dari hasil query
             foreach ($namaUKM as $id_ukm => $nama_ukm) {

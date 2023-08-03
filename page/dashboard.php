@@ -23,7 +23,6 @@ $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
 // Mengeksekusi query
 $result = mysqli_query($conn, $query);
 
-// Memeriksa apakah query berhasil dieksekusi
 if ($result) {
     // Mengambil data pengguna
     $user = mysqli_fetch_assoc($result);
@@ -32,10 +31,13 @@ if ($result) {
     $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['no_hp'] = $user['no_hp'];
+    $_SESSION['prodi'] = $user['prodi']; // Assuming "prodi" is the field name in the database
+    $_SESSION['semester'] = $user['semester']; // Assuming "semester" is the field name in the database
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
 }
+
 
 // Fungsi logout
 function logout() {
@@ -114,6 +116,8 @@ if (isset($_GET['logout'])) {
         <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $_SESSION['nama_lengkap']; ?></span></p>
         <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
         <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $_SESSION['no_hp']; ?></span></p>
+        <p><span class="label">Prodi:</span> <span class="value"><?php echo $_SESSION['prodi']; ?></span></p>
+        <p><span class="label">Semester:</span> <span class="value"><?php echo $_SESSION['semester']; ?></span></p>
     </div>
 </div>
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->

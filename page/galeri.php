@@ -14,32 +14,40 @@ $level = $_SESSION["level"];
 
 // Inisialisasi variabel pesan error
 $error = '';
+// Function to get all image files from a directory
+function getImagesFromDir($dir) {
+    $images = array();
+    if (is_dir($dir)) {
+        if ($dh = opendir($dir)) {
+            while (($file = readdir($dh)) !== false) {
+                if (!is_dir($dir . $file)) {
+                    $images[] = $dir . $file;
+                }
+            }
+            closedir($dh);
+        }
+    }
+    return $images;
+}
 
-
-// Mengambil data foto dari tabel tab_galeri
-//$query = "SELECT g.path_foto, g.nama_kegiatan, g.tgl, g.nama_ukm FROM tab_galeri g";
-//$result = mysqli_query($conn, $query);
-
-//if (mysqli_num_rows($result) > 0) {
-  //  while ($row = mysqli_fetch_assoc($result)) {
-   //     $pathFoto = $row['path_foto'];
-        // Lakukan sesuatu dengan path foto, misalnya menampilkan gambar
-   //     echo '<img src="' . $pathFoto . '" alt="Gambar">';
-   // }
-//} else {
-//    echo "Data tidak ada";
-//}
+// Get the image files from the 'kegiatan' directory
+$image_files = getImagesFromDir('../assets/images/kegiatan/');
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Galeri</title>
-    <meta charset="utf-8">
+	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="../assets/js/script.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+
 
     <style>
         .container {
@@ -126,20 +134,22 @@ $error = '';
 			</ul>
 		</div>
 	</nav>
-    <div class="container">
+	<div class="container">
         <h1>Galeri</h1>
-
         <div class="gallery">
-            <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+            <?php
+            // Loop through the image files and display them
+            foreach ($image_files as $index => $image_file) {
+                // Calculate the index of the image to display (0 to 3)
+                $image_index = $index % 4;
+                ?>
                 <div class="gallery-item">
-                    <img src="<?php echo $row['path_foto']; ?>" alt="Foto Kegiatan">
-                    <div class="caption">
-                        <p>Nama Kegiatan: <?php echo $row['nama_kegiatan']; ?></p>
-                        <p>Tanggal Kegiatan: <?php echo $row['tgl']; ?></p>
-                        <p>Nama UKM: <?php echo $row['nama_ukm']; ?></p>
-                    </div>
+                    <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" />
+                    <div class="caption">Caption for Image <?php echo ($index + 1); ?></div>
                 </div>
-            <?php } ?>
+                <?php
+            }
+            ?>
         </div>
     </div>
 
