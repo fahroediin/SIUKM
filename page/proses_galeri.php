@@ -19,6 +19,12 @@ if ($_SESSION['level'] == "2" || $_SESSION['level'] == "3") {
     exit();
 }
 
+function generateUniqueFilename($filename, $extension) {
+    $filename = preg_replace("/[^a-zA-Z0-9]/", "", $filename); // Remove non-alphanumeric characters
+    $filename = str_replace(" ", "", $filename); // Remove spaces
+    return $filename . "." . $extension;
+}
+
 // Menandai halaman yang aktif
 $active_page = 'galeri';
 
@@ -31,83 +37,110 @@ function generateRandomNumber()
 // Function to generate id_foto based on tgl and random number
 function generateIdFoto($tgl)
 {
-    return $tgl . generateRandomNumber();
+    // Convert the date to a DateTime object
+    $date = new DateTime($tgl);
+    
+    // Extract the year, month, and day from the DateTime object
+    $year = $date->format('Y');
+    $month = $date->format('m');
+    $day = $date->format('d');
+
+    // Generate a unique random number
+    $randomNumber = sprintf("%04d", mt_rand(1, 9999));
+
+    // Concatenate the year, month, day, and random number without hyphens
+    return $year . $month . $day . $randomNumber;
 }
 
-// Memeriksa apakah form telah disubmit
+// Function to generate id_kegiatan based on tgl and random number
+function generateIdKegiatan($tgl)
+{
+    // Convert the date to a DateTime object
+    $date = new DateTime($tgl);
+    
+    // Extract the year, month, and day from the DateTime object
+    $year = $date->format('Y');
+    $month = $date->format('m');
+    $day = $date->format('d');
+
+    // Generate a unique random number
+    $randomNumber = sprintf("%04d", mt_rand(1, 9999));
+
+    // Concatenate the year, month, day, and random number without hyphens
+    return $year . $month . $day . $randomNumber;
+}
+
+
+// Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Mengambil nilai-nilai dari form
-    $id_ukm = $_POST["id_ukm"];
-    $nama_ukm = $_POST["nama_ukm"];
-    $nama_kegiatan = $_POST["nama_kegiatan"];
-    $tgl = $_POST["tgl"];
+    // Validate and sanitize form inputs
+    $id_ukm = mysqli_real_escape_string($conn, $_POST["id_ukm"]);
+    $nama_ukm = mysqli_real_escape_string($conn, $_POST["nama_ukm"]);
+    $nama_kegiatan = mysqli_real_escape_string($conn, $_POST["nama_kegiatan"]);
+    $tgl = mysqli_real_escape_string($conn, $_POST["tgl"]);
+    // Define the maximum file size in bytes (5MB)
+    $maxFileSize = 5 * 1024 * 1024;
 
-    // Generate id_kegiatan
-    $id_kegiatan = $nama_kegiatan . $id_ukm . generateRandomNumber();
-
-    // Generate id_foto
-    $id_foto = generateIdFoto($tgl);
-
-}
-// Upload and save the photo
-$targetDir = "../assets/images/kegiatan/";
-
-if (isset($_FILES["foto_kegiatan"]["name"]) && $_FILES["foto_kegiatan"]["name"] != "") {
-    $foto_kegiatan = basename($_FILES["foto_kegiatan"]["name"]);
-    $targetFilePath = $targetDir . $foto_kegiatan;
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-
-    // Check if the image file is an actual image or a fake image
-    if (isset($_POST["submit"])) {
-        $check = getimagesize($_FILES["foto_kegiatan"]["tmp_name"]);
-        if ($check !== false) {
-            $uploadOk = 1;
-        } else {
-            $uploadOk = 0;
-        }
-    }
-
-    // Check if file already exists
-    if (file_exists($targetFilePath)) {
-        $uploadOk = 0;
-    }
-
-    // Allow certain image file formats
-    if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "png" && $imageFileType != "gif") {
-        $uploadOk = 0;
-    }
-
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
+    // Check if the file size exceeds the maximum limit
+    if ($_FILES["foto_kegiatan"]["size"] > $maxFileSize) {
         // Handle the error condition, for example:
-        echo "Sorry, your file was not uploaded.";
+        echo "Sorry, your file exceeds the maximum allowed size (5MB).";
         exit();
-    } else {
-        // If everything is OK, try to upload the file
-        if (move_uploaded_file($_FILES["foto_kegiatan"]["tmp_name"], $targetFilePath)) {
-            // File has been uploaded successfully, continue with the database insertion
-            // Rest of the code...
+    }
 
-            // Create the SQL query
-            $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    // Handle file upload
+    $targetDir = "../assets/images/kegiatan/";
 
-            // Prepare the statement
-            $stmt = $conn->prepare($sql);
+    if (isset($_FILES["foto_kegiatan"]["name"]) && $_FILES["foto_kegiatan"]["name"] != "") {
+        $foto_kegiatan = $_FILES["foto_kegiatan"]["name"];
+        $foto_kegiatan_extension = strtolower(pathinfo($foto_kegiatan, PATHINFO_EXTENSION));
+        $nama_kegiatan = $_POST["nama_kegiatan"];
 
-            // Bind the parameters
-            $stmt->bind_param("ssssss", $id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $foto_kegiatan, $tgl);
+        // Generate a unique filename based on the nama_kegiatan and the extension
+        $uniqueFilename = generateUniqueFilename($nama_kegiatan, $foto_kegiatan_extension);
 
-            // Execute the query
-            if ($stmt->execute()) {
-                // Redirect to the same page with a success parameter
-                header("Location: proses_galeri.php?success=1");
-                exit();
-            } else {
-                // Handle the error condition, for example:
-                echo "Sorry, there was an error uploading your file.";
-                exit();
-            }
+        $targetFilePath = $targetDir . $uniqueFilename;
+
+        // Check if the image file is an actual image or a fake image
+        $check = getimagesize($_FILES["foto_kegiatan"]["tmp_name"]);
+        if ($check === false) {
+            // Handle the error condition, for example:
+            echo "Sorry, your file is not a valid image.";
+            exit();
+        }
+
+        // Move the uploaded file to the target directory
+        if (!move_uploaded_file($_FILES["foto_kegiatan"]["tmp_name"], $targetFilePath)) {
+            // Handle the error condition, for example:
+            echo "Sorry, there was an error uploading your file.";
+            exit();
+        }
+
+                // Generate a unique id_foto based on tgl and random number
+                $id_foto = generateIdFoto($tgl);
+
+            
+                // Generate a unique id_kegiatan based on tgl and random number
+                $id_kegiatan = generateIdKegiatan($tgl);
+
+        // Prepare the SQL query to insert data into tab_galeri table
+    $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    // Prepare the statement
+    $stmt = $conn->prepare($sql);
+
+    // Bind the parameters
+    $stmt->bind_param("sssssss", $id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $uniqueFilename, $tgl);
+
+        // Execute the query
+        if ($stmt->execute()) {
+            // Redirect to the same page with a success parameter
+            header("Location: proses_galeri.php?success=1");
+            exit();
+        } else {
+            // Handle the error condition, for example:
+            echo "Sorry, there was an error uploading your file.";
+            exit();
         }
     }
 }
@@ -118,6 +151,11 @@ $result_ukm = mysqli_query($conn, $query_ukm);
 // Mendapatkan data ID kegiatan dan nama kegiatan dari tabel tab_kegiatan
 $query_kegiatan = "SELECT id_kegiatan, nama_kegiatan FROM tab_kegiatan";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
+
+// Fetch data from the tab_galeri table
+$query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, foto_kegiatan, tgl FROM tab_galeri";
+$result_galeri = mysqli_query($conn, $query_galeri);
+
 ?>
 
 <!DOCTYPE html>
@@ -173,6 +211,24 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         border: 1px solid #ccc;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
     }
 </style>
  <!-- Sidebar -->
@@ -190,11 +246,49 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
 </div>
 <body>
-    <div class="container">
+<div class="content">
+    <h2>Data Galeri</h2>
+    <table class="table">
+        <thead>
+            <tr>
+            <th>ID Foto</th>
+            <th>ID Kegiatan</th>
+            <th>ID UKM</th>
+            <th>Nama UKM</th>
+            <th>Nama Kegiatan</th>
+            <th>Foto Kegiatan</th>
+            <th>Tanggal</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+            <?php
+            while ($row_galeri = mysqli_fetch_assoc($result_galeri)) {
+                // Output table rows
+                echo "<tr>";
+                echo "<td>" . $row_galeri['id_foto'] . "</td>";
+                echo "<td>" . $row_galeri['id_kegiatan'] . "</td>";
+                echo "<td>" . $row_galeri['id_ukm'] . "</td>";
+                echo "<td>" . $row_galeri['nama_ukm'] . "</td>";
+                echo "<td>" . $row_galeri['nama_kegiatan'] . "</td>";
+                echo "<td><img src='../assets/images/kegiatan/" . $row_galeri['foto_kegiatan'] . "' width='100'></td>";
+                echo "<td>" . $row_galeri['tgl'] . "</td>";
+                echo "<td>
+                      <a href='edit_galeri.php?id_foto=" . $row_galeri['id_foto'] . "'>Edit</a>
+                      <a href='delete_galeri.php?id_foto=" . $row_galeri['id_foto'] . "'>Hapus</a>
+                  </td>";
+                echo "</tr>";
+            }
+            ?>
+        </tbody>
+</table>
+<div class="container">
         <div class="row justify-content-center">
+            <!-- Wrap the form with a card component -->
             <div class="card">
-                <h1>Proses Galeri</h1>
-    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+    
+                <div class="card-body">
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
         <div>
             <label for="id_ukm">ID UKM:</label>
             <select id="id_ukm" name="id_ukm" required>
@@ -223,28 +317,43 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <label for="foto_kegiatan">Foto Kegiatan:</label>
     <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required>
 </div>
-        <div>
-            <label for="tgl">Tanggal:</label>
-            <input type="date" id="tgl" name="tgl" required>
-        </div>
+  <div>
+    <label for="tgl">Tanggal:</label>
+    <input type="date" id="tgl" name="tgl" required>
+</div>
         <div>
             <button type="submit">Simpan</button>
             </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Add your JavaScript code here to populate the nama_ukm field -->
-    <script>
-        const idUkmSelect = document.getElementById("id_ukm");
-        const namaUkmField = document.getElementById("nama_ukm");
+  <!-- Add your JavaScript code here to populate the nama_ukm field -->
+<script>
+    const idUkmSelect = document.getElementById("id_ukm");
+    const namaUkmField = document.getElementById("nama_ukm");
 
-        idUkmSelect.addEventListener("change", function() {
-            const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
-            const namaUkm = selectedOption.text;
-            namaUkmField.value = namaUkm;
-        });
-    </script>
+    idUkmSelect.addEventListener("change", function() {
+        const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
+        const idUkm = selectedOption.value;
+        if (idUkm) {
+            // Make an AJAX request to get the nama_ukm based on the selected id_ukm
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `get_nama_ukm.php?id_ukm=${idUkm}`, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    // Update the nama_ukm field with the fetched value
+                    namaUkmField.value = xhr.responseText;
+                }
+            };
+            xhr.send();
+        } else {
+            // If no id_ukm is selected, reset the nama_ukm field
+            namaUkmField.value = "";
+        }
+    });
+</script>
+
 </body>
-
 </html>
