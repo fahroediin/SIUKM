@@ -84,6 +84,34 @@ while ($row = mysqli_fetch_assoc($result)) {
     // Menambahkan data ke array struktur berdasarkan id_ukm dan id_jabatan
     $struktur[$id_jabatan][$id_ukm][] = array("nim" => $nim, "nama_lengkap" => $nama_lengkap);
 }
+// Query to get kegiatan data for the "racana" UKM
+$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = 'wanaceta'";
+$kegiatanResult = mysqli_query($conn, $query);
+
+// Memeriksa apakah query berhasil dieksekusi
+if (!$kegiatanResult) {
+    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+    echo "Error: " . mysqli_error($conn);
+    exit();
+}
+
+// Create an array to store the kegiatan data
+$kegiatanData = array();
+while ($row = mysqli_fetch_assoc($kegiatanResult)) {
+    $kegiatanData[] = array("nama_kegiatan" => $row['nama_kegiatan'], "tgl" => $row['tgl']);
+}
+
+// Define Indonesian month names
+$indonesianMonths = array(
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+  'Agustus', 'September', 'Oktober', 'November', 'Desember'
+);
+
+// Function to format date in Indonesian format
+function formatDateIndonesia($date) {
+  global $indonesianMonths;
+  return date('d', strtotime($date)) . " " . $indonesianMonths[intval(date('m', strtotime($date))) - 1] . " " . date('Y', strtotime($date));
+}
 ?>
 
 <!DOCTYPE html>
@@ -208,6 +236,47 @@ h2 {
         background-color: #f2f2f2;
         text-align: center;
     }
+    .h2-kegiatan {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333; /* Set the desired color */
+}
+
+.kegiatan-container {
+    padding: 20px;
+    background-color: #f9f9f9; /* Set the desired background color */
+}
+
+.card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-img-right {
+        width: 100px; /* Set the fixed width to 100px */
+        height: auto;
+        position: absolute;
+        top: 50%;
+        right: 10px; /* Adjust the right spacing as needed */
+        transform: translateY(-50%);
+        opacity: 0.8;
+        /* Add other styles such as border-radius, box-shadow, etc. for visual appeal */
+    }
+
+    .card-title {
+        font-size: 24px; /* Increase the font size for the card title */
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden; /* Hide overflowing text */
+        text-overflow: ellipsis; /* Add ellipsis (...) for long texts */
+    }
+
+    .card-text {
+        font-size: 18px; /* Increase the font size for the card text */
+    }
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
     </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -234,12 +303,12 @@ h2 {
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="racana.php">Pramuka</a>
-						<a class="dropdown-item" href="wanacetta.php">Wanaceta</a>
-						<a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-						<a class="dropdown-item" href="ecc.php">ECC</a>
-						<a class="dropdown-item" href="riset.php">Riset</a>
+						<a class="dropdown-item" href="wanacetta.php">Mapala</a>
+						<a class="dropdown-item" href="agrogreen.php">Pertanian</a>
+						<a class="dropdown-item" href="ecc.php">Bahasa Inggris</a>
+						<a class="dropdown-item" href="riset.php">Penelitian</a>
 						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hsr.php">HSR</a>
+						<a class="dropdown-item" href="hsr.php">Keagamaan</a>
 					</div>
       </li>
     </ul>
@@ -283,6 +352,29 @@ h2 {
             </div>
         </div>
 
+        <br>
+        <div class="kegiatan-container">
+          <h2 class="h2-kegiatan">Jadwal Kegiatan</h2>
+          <?php if (empty($kegiatanData)) { ?>
+              <!-- Display the message when there is no data -->
+              <p style="text-align: center; font-style: italic;">Belum ada jadwal kegiatan terdekat</p>
+          <?php } else { ?>
+              <!-- Display the kegiatan cards -->
+              <div class="card-columns">
+                  <?php foreach ($kegiatanData as $kegiatan) { ?>
+                      <div class="card">
+                          <div class="card-body">
+                              <h5 class="card-title"><?php echo $kegiatan['nama_kegiatan']; ?></h5>
+                              <p class="card-text"><?php echo formatDateIndonesia($kegiatan['tgl']); ?></p>
+                          </div>
+                          <!-- Add the image to the right side of the card -->
+                          <img src="../assets/images/announcement.png" class="card-img-right" alt="Announcement">
+                      </div>
+                  <?php } ?>
+              </div>
+          <?php } ?>
+      </div>
+      
         <div class="divider jumbotron">
      <div class="ukm-info">
         <!-- Menampilkan visi dan misi -->

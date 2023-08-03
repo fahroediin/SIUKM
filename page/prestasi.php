@@ -87,12 +87,12 @@ $result = mysqli_query($conn, $query);
 					</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="racana.php">Pramuka</a>
-						<a class="dropdown-item" href="wanacetta.php">Wanaceta</a>
-						<a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-						<a class="dropdown-item" href="ecc.php">ECC</a>
-						<a class="dropdown-item" href="riset.php">Riset</a>
+						<a class="dropdown-item" href="wanacetta.php">Mapala</a>
+						<a class="dropdown-item" href="agrogreen.php">Pertanian</a>
+						<a class="dropdown-item" href="ecc.php">Bahasa Inggris</a>
+						<a class="dropdown-item" href="riset.php">Penelitian</a>
 						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hsr.php">HSR</a>
+						<a class="dropdown-item" href="hsr.php">Keagamaan</a>
 					</div>
 				</li>
 			</ul>

@@ -222,11 +222,11 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                            
                                 <input type="hidden" id="id_kegiatan" name="id_kegiatan" class="form-control" readonly>
                           
-                            <div class="form-group">
+                                <div class="form-group">
                                 <label for="nama_kegiatan">Nama Kegiatan:</label>
-                                <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control"
-                                    required>
+                                <input type="text" id="nama_kegiatan" placeholder="Nama Kegiatan Maksimal 15 karakter" name="nama_kegiatan" class="form-control" required maxlength="15" minlength="3">
                             </div>
+
                             <div class="form-group">
                                 <label for="tgl">Tanggal:</label>
                                 <input type="date" id="tgl" name="tgl" class="form-control" required>
