@@ -144,26 +144,30 @@ while ($row = mysqli_fetch_assoc($result)) {
       var nim_ketuaField = document.getElementById("nim_ketua");
       var visiField = document.getElementById("visi");
       var misiField = document.getElementById("misi");
+      var logo_ukmField = document.getElementById("logo_ukm_preview");
 
       // Mengirim permintaan AJAX ke server
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-          // Mengambil respons dari server dalam bentuk JSON
-          var data = JSON.parse(this.responseText);
+            // Mengambil respons dari server dalam bentuk JSON
+            var data = JSON.parse(this.responseText);
 
-          // Mengatur nilai field-field yang sesuai dengan respons dari server
-          nama_ukmField.value = data.nama_ukm;
-          sejarahField.value = data.sejarah;
-          nama_ketuaField.value = data.nama_ketua;
-          nim_ketuaField.value = data.nim_ketua;
-          visiField.value = data.visi;
-          misiField.value = data.misi;
+            // Mengatur nilai field-field yang sesuai dengan respons dari server
+            nama_ukmField.value = data.nama_ukm;
+            sejarahField.value = data.sejarah;
+            nama_ketuaField.value = data.nama_ketua;
+            nim_ketuaField.value = data.nim_ketua;
+            visiField.value = data.visi;
+            misiField.value = data.misi;
+
+            // Update the logo preview image
+            logo_ukmField.src = "../assets/images/logoukm/" + data.logo_ukm;
         }
-      };
-      xhttp.open("GET", "get_data_ukm.php?id_ukm=" + id_ukm, true);
-      xhttp.send();
-    }
+    };
+    xhttp.open("GET", "get_data_ukm.php?id_ukm=" + id_ukm, true);
+    xhttp.send();
+}
 </script>
 </head>
 <style>
@@ -242,9 +246,14 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <label for="sejarah">Sejarah:</label>
                 <textarea class="form-control" id="sejarah" name="sejarah" rows="5"></textarea>
             </div>
-            <div class="form-group">
+                        <div class="form-group">
                 <label for="logo_ukm">Logo UKM:</label>
                 <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm">
+                <!-- Add this img tag to display the logo preview -->
+                <img id="logo_ukm_preview" src="" alt="Logo UKM" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+
+                <!-- Add the message for logo upload -->
+                <p class="mt-2" style="font-size: 12px; color: #777;">Upload logo UKM dengan resolusi 512x512 pixel.</p>
             </div>
             <div class="form-group">
                 <label for="nama_ketua">Nama Ketua:</label>

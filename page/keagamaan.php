@@ -115,6 +115,31 @@ function formatDateIndonesia($date) {
   global $indonesianMonths;
   return date('d', strtotime($date)) . " " . $indonesianMonths[intval(date('m', strtotime($date))) - 1] . " " . date('Y', strtotime($date));
 }
+// Directory path for the logos
+$logoDirectory = '../assets/images/logoukm/';
+$defaultLogo = $logoDirectory . 'logo-default.png';
+
+// Query to get the logo URL for the "pramuka" UKM
+$query = "SELECT logo_ukm FROM tab_ukm WHERE id_ukm = 'keagamaan'";
+$logoResult = mysqli_query($conn, $query);
+
+// Memeriksa apakah query berhasil dieksekusi
+if (!$logoResult) {
+  // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+  echo "Error: " . mysqli_error($conn);
+  exit();
+}
+
+// Get the logo URL
+$row = mysqli_fetch_assoc($logoResult);
+$logo_ukm = $row['logo_ukm'];
+
+// Check if the logo file exists, otherwise use the default logo
+if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
+  $logo_src = $logoDirectory . $logo_ukm;
+} else {
+  $logo_src = $defaultLogo;
+}
 ?>
 
 <!DOCTYPE html>
@@ -166,6 +191,8 @@ function formatDateIndonesia($date) {
   height: 200px;
   border-radius: 10%;
   overflow: hidden;
+  max-width: 512px; 
+  max-height: 512px;
 }
 
 .ukm-logo img {
@@ -345,9 +372,9 @@ h2 {
 	<div class="container">
         <h1>Keagamaan</h1>
         <div class="ukm-info">
-            <div class="ukm-logo">
-                <img src="..\assets\images\logoukm\logo-default.png" alt="Logo UKM Agama" class="ukm-logo">
-            </div>
+        <div class="ukm-logo">
+            <img src="<?php echo $logo_src; ?>" alt="Logo UKM Pramuka" class="ukm-logo">
+          </div>
             <div>
                 <h2><?php echo $nama_ukm; ?></h2>
                 <p><?php echo $sejarah; ?></p>
