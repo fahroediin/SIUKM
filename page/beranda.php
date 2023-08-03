@@ -59,13 +59,13 @@ $level = $_SESSION["level"];
 						Pilih UKM
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="racana.php">Pramuka</a>
-						<a class="dropdown-item" href="wanacetta.php">Mapala</a>
-						<a class="dropdown-item" href="agrogreen.php">Pertanian</a>
-						<a class="dropdown-item" href="ecc.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="riset.php">Penelitian</a>
-						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hsr.php">Keagamaan</a>
+						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
+						<a class="dropdown-item" href="mapala.php">Mapala</a>
+						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
+						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
+						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
 					</div>
 				</li>
 			</ul>

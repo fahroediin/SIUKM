@@ -8,6 +8,9 @@ session_start();
 // Inisialisasi variabel pesan error
 $error = '';
 
+// Menonaktifkan pesan error
+error_reporting(0);
+
 // Mengambil data struktur organisasi dari tabel tab_strukm
 $query = "SELECT * FROM tab_strukm";
 $result = mysqli_query($conn, $query);
@@ -20,7 +23,7 @@ if (!$result) {
 }
 
 // Mendapatkan data UKM-info berupa visi dan misi
-$query = "SELECT * FROM tab_ukm WHERE id_ukm = 'mcriset'";
+$query = "SELECT * FROM tab_ukm WHERE id_ukm = 'keagamaan'";
 $infoResult = mysqli_query($conn, $query);
 
 // Memeriksa apakah query berhasil dieksekusi
@@ -85,7 +88,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $struktur[$id_jabatan][$id_ukm][] = array("nim" => $nim, "nama_lengkap" => $nama_lengkap);
 }
 // Query to get kegiatan data for the "racana" UKM
-$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = 'mcriset'";
+$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = 'keagamaan'";
 $kegiatanResult = mysqli_query($conn, $query);
 
 // Memeriksa apakah query berhasil dieksekusi
@@ -117,7 +120,7 @@ function formatDateIndonesia($date) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title>PENELITIAN - SIUKM STMIK KOMPUTAMA MAJENANG</title>
+	<title>KEAGAMAAN - SIUKM STMIK KOMPUTAMA MAJENANG</title>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -302,13 +305,13 @@ h2 {
           Pilih UKM
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="racana.php">Pramuka</a>
-						<a class="dropdown-item" href="wanacetta.php">Mapala</a>
-						<a class="dropdown-item" href="agrogreen.php">Pertanian</a>
-						<a class="dropdown-item" href="ecc.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="riset.php">Penelitian</a>
-						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hsr.php">Keagamaan</a>
+						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
+						<a class="dropdown-item" href="mapala.php">Mapala</a>
+						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
+						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
+						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
 					</div>
       </li>
     </ul>
@@ -340,10 +343,10 @@ h2 {
 </nav>
 
 	<div class="container">
-        <h1>Penelitian</h1>
+        <h1>Keagamaan</h1>
         <div class="ukm-info">
             <div class="ukm-logo">
-                <img src="..\assets\images\logoukm\mcs.jpg" alt="Logo UKM Penelitian" class="ukm-logo">
+                <img src="..\assets\images\logoukm\logo-default.png" alt="Logo UKM Agama" class="ukm-logo">
             </div>
             <div>
                 <h2><?php echo $nama_ukm; ?></h2>
@@ -390,12 +393,11 @@ h2 {
     <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
     <?php
-    $id_ukm_target = 'mcriset';
+    $id_ukm_target = 'hsr';
 
     echo "<table>";
     foreach ($jabatan as $id_jabatan => $nama_jabatan) {
         echo "<tr><th colspan='2' class='table-heading'>$nama_jabatan</th></tr>";
-        
         foreach ($struktur[$id_jabatan] as $id_ukm => $anggota) {
             if ($id_ukm === $id_ukm_target) {
                 foreach ($anggota as $data) {
