@@ -89,27 +89,27 @@ if (isset($_FILES["foto_kegiatan"]["name"]) && $_FILES["foto_kegiatan"]["name"] 
             // File has been uploaded successfully, continue with the database insertion
             // Rest of the code...
 
-         // Create the SQL query
-    $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            // Create the SQL query
+            $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    // Prepare the statement
-    $stmt = $conn->prepare($sql);
+            // Prepare the statement
+            $stmt = $conn->prepare($sql);
 
-    // Bind the parameters
-    $stmt->bind_param("sssssss", $id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $foto_kegiatan, $tgl);
+            // Bind the parameters
+            $stmt->bind_param("ssssss", $id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $foto_kegiatan, $tgl);
 
-    // Execute the query
-    if ($stmt->execute()) {
-        // Redirect to the same page with a success parameter
-        header("Location: proses_galeri.php?success=1");
-        exit();
-    } else {
-        // Handle the error condition, for example:
-        echo "Sorry, there was an error uploading your file.";
-        exit();
+            // Execute the query
+            if ($stmt->execute()) {
+                // Redirect to the same page with a success parameter
+                header("Location: proses_galeri.php?success=1");
+                exit();
+            } else {
+                // Handle the error condition, for example:
+                echo "Sorry, there was an error uploading your file.";
+                exit();
+            }
+        }
     }
-}
-}
 }
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";

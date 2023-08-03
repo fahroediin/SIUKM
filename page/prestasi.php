@@ -36,10 +36,10 @@ $result = mysqli_query($conn, $query);
 
 </head>
 <style>
-            h1 {
-			  padding-top: 40px;
+    h1 {
+		padding-top: 40px;
 		     }
-.container {
+    .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
@@ -85,7 +85,7 @@ $result = mysqli_query($conn, $query);
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
 						Pilih UKM
 					</a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="racana.php">Pramuka</a>
 						<a class="dropdown-item" href="wanacetta.php">Wanaceta</a>
 						<a class="dropdown-item" href="agrogreen.php">Agro Green</a>
@@ -121,7 +121,7 @@ $result = mysqli_query($conn, $query);
       </li>
 			</ul>
 		</div>
-	</nav>
+</nav>
 <div class="container">
     <h1>Daftar Prestasi</h1>
     <div class="divider"></div>
