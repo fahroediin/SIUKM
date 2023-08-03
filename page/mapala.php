@@ -408,13 +408,14 @@ h2 {
       
         <div class="divider jumbotron">
      <div class="ukm-info">
-        <!-- Menampilkan visi dan misi -->
-        <h3>Visi:</h3>
-         <p><?php echo $visi; ?></p>
+            <!-- Visi -->
+            <h3>Visi</h3>
+        <p style="text-align: center; font-style: italic;"><?php echo $visi; ?></p>
 
-       <h3>Misi:</h3>
-        <p><?php echo $misi; ?></p>
-    </div>
+        <!-- Misi -->
+        <h3>Misi</h3>
+        <p style="text-align: center; font-style: italic;"><?php echo $misi; ?></p>
+        </div>
 
   </div>
 		</div>

@@ -88,7 +88,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $struktur[$id_jabatan][$id_ukm][] = array("nim" => $nim, "nama_lengkap" => $nama_lengkap);
 }
 // Query to get kegiatan data for the "racana" UKM
-$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = 'ecc'";
+$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = 'english'";
 $kegiatanResult = mysqli_query($conn, $query);
 
 // Memeriksa apakah query berhasil dieksekusi
@@ -405,13 +405,14 @@ h2 {
 
         <div class="divider jumbotron">
      <div class="ukm-info">
-        <!-- Menampilkan visi dan misi -->
-        <h3>Visi:</h3>
-         <p><?php echo $visi; ?></p>
+           <!-- Visi -->
+           <h3>Visi</h3>
+        <p style="text-align: center; font-style: italic;"><?php echo $visi; ?></p>
 
-       <h3>Misi:</h3>
-        <p><?php echo $misi; ?></p>
-    </div>
+        <!-- Misi -->
+        <h3>Misi</h3>
+        <p style="text-align: center; font-style: italic;"><?php echo $misi; ?></p>
+        </div>
 
   </div>
 		</div>
