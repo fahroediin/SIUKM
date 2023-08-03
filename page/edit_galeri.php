@@ -70,16 +70,53 @@ function generateIdKegiatan($tgl)
     return $year . $month . $day . $randomNumber;
 }
 
+// Check if the id_foto query parameter is set in the URL
+if (isset($_GET['id_foto'])) {
+    // Retrieve the id_foto from the query parameter
+    $id_foto = $_GET['id_foto'];
+
+    // Fetch the corresponding data from the database based on the id_foto
+    $query_single_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, foto_kegiatan, tgl FROM tab_galeri WHERE id_foto = '$id_foto'";
+    $result_single_galeri = mysqli_query($conn, $query_single_galeri);
+
+    // Check if a record is found
+    if ($result_single_galeri && mysqli_num_rows($result_single_galeri) > 0) {
+        // Fetch the data from the result
+        $row_single_galeri = mysqli_fetch_assoc($result_single_galeri);
+        
+        // Populate the fields with the fetched data
+        updateFields(
+            $row_single_galeri['id_foto'],
+            $row_single_galeri['id_ukm'],
+            $row_single_galeri['nama_ukm'],
+            $row_single_galeri['id_kegiatan'],
+            $row_single_galeri['nama_kegiatan'],
+            $row_single_galeri['tgl']
+        );
+    } else {
+        // Handle the case when the id_foto doesn't match any records (e.g., redirect to an error page)
+        echo "Error: Data not found.";
+        exit();
+    }
+}
+function updateFields($id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $tgl) {
+    // Populate the form fields with the fetched data
+    echo "
+        <script>
+            updateFields('$id_foto', '$id_ukm', '$nama_ukm', '$id_kegiatan', '$nama_kegiatan', '$tgl');
+        </script>
+    ";
+}
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate and sanitize form inputs
+    $id_foto = mysqli_real_escape_string($conn, $_POST["id_foto"]);
     $id_ukm = mysqli_real_escape_string($conn, $_POST["id_ukm"]);
     $nama_ukm = mysqli_real_escape_string($conn, $_POST["nama_ukm"]);
+    $id_kegiatan = mysqli_real_escape_string($conn, $_POST["id_kegiatan"]);
     $nama_kegiatan = mysqli_real_escape_string($conn, $_POST["nama_kegiatan"]);
     $tgl = mysqli_real_escape_string($conn, $_POST["tgl"]);
-    // Define the maximum file size in bytes (5MB)
-    $maxFileSize = 5 * 1024 * 1024;
 
     // Check if the file size exceeds the maximum limit
     if ($_FILES["foto_kegiatan"]["size"] > $maxFileSize) {
@@ -88,17 +125,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Handle file upload
-    $targetDir = "../assets/images/kegiatan/";
-
+    // Handle file upload (if a new file is selected)
     if (isset($_FILES["foto_kegiatan"]["name"]) && $_FILES["foto_kegiatan"]["name"] != "") {
+        // Existing image filename (to be used in updating the record later)
+        $existingFilename = "";
+
+        // Check if there's an existing record with the given id_foto
+        $query_existing_foto = "SELECT foto_kegiatan FROM tab_galeri WHERE id_foto = '$id_foto'";
+        $result_existing_foto = mysqli_query($conn, $query_existing_foto);
+        if ($result_existing_foto && mysqli_num_rows($result_existing_foto) > 0) {
+            $row_existing_foto = mysqli_fetch_assoc($result_existing_foto);
+            $existingFilename = $row_existing_foto["foto_kegiatan"];
+        }
+
+        // Generate a unique filename based on the nama_kegiatan and the extension
         $foto_kegiatan = $_FILES["foto_kegiatan"]["name"];
         $foto_kegiatan_extension = strtolower(pathinfo($foto_kegiatan, PATHINFO_EXTENSION));
         $nama_kegiatan = $_POST["nama_kegiatan"];
-
-        // Generate a unique filename based on the nama_kegiatan and the extension
         $uniqueFilename = generateUniqueFilename($nama_kegiatan, $foto_kegiatan_extension);
-
         $targetFilePath = $targetDir . $uniqueFilename;
 
         // Check if the image file is an actual image or a fake image
@@ -116,32 +160,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
-                // Generate a unique id_foto based on tgl and random number
-                $id_foto = generateIdFoto($tgl);
+        // Delete the old image file if it exists and the new image is uploaded
+        if (!empty($existingFilename) && file_exists($targetDir . $existingFilename)) {
+            unlink($targetDir . $existingFilename);
+        }
+    } else {
+        // No new file is uploaded, keep the existing filename (no need to update the image)
+        $uniqueFilename = $existingFilename;
+    }
 
-            
-                // Generate a unique id_kegiatan based on tgl and random number
-                $id_kegiatan = generateIdKegiatan($tgl);
-
-        // Prepare the SQL query to insert data into tab_galeri table
-    $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    // Prepare the SQL query to update data in the tab_galeri table
+    $sql = "UPDATE tab_galeri SET id_ukm = ?, nama_ukm = ?, id_kegiatan = ?, nama_kegiatan = ?, foto_kegiatan = ?, tgl = ? WHERE id_foto = ?";
 
     // Prepare the statement
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters
-    $stmt->bind_param("sssssss", $id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $uniqueFilename, $tgl);
+    $stmt->bind_param("sssssss", $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $uniqueFilename, $tgl, $id_foto);
 
-        // Execute the query
-        if ($stmt->execute()) {
-            // Redirect to the same page with a success parameter
-            header("Location: proses_galeri.php?success=1");
-            exit();
-        } else {
-            // Handle the error condition, for example:
-            echo "Sorry, there was an error uploading your file.";
-            exit();
-        }
+    // Execute the query
+    if ($stmt->execute()) {
+        // Redirect to the same page with a success parameter
+        header("Location: proses_galeri.php?success=1");
+        exit();
+    } else {
+        // Handle the error condition, for example:
+        echo "Sorry, there was an error updating the record.";
+        exit();
     }
 }
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
@@ -157,70 +202,79 @@ $query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, f
 $result_galeri = mysqli_query($conn, $query_galeri);
 
 ?>
-
 <!DOCTYPE html>
 <html>
 
 <head>
-<title>Proses Galeri - SIUKM</title>
+    <title>Proses Galeri - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-    <style>
-       
+</head>
+<style>
+    .card {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-        .card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 600px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
 
-        .card-body div {
-            display: flex;
-            flex-direction: column;
-        }
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        select,
-        input[type="text"],
-        input[type="date"],
-        button {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        select {
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .card {
+        /* Set max-width and margin auto to center the card on larger screens */
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        table {
             width: 100%;
+            border-collapse: collapse;
         }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
         }
 
-    </style>
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    }
+</style>
  <!-- Sidebar -->
  <div class="sidebar">
     <h2>Manajemen Data UKM</h2>
@@ -238,85 +292,48 @@ $result_galeri = mysqli_query($conn, $query_galeri);
 <body>
 <div class="content">
     <h2>Data Galeri</h2>
-    <table class="table">
-        <thead>
-            <tr>
-            <th>ID Foto</th>
-            <th>ID Kegiatan</th>
-            <th>ID UKM</th>
-            <th>Nama UKM</th>
-            <th>Nama Kegiatan</th>
-            <th>Foto Kegiatan</th>
-            <th>Tanggal</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-            <?php
-            while ($row_galeri = mysqli_fetch_assoc($result_galeri)) {
-                // Output table rows
-                echo "<tr>";
-                echo "<td>" . $row_galeri['id_foto'] . "</td>";
-                echo "<td>" . $row_galeri['id_kegiatan'] . "</td>";
-                echo "<td>" . $row_galeri['id_ukm'] . "</td>";
-                echo "<td>" . $row_galeri['nama_ukm'] . "</td>";
-                echo "<td>" . $row_galeri['nama_kegiatan'] . "</td>";
-                echo "<td><img src='../assets/images/kegiatan/" . $row_galeri['foto_kegiatan'] . "' width='100'></td>";
-                echo "<td>" . $row_galeri['tgl'] . "</td>";
-                echo "<td>
-                        <a href='edit_galeri.php?id_foto=" . $row_galeri['id_foto'] . "'>Edit</a>
-                        <a href='delete_galeri.php?id_foto=" . $row_galeri['id_foto'] . "'>Hapus</a>
-                    </td>";
-                echo "</tr>";
-            }
-            ?>
-        </tbody>
-</table>
 <div class="container">
-            <div class="row justify-content-center">
-                <!-- Wrap the form with a card component -->
-                <div class="card">
-                    <div class="card-body">
-                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
-                            enctype="multipart/form-data">
-                            <div class="form-group">
-                                <label for="id_ukm">ID UKM:</label>
-                                <select id="id_ukm" name="id_ukm" class="form-control" required>
-                                    <option value="" selected disabled>Pilih ID UKM</option>
-                                    <?php
-                                        // Membuat opsi combobox dari hasil query
-                                        while ($row_ukm = mysqli_fetch_assoc($result_ukm)) {
-                                            echo "<option value='" . $row_ukm['id_ukm'] . "'>" . $row_ukm['id_ukm'] . "</option>";
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="nama_ukm">Nama UKM:</label>
-                                <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
-                            </div>
-                           
-                                <input type="hidden" id="id_kegiatan" name="id_kegiatan" class="form-control" readonly>
-                          
-                            <div class="form-group">
-                                <label for="nama_kegiatan">Nama Kegiatan:</label>
-                                <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label for="foto_kegiatan">Foto Kegiatan:</label>
-                                <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required
-                                    class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="tgl">Tanggal:</label>
-                                <input type="date" id="tgl" name="tgl" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
+        <div class="row justify-content-center">
+            <!-- Wrap the form with a card component -->
+            <div class="card">
+    
+                <div class="card-body">
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
+        <div>
+            <label for="id_ukm">ID UKM:</label>
+            <select id="id_ukm" name="id_ukm" required>
+                <option value="" selected disabled>Pilih ID UKM</option>
+                <?php
+                // Membuat opsi combobox dari hasil query
+                while ($row_ukm = mysqli_fetch_assoc($result_ukm)) {
+                    echo "<option value='" . $row_ukm['id_ukm'] . "'>" . $row_ukm['id_ukm'] . "</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div>
+            <label for="nama_ukm">Nama UKM:</label>
+            <input type="text" id="nama_ukm" name="nama_ukm" readonly>
+        </div>
+        <div>
+            <label for="id_kegiatan">ID Kegiatan:</label>
+            <input type="text" id="id_kegiatan" name="id_kegiatan" readonly>
+        </div>
+        <div>
+    <label for="nama_kegiatan">Nama Kegiatan:</label>
+    <input type="text" id="nama_kegiatan" name="nama_kegiatan" required>
+</div>
+<div>
+    <label for="foto_kegiatan">Foto Kegiatan:</label>
+    <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required>
+</div>
+  <div>
+    <label for="tgl">Tanggal:</label>
+    <input type="date" id="tgl" name="tgl" required>
+</div>
+        <div>
+            <button type="submit">Simpan</button>
+            </form>
                 </div>
             </div>
         </div>
@@ -324,6 +341,21 @@ $result_galeri = mysqli_query($conn, $query_galeri);
 
   <!-- Add your JavaScript code here to populate the nama_ukm field -->
 <script>
+ // Update the fields with data based on the selected row
+ function updateFields(id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, tgl) {
+        const idUkmSelect = document.getElementById("id_ukm");
+        const namaUkmField = document.getElementById("nama_ukm");
+        const idKegiatanField = document.getElementById("id_kegiatan");
+        const namaKegiatanField = document.getElementById("nama_kegiatan");
+        const tglField = document.getElementById("tgl");
+
+        idUkmSelect.value = id_ukm;
+        namaUkmField.value = nama_ukm;
+        idKegiatanField.value = id_kegiatan;
+        namaKegiatanField.value = nama_kegiatan;
+        tglField.value = tgl;
+    }
+
     const idUkmSelect = document.getElementById("id_ukm");
     const namaUkmField = document.getElementById("nama_ukm");
 
