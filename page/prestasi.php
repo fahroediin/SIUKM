@@ -32,6 +32,7 @@ $result = mysqli_query($conn, $query);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-BaFh8/FDd3jxAl2OiD00pM5Y/r5mBRbBIrHwwUsBcnu8V6GwW1vFPTTy3MBLo+U/NWk1x4U+az1qKoHyyhxMQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 
 </head>
@@ -60,6 +61,20 @@ $result = mysqli_query($conn, $query);
     }
     th {
         background-color: #f2f2f2;
+    }
+    .filter-button {
+        border-radius: 0.25rem;
+        padding: 6px 12px;
+    }
+
+    /* Style the search icon */
+    .filter-button i {
+        margin-right: 5px;
+    }
+
+    /* Style the filter form */
+    .filter-form {
+        margin-bottom: 20px;
     }
 </style>
 <body>
@@ -130,6 +145,56 @@ $result = mysqli_query($conn, $query);
         <a href="tambah_prestasi.php" class="btn btn-primary">Tambah Prestasi</a>
     <?php endif; ?>
 
+   <!-- Filter form -->
+   <form method="get">
+        <label for="year">Filter by Year:</label>
+        <select name="year" id="year">
+            <option value="">All</option>
+            <?php
+            // Get unique years from the tgl_prestasi column
+            $year_query = "SELECT DISTINCT YEAR(tgl_prestasi) AS year FROM tab_prestasi ORDER BY year DESC";
+            $year_result = mysqli_query($conn, $year_query);
+            while ($year_row = mysqli_fetch_assoc($year_result)) {
+                echo '<option value="' . $year_row['year'] . '">' . $year_row['year'] . '</option>';
+            }
+            ?>
+        </select>
+
+        <label for="ukm">Filter by UKM:</label>
+        <select name="ukm" id="ukm">
+            <option value="">All</option>
+            <?php
+        // Get the filter values from the form submission
+        $filter_year = $_GET['year'];
+        $filter_ukm = $_GET['ukm'];
+
+        // Add the filters to the SQL query
+        $query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tgl_prestasi, u.id_ukm, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
+
+        if (!empty($filter_year)) {
+            $query .= " WHERE YEAR(p.tgl_prestasi) = '$filter_year'";
+        }
+
+        if (!empty($filter_ukm)) {
+            $query .= !empty($filter_year) ? " AND u.nama_ukm = '$filter_ukm'" : " WHERE u.nama_ukm = '$filter_ukm'";
+        }
+
+        $result = mysqli_query($conn, $query);
+            // Get unique UKM names from the tab_ukm table
+            $ukm_query = "SELECT DISTINCT nama_ukm FROM tab_ukm ORDER BY nama_ukm";
+            $ukm_result = mysqli_query($conn, $ukm_query);
+            while ($ukm_row = mysqli_fetch_assoc($ukm_result)) {
+                echo '<option value="' . $ukm_row['nama_ukm'] . '">' . $ukm_row['nama_ukm'] . '</option>';
+            }
+            ?>
+        </select>
+
+        <button type="submit" class="btn btn-primary filter-button">
+        <i class="fas fa-search"></i> Filter
+    </button>
+    </form>
+    <br>
+
     <table>
         <tr>
             <th>No.</th>
@@ -142,6 +207,11 @@ $result = mysqli_query($conn, $query);
             <?php endif; ?>
         </tr>
         <?php
+                    // Define Indonesian month names
+            $indonesianMonths = array(
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            );
         if (mysqli_num_rows($result) > 0) {
             $no = 1;
             while ($row = mysqli_fetch_assoc($result)) {
@@ -149,7 +219,7 @@ $result = mysqli_query($conn, $query);
                 echo "<td>" . $no . "</td>";
                 echo "<td>" . $row['nama_prestasi'] . "</td>";
                 echo "<td>" . $row['penyelenggara'] . "</td>";
-                echo "<td>" . date("d-m-Y", strtotime($row['tgl_prestasi'])) . "</td>";
+                echo "<td>" . date("d", strtotime($row['tgl_prestasi'])) . " " . $indonesianMonths[date("n", strtotime($row['tgl_prestasi'])) - 1] . " " . date("Y", strtotime($row['tgl_prestasi'])) . "</td>";
                 echo "<td>" . $row['nama_ukm'] . "</td>";
                 if ($level == 'admin') {
                     echo "<td><a href='edit_prestasi.php?id=" . $row['id_prestasi'] . "'>Edit</a> | <a href='hapus_prestasi.php?id=" . $row['id_prestasi'] . "' onclick='return confirm(\"Apakah Anda yakin ingin menghapus prestasi ini?\")'>Hapus</a></td>";
