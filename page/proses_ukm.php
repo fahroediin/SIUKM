@@ -54,8 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_ukm = $_POST["id_ukm"];
     $nama_ukm = $_POST["nama_ukm"];
     $sejarah = $_POST["sejarah"];
-    $nama_ketua = $_POST["nama_ketua"];
-    $nim_ketua = $_POST["nim_ketua"];
+    $instagram = $_POST["instagram"];
+    $facebook = $_POST["facebook"];
     $visi = $_POST["visi"];
     $misi = $_POST["misi"];
 
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
-$query = "SELECT id_ukm, nama_ukm, logo_ukm, nama_ketua, nim_ketua, sejarah, visi, misi FROM tab_ukm";
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
 $result = mysqli_query($conn, $query);
 
 // Inisialisasi variabel untuk opsi combobox
@@ -116,8 +116,8 @@ while ($row = mysqli_fetch_assoc($result)) {
   $id_ukm = $row['id_ukm'];
   $nama_ukm = $row['nama_ukm'];
   $logo_ukm = $row['logo_ukm'];
-  $nama_ketua = $row['nama_ketua'];
-  $nim_ketua = $row['nim_ketua'];
+  $instagram = $row['instagram'];
+  $facebook = $row['facebook'];
   $sejarah = $row['sejarah'];
   $visi = $row['visi'];
   $misi = $row['misi'];
@@ -140,8 +140,8 @@ while ($row = mysqli_fetch_assoc($result)) {
       var id_ukm = select.value;
       var nama_ukmField = document.getElementById("nama_ukm");
       var sejarahField = document.getElementById("sejarah");
-      var nama_ketuaField = document.getElementById("nama_ketua");
-      var nim_ketuaField = document.getElementById("nim_ketua");
+      var instagramField = document.getElementById("instagram");
+      var facebookField = document.getElementById("facebook");
       var visiField = document.getElementById("visi");
       var misiField = document.getElementById("misi");
       var logo_ukmField = document.getElementById("logo_ukm_preview");
@@ -156,8 +156,8 @@ while ($row = mysqli_fetch_assoc($result)) {
             // Mengatur nilai field-field yang sesuai dengan respons dari server
             nama_ukmField.value = data.nama_ukm;
             sejarahField.value = data.sejarah;
-            nama_ketuaField.value = data.nama_ketua;
-            nim_ketuaField.value = data.nim_ketua;
+            instagramField.value = data.instagram;
+            facebookField.value = data.facebook;
             visiField.value = data.visi;
             misiField.value = data.misi;
 
@@ -224,7 +224,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <!-- Main content -->
 <div class="content">
     <div class="card">
-    <h2>Edit Data UKM</h2>
+    <h2>Data UKM</h2>
     <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>
@@ -256,12 +256,12 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <p class="mt-2" style="font-size: 12px; color: #777;">Upload logo UKM dengan resolusi 512x512 pixel.</p>
             </div>
             <div class="form-group">
-                <label for="nama_ketua">Nama Ketua:</label>
-                <input type="text" class="form-control" id="nama_ketua" name="nama_ketua">
+                <label for="instagram">Instagram:</label>
+                <input type="text" class="form-control" id="instagram" name="instagram">
             </div>
             <div class="form-group">
-                <label for="nim_ketua">NIM Ketua:</label>
-                <input type="text" class="form-control" id="nim_ketua" name="nim_ketua">
+                <label for="facebook">Facebook:</label>
+                <input type="text" class="form-control" id="facebook" name="facebook">
             </div>
             <div class="form-group">
                 <label for="visi">Visi:</label>

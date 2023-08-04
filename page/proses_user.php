@@ -66,7 +66,7 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// Function to check if id_user is already registered
+// Function to check if id_user is already registered and return a boolean value
 function isIdUserRegistered($id_user, $conn)
 {
     $sql = "SELECT id_user FROM tab_user WHERE id_user = '$id_user'";
@@ -81,11 +81,13 @@ if (isset($_POST['submit'])) {
 
     // Check if the id_user is already registered
     if (isIdUserRegistered($id_user, $conn)) {
-        echo "NIM Sudah Terdaftar";
+        echo "<script>alert('NIM Sudah Terdaftar');</script>";
+        // Kosongkan textfield id_user
+        header("Location: proses_user.php");
+        $_POST['id_user'] = "";
+        // Exit to prevent further processing
         exit();
     }
-
-    // Continue with the rest of the code to insert the user...
 
     $password = $_POST['password'];
     $nama_lengkap = $_POST['nama_lengkap'];
@@ -119,16 +121,16 @@ if (isset($_POST['submit'])) {
         // File is uploaded successfully, move it to a desired directory
         $pasfoto_tmp_name = $_FILES['pasfoto']['tmp_name'];
         $pasfoto_extension = pathinfo($_FILES['pasfoto']['name'], PATHINFO_EXTENSION);
-        $pasfoto_filename = $id_ukm . "_" . $nama_lengkap . "." . $pasfoto_extension; // Format the filename
-        move_uploaded_file($pasfoto_tmp_name, "../assets/images/pasfoto" . $pasfoto_filename);
+        $pasfoto_filename = $id_user . "_" . $nama_lengkap . "." . $pasfoto_extension; // Format the filename
+        move_uploaded_file($pasfoto_tmp_name, "../assets/images/pasfoto/" . $pasfoto_filename);
     }
 
     if ($_FILES['foto_ktm']['error'] === 0) {
         // File is uploaded successfully, move it to a desired directory
         $foto_ktm_tmp_name = $_FILES['foto_ktm']['tmp_name'];
         $foto_ktm_extension = pathinfo($_FILES['foto_ktm']['name'], PATHINFO_EXTENSION);
-        $foto_ktm_filename = $id_ukm . "_" . $nama_lengkap . "." . $foto_ktm_extension; // Format the filename
-        move_uploaded_file($foto_ktm_tmp_name, "../assets/images/ktm" . $foto_ktm_filename);
+        $foto_ktm_filename = $id_user . "_" . $nama_lengkap . "." . $foto_ktm_extension; // Format the filename
+        move_uploaded_file($foto_ktm_tmp_name, "../assets/images/ktm/" . $foto_ktm_filename);
     }
 
     // Menyimpan data ke database
@@ -363,7 +365,7 @@ if (isset($_POST['submit'])) {
 <div class="content">
     <div class="card">
         <h2>Tambah User Baru</h2>
-        <form method="POST" action="proses_user.php" onsubmit="return validateForm();">
+        <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="id_user">ID User:</label>
                 <input type="text" class="form-control" id="id_user" name="id_user" required>

@@ -27,43 +27,75 @@ if (isset($_GET['id'])) {
     exit();
 }
 
+// Check if the level is "1" and disable form fields accordingly
+$disableSemesterProdi = "";
+$semesterRequired = "required";
+$prodiRequired = "required";
+
+if ($row['level'] === '1') {
+    $disableSemesterProdi = "disabled";
+    $semesterRequired = "";
+    $prodiRequired = "";
+}
 
 // Memeriksa apakah tombol update diklik
 if (isset($_POST['update'])) {
     // Memeriksa apakah parameter id_user telah diberikan
     if (isset($_POST['id_user'])) {
-        $id_user = $_POST['id_user'];
-        $nama_lengkap = $_POST['nama_lengkap'];
-        $prodi = $_POST['prodi'];
-        $semester = $_POST['semester'];
-        $email = $_POST['email'];
-        $no_hp = $_POST['no_hp'];
-        $level = $_POST['level'];
+        // Get the ID and other user data from the POST request
+    $id_user = $_POST['id_user'];
+    $nama_lengkap = $_POST['nama_lengkap'];
+    $prodi = $_POST['prodi'];
+    $semester = $_POST['semester'];
+    $email = $_POST['email'];
+    $no_hp = $_POST['no_hp'];
+    $level = $_POST['level'];
 
-        // Update user data in the database
-        $sql = "UPDATE tab_user SET nama_lengkap = '$nama_lengkap', prodi = '$prodi', semester = '$semester', email = '$email', no_hp = '$no_hp', level = '$level' WHERE id_user = '$id_user'";
-        $result = $conn->query($sql);
-
-        if ($result) {
-            // Redirect back to the user list after update
-            header("Location: proses_user.php");
-            exit();
-        } else {
-            // If an error occurs during the update
-            echo "Error: " . $conn->error;
-            exit();
-        }
+    // File upload handling for pasfoto
+    if ($_FILES['pasfoto']['error'] === 0) {
+        $pasfoto_tmp_name = $_FILES['pasfoto']['tmp_name'];
+        $pasfoto_extension = pathinfo($_FILES['pasfoto']['name'], PATHINFO_EXTENSION);
+        $pasfoto_filename = $id_user . "_" . $nama_lengkap . "." . $pasfoto_extension; // Format the filename
+        $pasfoto_destination = "../assets/images/pasfoto/" . $pasfoto_filename;
+        move_uploaded_file($pasfoto_tmp_name, $pasfoto_destination);
     } else {
-        // If the user ID is not provided
-        echo "Invalid user ID";
+        // If no new pasfoto is uploaded, keep the existing filename
+        $pasfoto_filename = $row['pasfoto']; // Assuming 'pasfoto' is the column in the 'tab_user' table that stores the pasfoto filename
+    }
+
+    // File upload handling for foto_ktm
+    if ($_FILES['foto_ktm']['error'] === 0) {
+        $foto_ktm_tmp_name = $_FILES['foto_ktm']['tmp_name'];
+        $foto_ktm_extension = pathinfo($_FILES['foto_ktm']['name'], PATHINFO_EXTENSION);
+        $foto_ktm_filename = $id_user . "_" . $nama_lengkap . "." . $foto_ktm_extension; // Format the filename
+        $foto_ktm_destination = "../assets/images/ktm/" . $foto_ktm_filename;
+        move_uploaded_file($foto_ktm_tmp_name, $foto_ktm_destination);
+    } else {
+        // If no new foto_ktm is uploaded, keep the existing filename
+        $foto_ktm_filename = $row['foto_ktm']; // Assuming 'foto_ktm' is the column in the 'tab_user' table that stores the foto_ktm filename
+    }
+
+    // Prepare the update query using prepared statements to avoid SQL injection
+    $stmt = $conn->prepare("UPDATE tab_user SET nama_lengkap = ?, prodi = ?, semester = ?, email = ?, no_hp = ?, level = ?, pasfoto = ?, foto_ktm = ? WHERE id_user = ?");
+    $stmt->bind_param("ssisssssi", $nama_lengkap, $prodi, $semester, $email, $no_hp, $level, $pasfoto_filename, $foto_ktm_filename, $id_user);
+
+    // Execute the update query
+    if ($stmt->execute()) {
+        // Redirect back to the user list after update
+        header("Location: proses_user.php");
+        exit();
+    } else {
+        // If an error occurs during the update
+        echo "Error: " . $stmt->error;
         exit();
     }
+}
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Manager - SIUKM</title>
+    <title> Edit User - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -167,7 +199,29 @@ if (isset($_POST['update'])) {
         });
     });
 </script>
+<script>
+    // Function to display pasfoto preview
+    document.getElementById("pasfoto").addEventListener("change", function (e) {
+        var fileInput = e.target;
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+        reader.onload = function () {
+            document.getElementById("pasfoto-preview").src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
 
+    // Function to display foto_ktm preview
+    document.getElementById("foto_ktm").addEventListener("change", function (e) {
+        var fileInput = e.target;
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+        reader.onload = function () {
+            document.getElementById("foto_ktm-preview").src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
 <script>
     function confirmDelete() {
         return confirm("Apakah Anda yakin ingin menghapus data ini?");
@@ -177,31 +231,31 @@ if (isset($_POST['update'])) {
 <div class="content">
     <div class="card">
         <h2>Edit User</h2>
-        <form method="POST" onsubmit="return validateForm();">
+        <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="id_user" value="<?php echo $row['id_user']; ?>">
             <div class="form-group">
                 <label for="nama_lengkap">Nama Lengkap:</label>
                 <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="<?php echo $row['nama_lengkap']; ?>" required>
             </div>
             <div class="form-group">
-                <label for="prodi">Program Studi:</label>
-                <select id="prodi" name="prodi" class="form-control" required>
-                    <option value="" <?php if ($row['prodi'] === '') echo 'selected'; ?>>Pilih Program Studi</option>
-                    <option value="Teknik Informatika" <?php if ($row['prodi'] === 'Teknik Informatika') echo 'selected'; ?>>Teknik Informatika</option>
-                    <option value="Sistem Informasi" <?php if ($row['prodi'] === 'Sistem Informasi') echo 'selected'; ?>>Sistem Informasi</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="semester">Semester:</label>
-                <select id="semester" name="semester" class="form-control" required>
-                    <option value="" <?php if ($row['semester'] === '') echo 'selected'; ?>>Pilih Semester</option>
-                    <?php
-                    for ($i = 1; $i <= 14; $i++) {
-                        echo '<option value="' . $i . '" ' . ($row['semester'] == $i ? 'selected' : '') . '>' . $i . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
+            <label for="prodi">Program Studi:</label>
+            <select id="prodi" name="prodi" class="form-control" <?php echo $disableSemesterProdi; ?> <?php echo $prodiRequired; ?>>
+                <option value="" <?php if ($row['prodi'] === '') echo 'selected'; ?>>Pilih Program Studi</option>
+                <option value="Teknik Informatika" <?php if ($row['prodi'] === 'Teknik Informatika') echo 'selected'; ?>>Teknik Informatika</option>
+                <option value="Sistem Informasi" <?php if ($row['prodi'] === 'Sistem Informasi') echo 'selected'; ?>>Sistem Informasi</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="semester">Semester:</label>
+            <select id="semester" name="semester" class="form-control" <?php echo $disableSemesterProdi; ?> <?php echo $semesterRequired; ?>>
+                <option value="" <?php if ($row['semester'] === '') echo 'selected'; ?>>Pilih Semester</option>
+                <?php
+                for ($i = 1; $i <= 14; $i++) {
+                    echo '<option value="' . $i . '" ' . ($row['semester'] == $i ? 'selected' : '') . '>' . $i . '</option>';
+                }
+                ?>
+            </select>
+        </div>
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" name="email" value="<?php echo $row['email']; ?>" required>
@@ -210,6 +264,17 @@ if (isset($_POST['update'])) {
             <label for="no_hp">No. HP:</label>
             <input type="text" class="form-control" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required pattern="[0-9]+" title="Please enter numeric characters only">
               </div>
+              <div class="form-group">
+                <label for="pasfoto">Pasfoto:</label>
+                <input type="file" class="form-control" id="pasfoto" name="pasfoto">
+                <img id="pasfoto-preview" src="" alt="Pasfoto Preview" style="max-width: 200px; margin-top: 10px;">
+            </div>
+
+            <div class="form-group">
+                <label for="foto_ktm">Foto KTM:</label>
+                <input type="file" class="form-control" id="foto_ktm" name="foto_ktm">
+                <img id="foto_ktm-preview" src="" alt="Foto KTM Preview" style="max-width: 200px; margin-top: 10px;">
+            </div>
             <div class="form-group">
                 <label for="level">Level:</label>
                 <select id="level" name="level" class="form-control">
@@ -219,7 +284,7 @@ if (isset($_POST['update'])) {
                 </select>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="update">Update</button>
+            <button type="submit" class="btn btn-primary" name="update">Update</button>
             </div>
         </form>
     </div>

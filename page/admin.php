@@ -39,80 +39,51 @@ if (isset($_GET['logout'])) {
     logout();
 }
 
-// Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
-$userId = $_SESSION['id_user'];
-$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
-
-// Mengeksekusi query
-$result = mysqli_query($conn, $query);
-
 // Memeriksa apakah query berhasil dieksekusi
-if ($result) {
-    // Mengambil data pengguna
-    $user = mysqli_fetch_assoc($result);
+// Assuming you have a table named 'tab_user'
+if ($conn) {
+    // Get the user ID from the session
+    $userId = $_SESSION['id_user'];
+    
+    // Prepare the SQL query
+    $sql = "SELECT * FROM tab_user WHERE id_user = '$userId'";
 
-    // Menyimpan data pengguna ke dalam variabel session
-    $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
-    $_SESSION['email'] = $user['email'];
-    $_SESSION['no_hp'] = $user['no_hp'];
-} else {
-    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-    echo "Error: " . mysqli_error($conn);
-}
+    // Execute the query
+    $result = mysqli_query($conn, $sql);
 
-// Memeriksa apakah form telah disubmit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Mengambil data dari form
-    $oldPassword = $_POST['old_password'];
-    $password = $_POST['password'];
-    $confirmPassword = $_POST['confirm_password'];
-    $email = $_POST['email'];
-    $namaLengkap = $_POST['nama_lengkap'];
-    $noHp = $_POST['no_hp'];
+    if ($result) {
+        // Mengambil data pengguna
+        $user = mysqli_fetch_assoc($result);
 
-    // Memeriksa apakah password baru dan konfirmasi password cocok
-    if ($password !== $confirmPassword) {
-        // Password baru dan konfirmasi password tidak cocok
-        $error = "Error: Password baru dan konfirmasi password tidak cocok.";
+        // Menyimpan data pengguna ke dalam variabel session
+        $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['no_hp'] = $user['no_hp'];
+
+        // Menyimpan foto profil ke dalam variabel session
+        $_SESSION['pasfoto'] = $user['pasfoto'];
     } else {
-        // Menghindari SQL injection
-        $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
-        $password = mysqli_real_escape_string($conn, $password);
-        $email = mysqli_real_escape_string($conn, $email);
-        $namaLengkap = mysqli_real_escape_string($conn, $namaLengkap);
-        $noHp = mysqli_real_escape_string($conn, $noHp);
-
-        // Mengecek kebenaran password lama
-        $userId = $_SESSION['id_user'];
-        $query = "SELECT * FROM tab_user WHERE id_user = '$userId' AND password = '$oldPassword'";
-        $result = mysqli_query($conn, $query);
-
-        if (mysqli_num_rows($result) === 0) {
-            // Password lama tidak cocok
-            $error = "Error: Password lama tidak cocok.";
-        } else {
-            // Membuat query update
-            $query = "UPDATE tab_user SET password = '$password', email = '$email', nama_lengkap = '$namaLengkap', no_hp = '$noHp' WHERE id_user = '$userId'";
-
-            // Mengeksekusi query update
-            $updateResult = mysqli_query($conn, $query);
-
-            // Tampilkan snackbar jika data berhasil diubah
-            if ($updateResult) {
-                // Mengupdate data di dalam session
-                $_SESSION['password'] = $password;
-                $_SESSION['email'] = $email;
-                $_SESSION['nama_lengkap'] = $namaLengkap;
-                $_SESSION['no_hp'] = $noHp;
-
-                // Tampilkan snackbar jika data berhasil diubah
-                echo "<script>showSnackbar('Data berhasil diubah.');</script>";
-            } else {
-                // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-                $error = "Error: " . mysqli_error($conn);
-            }
+        // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+        echo "Error: " . mysqli_error($conn);
+    }
+} else {
+    // If the connection to the database failed, handle the error accordingly
+    die("Connection failed: " . mysqli_connect_error());
+}
+// Create a function to generate the profile picture path based on id_user
+function getProfilePicturePath($userId) {
+    $extensions = array('jpg', 'jpeg', 'png');
+    $baseDir = "../assets/images/pasfoto/";
+    
+    foreach ($extensions as $extension) {
+        $filePath = $baseDir . $userId . "." . $extension;
+        if (file_exists($filePath)) {
+            return $filePath;
         }
     }
+    
+    // If no matching file is found, return the default profile picture path
+    return "../assets/images/pasfoto/default_profile_picture.png";
 }
 ?>
 
@@ -256,9 +227,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Dashboard Admin</h1>
             <hr class="divider">
             <div class="user-info">
-    <div class="profile-container">
-        <img src="../assets/images/sanji.jpg" alt="Foto Profil" class="profil-picture">
-    </div>
+            <div class="profile-container">
+    <?php
+    // Check if the user has a profile picture set
+    if (!empty($_SESSION['pasfoto'])) {
+        $profilePicturePath = '../assets/images/pasfoto/' . $_SESSION['pasfoto'];
+        // Check if the profile picture file exists
+        if (file_exists($profilePicturePath)) {
+            echo '<img src="' . $profilePicturePath . '" alt="Foto Profil" class="profil-picture">';
+        } else {
+            // If the profile picture file does not exist, show a default image
+            echo '<img src="../assets/images/pasfoto/default_profile_picture.png" alt="Default Profil Picture" class="profil-picture">';
+        }
+    } else {
+        // If no profile picture is set, display a default image
+        echo '<img src="../assets/images/pasfoto/default_profile_picture.png" alt="Default Profil Picture" class="profil-picture">';
+    }
+    ?>
+</div>
+
     <div class="profile-details">
         <p><span class="label">Nama:</span> <span class="value"><?php echo $_SESSION['nama_lengkap']; ?></span></p>
         <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
