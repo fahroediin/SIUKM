@@ -134,6 +134,27 @@ if (!$logoResult) {
 $row = mysqli_fetch_assoc($logoResult);
 $logo_ukm = $row['logo_ukm'];
 
+
+$query = "SELECT instagram, facebook FROM tab_ukm WHERE id_ukm = 'pertanian'";
+$socialMediaResult = mysqli_query($conn, $query);
+
+// Memeriksa apakah query berhasil dieksekusi
+if (!$logoResult) {
+  // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+  echo "Error: " . mysqli_error($conn);
+  exit();
+}
+
+// Get the logo URL
+$row = mysqli_fetch_assoc($logoResult);
+$logo_ukm = $row['logo_ukm'];
+$row = mysqli_fetch_assoc($socialMediaResult);
+$instagram = $row['instagram'];
+$facebook = $row['facebook'];
+
+$instagram = "https://www.instagram.com/" . $instagram;
+$facebook = "https://www.facebook.com/" . $facebook;
+
 // Check if the logo file exists, otherwise use the default logo
 if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
   $logo_src = $logoDirectory . $logo_ukm;
@@ -145,7 +166,7 @@ if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title>PERKEBUNAN - SIUKM STMIK KOMPUTAMA MAJENANG</title>
+	<title>PERTANIAN - SIUKM STMIK KOMPUTAMA MAJENANG</title>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -380,9 +401,10 @@ h2 {
                 <p><?php echo $sejarah; ?></p>
             </div>
         </div>
+         
+        <div class="divider">
         <br>
-          
-      <div class="kegiatan-container">
+        <div class="kegiatan-container">
           <h2 class="h2-kegiatan">Jadwal Kegiatan</h2>
           <?php if (empty($kegiatanData)) { ?>
               <!-- Display the message when there is no data -->
@@ -404,17 +426,38 @@ h2 {
           <?php } ?>
       </div>
 
+      <div class="divider">
+
+      <div class="card mt-4">
+      <div class="card-body d-flex flex-column align-items-center">
+        <h5 class="card-title">Follow Us</h5>
+    <p class="mt-2" style="font-size: 14px; color: #777;">Untuk bertanya lebih lanjut terkait UKM</p>
+        <div class="card-text">
+            <!-- Add Instagram and Facebook icons with links -->
+            <a href="<?php echo $instagram; ?>" target="_blank" class="btn btn-primary mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+                    <path d="M11 0H5C2.239 0 0 2.239 0 5v6c0 2.761 2.239 5 5 5h6c2.761 0 5-2.239 5-5V5C16 2.239 13.761 0 11 0zM8 12.5A4.502 4.502 0 0 1 3.5 8 4.502 4.502 0 0 1 8 3.5 4.502 4.502 0 0 1 12.5 8 4.502 4.502 0 0 1 8 12.5zM12 4.145a.855.855 0 1 1 0-1.71.855.855 0 0 1 0 1.71zM8 10a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm5.22-8.008a1.472 1.472 0 0 1 1.477 1.477v10.062a1.472 1.472 0 0 1-1.477 1.477H2.778a1.472 1.472 0 0 1-1.477-1.477V2.47A1.472 1.472 0 0 1 2.778.993h10.442zM8 1.334a6.672 6.672 0 0 0-6.667 6.666A6.672 6.672 0 0 0 8 14.667a6.672 6.672 0 0 0 6.667-6.667A6.672 6.672 0 0 0 8 1.334z"/>
+                </svg> <?php echo '@' . $row['instagram']; ?>
+            </a>
+            <a href="<?php echo $facebook; ?>" target="_blank" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                    <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                </svg> <?php echo  $row['facebook']; ?>
+            </a>
+             </div>
+              </div>
+</div>
 
         <div class="divider jumbotron">
      <div class="ukm-info">
-        <!-- Visi -->
-    <h3>Visi</h3>
-    <p style="text-align: center; font-style: italic;"><?php echo $visi; ?></p>
+           <!-- Visi -->
+           <h3>Visi</h3>
+        <p style="text-align: center; font-style: italic;"><?php echo $visi; ?></p>
 
-    <!-- Misi -->
-    <h3>Misi</h3>
-    <p style="text-align: center; font-style: italic;"><?php echo $misi; ?></p>
-    </div>
+        <!-- Misi -->
+        <h3>Misi</h3>
+        <p style="text-align: center; font-style: italic;"><?php echo $misi; ?></p>
+        </div>
 
   </div>
 		</div>
@@ -422,12 +465,11 @@ h2 {
     <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
     <?php
-    $id_ukm_target = 'agro';
+    $id_ukm_target = 'pertanian';
 
     echo "<table>";
     foreach ($jabatan as $id_jabatan => $nama_jabatan) {
         echo "<tr><th colspan='2' class='table-heading'>$nama_jabatan</th></tr>";
-        
         foreach ($struktur[$id_jabatan] as $id_ukm => $anggota) {
             if ($id_ukm === $id_ukm_target) {
                 foreach ($anggota as $data) {

@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
      // Menyimpan data ke database
-     $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', nama_ketua='$nama_ketua', nim_ketua='$nim_ketua', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
+     $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', instagram='$instagram', facebook='$facebook', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
      $result = $conn->query($sql);
 
     if ($result) {
@@ -240,11 +240,11 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
             <div class="form-group">
                 <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm">
+                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" readonly required>
             </div>
             <div class="form-group">
                 <label for="sejarah">Sejarah:</label>
-                <textarea class="form-control" id="sejarah" name="sejarah" rows="5"></textarea>
+                <textarea class="form-control" placeholder="Masukkan sejarah UKM dalam 1 paragraf tanpa terpisah" id="sejarah" name="sejarah" rows="5"></textarea>
             </div>
                         <div class="form-group">
                 <label for="logo_ukm">Logo UKM:</label>
@@ -256,20 +256,21 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <p class="mt-2" style="font-size: 12px; color: #777;">Upload logo UKM dengan resolusi 512x512 pixel.</p>
             </div>
             <div class="form-group">
-                <label for="instagram">Instagram:</label>
-                <input type="text" class="form-control" id="instagram" name="instagram">
-            </div>
-            <div class="form-group">
-                <label for="facebook">Facebook:</label>
-                <input type="text" class="form-control" id="facebook" name="facebook">
-            </div>
+            <label for="instagram">Instagram:</label>
+            <input type="text" placeholder="Masukkan akun instagram ukm tanpa @" class="form-control" id="instagram" name="instagram" pattern="[a-zA-Z]+">
+        </div>
+        <div class="form-group">
+            <label for="facebook">Facebook:</label>
+            <input type="text" placeholder="Masukkan akun facebook ukm tanpa @" class="form-control" id="facebook" name="facebook" pattern="[a-zA-Z]+">
+        </div>
+
             <div class="form-group">
                 <label for="visi">Visi:</label>
-                <textarea class="form-control" id="visi" name="visi" rows="3"></textarea>
+                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="visi" name="visi" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label for="misi">Misi:</label>
-                <textarea class="form-control" id="misi" name="misi" rows="3"></textarea>
+                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="misi" name="misi" rows="3"></textarea>
             </div>
             <button type="submit" class="btn btn-primary" onclick="showConfirmation(event)">Simpan</button>
         </form>
