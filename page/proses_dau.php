@@ -34,8 +34,9 @@ if (isset($_GET['logout'])) {
 $active_page = 'data_anggota_ukm';
 
 // Memperoleh data anggota UKM dari tabel tab_dau
-$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
+$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
 $result = mysqli_query($conn, $query);
+
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -50,7 +51,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_ukm = $_POST["id_ukm"];
     $nama_ukm = $_POST["nama_ukm"];
     $sjk_bergabung = $_POST["sjk_bergabung"];
-    $tahun_bergabung = substr($_POST["sjk_bergabung"], 2, 2); // Ambil 2 digit terakhir tahun
+    $tahun_bergabung = substr($_POST["sjk_bergabung"], 2, 2);
+
+    $pasfoto = $_POST["pasfoto"];
+    $fotoKtm = $_POST["foto_ktm"];
 
     // Generate the ID Anggota based on the rules
     $randomDigits = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT); // 4-digit random number
@@ -74,10 +78,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Combine the parts to create the ID Anggota
     $id_anggota = substr($id_user, -2) . $programAbbreviation . $currentSemester . $currentMonth . substr($tahun_bergabung, -2) . $randomDigits;
 
-    // Simpan data ke database
-    $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, id_ukm, nama_ukm, sjk_bergabung) 
-    VALUES ('$id_anggota', '$id_user', '$nama_lengkap', '$no_hp', '$email', '$prodi', '$semester', '$id_ukm', '$nama_ukm', '$sjk_bergabung')";
 
+    // Simpan data ke database
+    $sql = "INSERT INTO tab_dau (id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung) 
+            VALUES ('$id_anggota', '$id_user', '$nama_lengkap', '$no_hp', '$email', '$prodi', '$semester', '$pasfoto', '$fotoKtm', '$id_ukm', '$nama_ukm', '$sjk_bergabung')";
 
     if (mysqli_query($conn, $sql)) {
         echo "Berhasil menambahkan anggota";
@@ -181,26 +185,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </tr>
         </thead>
         <tbody>
-            <?php
-            // Loop melalui hasil query untuk menampilkan data anggota UKM
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>";
-                echo "<td>" . $row['id_anggota'] . "</td>";
-                echo "<td>" . $row['id_user'] . "</td>";
-                echo "<td>" . $row['nama_lengkap'] . "</td>";
-                echo "<td>" . $row['no_hp'] . "</td>";
-                echo "<td>" . $row['email'] . "</td>";
-                echo "<td>" . $row['prodi'] . "</td>";
-                echo "<td>" . $row['semester'] . "</td>";
-                echo "<td><img src='" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
-                echo "<td>" . $row['id_ukm'] . "</td>";
-                echo "<td>" . $row['nama_ukm'] . "</td>";
-                echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
-                echo "<td><a href='delete_anggota.php?id_anggota=" . $row['id_anggota'] . "' class='btn btn-danger btn-sm delete-button' onclick='return confirmDelete()'>Hapus</a></td>";
-                echo "</tr>";
-            }
-            ?>
-        </tbody>
+    <?php
+    // Loop melalui hasil query untuk menampilkan data anggota UKM
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>";
+        echo "<td>" . $row['id_anggota'] . "</td>";
+        echo "<td>" . $row['id_user'] . "</td>";
+        echo "<td>" . $row['nama_lengkap'] . "</td>";
+        echo "<td>" . $row['no_hp'] . "</td>";
+        echo "<td>" . $row['email'] . "</td>";
+        echo "<td>" . $row['prodi'] . "</td>";
+        echo "<td>" . $row['semester'] . "</td>";
+        // Display the "Pasfoto" image
+        echo "<td><img src='../assets/images/pasfoto/" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
+        // Display the "Foto_KTM" image
+        echo "<td><img src='../assets/images/ktm/" . $row['foto_ktm'] . "' alt='Foto KTM' class='img-thumbnail' style='max-height: 100px;'></td>";
+        echo "<td>" . $row['id_ukm'] . "</td>";
+        echo "<td>" . $row['nama_ukm'] . "</td>";
+        echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
+        echo "<td><a href='delete_anggota.php?id_anggota=" . $row['id_anggota'] . "' class='btn btn-danger btn-sm delete-button' onclick='return confirmDelete()'>Hapus</a></td>";
+        echo "</tr>";
+    }
+    ?>
+</tbody>
+
     </table>
         </div>
     
@@ -233,6 +241,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 var namaLengkapField = document.getElementsByName("nama_lengkap")[0];
                 var prodiField = document.getElementsByName("prodi")[0];
                 var semesterField = document.getElementsByName("semester")[0];
+                var pasfotoField = document.getElementsByName("pasfoto")[0];
+                var fotoKtmField = document.getElementsByName("foto_ktm")[0];
                 var noHpField = document.getElementsByName("no_hp")[0];
                 var emailField = document.getElementsByName("email")[0];
 
@@ -253,38 +263,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                 }
             });
-        </script>
+            </script>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            // Function to fetch user data based on the selected id_user
-            function fetchUserData(userId) {
-                $.ajax({
-                    type: "POST",
-                    url: "get_user_data.php", // Create a separate PHP file to handle AJAX request and database query
-                    data: { id_user: userId },
-                    dataType: "json",
-                    success: function (data) {
-                        // Update the text fields with the fetched data
-                        $("input[name='nama_lengkap']").val(data.nama_lengkap);
-                        $("input[name='prodi']").val(data.prodi);
-                        $("input[name='semester']").val(data.semester);
-                        $("input[name='no_hp']").val(data.no_hp);
-                        $("input[name='email']").val(data.email);
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(error);
-                    }
-                });
+    // Function to fetch user data based on the selected id_user
+    function fetchUserData(userId) {
+        $.ajax({
+            type: "POST",
+            url: "get_user_data.php", // Create a separate PHP file to handle AJAX request and database query
+            data: { id_user: userId },
+            dataType: "json",
+            success: function(data) {
+                // Update the text fields with the fetched data
+                $("input[name='nama_lengkap']").val(data.nama_lengkap);
+                $("input[name='prodi']").val(data.prodi);
+                $("input[name='semester']").val(data.semester);
+                $("input[name='pasfoto']").val(data.pasfoto);
+                $("input[name='foto_ktm']").val(data.foto_ktm);
+                $("input[name='no_hp']").val(data.no_hp);
+                $("input[name='email']").val(data.email);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
             }
+        });
+    }
 
-            // Event listener for the dropdown (id_user)
-            $("select[name='id_user']").on("change", function () {
-                var selectedUserId = $(this).val();
-                fetchUserData(selectedUserId);
-            });
-        </script>
+    // Event listener for the dropdown (id_user)
+    $("select[name='id_user']").on("change", function() {
+        var selectedUserId = $(this).val();
+        fetchUserData(selectedUserId);
+    });
+</script>
+
          <div class="col-md-6">
             <label for="nama_lengkap">Nama Lengkap:</label>
             <input type="text" class="form-control" name="nama_lengkap" required readonly>
@@ -318,28 +331,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="sjk_bergabung">SJK Bergabung:</label>
                 <input type="date" class="form-control" id="sjk_bergabung"  name="sjk_bergabung" required>
             </div>
+                        <div class="col-md-6">
+                <label for="id_ukm">ID UKM:</label>
+                <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                    <option value="">Pilih ID UKM</option>
+                    <?php
+                    // Fetch data from the tab_ukm table and populate the dropdown options
+                    $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm"; // Add 'nama_ukm' to the SELECT query
+                    $ukmResult = mysqli_query($conn, $ukmQuery);
+
+                    while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+                        echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            </div>
+
+        <div class="form-row">
             <div class="col-md-6">
-        <label for="id_ukm">ID UKM:</label>
-        <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
-            <option value="">Pilih ID UKM</option>
-            <?php
-            // Fetch data from the tab_ukm table and populate the dropdown options
-            $ukmQuery = "SELECT id_ukm FROM tab_ukm";
-            $ukmResult = mysqli_query($conn, $ukmQuery);
+                <label for="nama_ukm">Nama UKM:</label>
+                <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" required readonly>
+            </div>
+            <input type="text" class="form-control" name="pasfoto" id="pasfoto" style="display: none;">
+            <input type="text" name="foto_ktm" id="foto_ktm" style="display: none;">
 
-            while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
-                echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
-            }
-            ?>
-        </select>
-        </div>
-         </div>
-
-    <div class="form-row">
-    <div class="col-md-6">
-    <label for="nama_ukm">Nama UKM:</label>
-    <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" required readonly>
-</div>
 <!-- Move the "Tambah Anggota" button to the right side -->
 <div class="col-md-6 d-flex align-items-end justify-content-end">
     <button type="submit" class="btn btn-primary">
@@ -354,29 +370,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function confirmDelete() {
                 return confirm("Apakah yakin ingin menghapus data anggota ini?");
             }
+</script>
+<!-- Script for handling file uploads -->
+<script>
+    // Function to handle pasfoto file upload
+    function openPasfotoUploader() {
+        document.getElementById("pasfoto").click();
+    }
 
-        // Function to fetch "Nama UKM" based on the selected "ID UKM"
-        function fetchNamaUKM(id_ukm) {
-            $.ajax({
-                type: "POST",
-                url: "get_nama_ukm.php", // The PHP file created in Step 1
-                data: { id_ukm: id_ukm },
-                dataType: "json",
-                success: function (data) {
-                    // Update the "Nama UKM" textfield with the fetched data
-                    $("#nama_ukm").val(data.nama_ukm);
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
+    document.getElementById("pasfoto").addEventListener("change", function() {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            document.getElementsByName("hidden_pasfoto")[0].value = reader.result;
+        };
+        if (file) {
+            reader.readAsDataURL(file);
         }
-
-    // Event listener for the dropdown (id_ukm)
-    $("#id_ukm_dropdown").on("change", function () {
-        var selectedUKMId = $(this).val();
-        fetchNamaUKM(selectedUKMId);
     });
+
+    // Function to handle foto_ktm file upload
+    function openFotoKTMUploader() {
+        document.getElementById("foto_ktm").click();
+    }
+
+    document.getElementById("foto_ktm").addEventListener("change", function() {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            document.getElementsByName("hidden_foto_ktm")[0].value = reader.result;
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $("#id_ukm_dropdown").change(function() {
+        // Ambil nilai ID UKM yang dipilih oleh pengguna
+        var id_ukm = $(this).val();
+
+        // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
+        $.ajax({
+            url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
+            method: "POST",
+            data: { id_ukm: id_ukm },
+            success: function(response) {
+                // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
+                $("#nama_ukm").val(response);
+            },
+            error: function(xhr, status, error) {
+                // Tangani error jika ada
+                console.error(error);
+            }
+        });
+    });
+});
 </script>
 </body>
 </html>

@@ -50,7 +50,7 @@ if ($result->num_rows > 0) {
 }
 
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
-$query = "SELECT id_ukm, nama_ukm, logo_ukm, nama_ketua, nim_ketua, sejarah, visi, misi FROM tab_ukm";
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
 $result = mysqli_query($conn, $query);
 
 // Inisialisasi variabel untuk opsi combobox

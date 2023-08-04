@@ -2,34 +2,28 @@
 // Memasukkan file db_connect.php
 require_once "db_connect.php";
 
-// Memeriksa apakah ada parameter id_ukm yang dikirim melalui GET
-if (isset($_GET['id_ukm'])) {
-    // Mengambil nilai id_ukm dari parameter GET
-    $id_ukm = $_GET['id_ukm'];
+// Check if the ID UKM is set in the POST data
+if (isset($_POST['id_ukm'])) {
+    // Get the ID UKM from the POST data
+    $id_ukm = $_POST['id_ukm'];
 
-    // Membuat query untuk mengambil nama_ukm berdasarkan id_ukm
+    // Query to fetch the nama_ukm based on the selected id_ukm
     $query = "SELECT nama_ukm FROM tab_ukm WHERE id_ukm = '$id_ukm'";
-
-    // Mengeksekusi query
     $result = mysqli_query($conn, $query);
 
-    // Memeriksa apakah ada hasil dari query
-    if (mysqli_num_rows($result) > 0) {
-        // Jika ada hasil, ambil nama_ukm dari hasil query
+    // Check if the query was successful and fetch the result
+    if ($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         $nama_ukm = $row['nama_ukm'];
 
-        // Mengirimkan nama_ukm sebagai respons ke pemanggil (file utama)
+        // Return the nama_ukm as a response to the AJAX request
         echo $nama_ukm;
     } else {
-        // Jika tidak ada hasil, kirimkan pesan error sebagai respons
-        echo "Nama UKM tidak ditemukan.";
+        // If no matching data found, return an empty response or an error message
+        echo "Data not found";
     }
 } else {
-    // Jika parameter id_ukm tidak diberikan, kirimkan pesan error sebagai respons
-    echo "ID UKM tidak ditemukan.";
+    // If the id_ukm is not set in the POST data, return an empty response or an error message
+    echo "ID UKM not provided";
 }
-
-// Menutup koneksi database
-mysqli_close($conn);
 ?>
