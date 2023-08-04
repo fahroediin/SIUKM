@@ -152,9 +152,9 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'visi_misi') echo 'active'; ?>">Data UKM</a>
+    <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-    <a href="kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
 </div>
 <body>
@@ -241,7 +241,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         </div>
     </div>
 
-  <!-- Add your JavaScript code here to populate the nama_ukm field -->
+<!-- Add your JavaScript code here to populate the nama_ukm field -->
 <script>
     const idUkmSelect = document.getElementById("id_ukm");
     const namaUkmField = document.getElementById("nama_ukm");
@@ -250,22 +250,33 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
         const idUkm = selectedOption.value;
         if (idUkm) {
-            // Make an AJAX request to get the nama_ukm based on the selected id_ukm
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `get_nama_ukm.php?id_ukm=${idUkm}`, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    // Update the nama_ukm field with the fetched value
-                    namaUkmField.value = xhr.responseText;
+            // Mengirim permintaan AJAX ke server
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Mengambil respons dari server dalam bentuk JSON
+                    var data = JSON.parse(this.responseText);
+                    if (data.error) {
+                        // Handle error response from the server
+                        console.error(data.error);
+                        namaUkmField.value = ""; // Clear the field in case of an error
+                    } else {
+                        // Update nama_ukm field with the retrieved data
+                        namaUkmField.value = data.nama_ukm;
+                    }
                 }
             };
-            xhr.send();
+
+            // Send the AJAX request to the server
+            xhttp.open("GET", "get_data_ukm.php?id_ukm=" + idUkm, true);
+            xhttp.send();
         } else {
             // If no id_ukm is selected, reset the nama_ukm field
             namaUkmField.value = "";
         }
     });
 </script>
+
 
 </body>
 </html>

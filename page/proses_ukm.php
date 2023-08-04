@@ -21,7 +21,7 @@ if ($_SESSION['level'] == "2" || $_SESSION['level'] == "3") {
 
 
 // Menandai halaman yang aktif
-$active_page = 'visi_misi';
+$active_page = 'ukm';
 
 // Fungsi logout
 function logout()
@@ -215,7 +215,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'visi_misi') echo 'active'; ?>">Data UKM</a>
+    <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
     <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
@@ -244,7 +244,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
             <div class="form-group">
                 <label for="sejarah">Sejarah:</label>
-                <textarea class="form-control" placeholder="Masukkan sejarah UKM dalam 1 paragraf tanpa terpisah" id="sejarah" name="sejarah" rows="5"></textarea>
+                <textarea class="form-control" placeholder="Isikan sejarah UKM" id="sejarah" name="sejarah" rows="5"></textarea>
             </div>
                         <div class="form-group">
                 <label for="logo_ukm">Logo UKM:</label>
