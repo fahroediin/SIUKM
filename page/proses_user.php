@@ -5,7 +5,6 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
     // Jika belum login, redirect ke halaman login.php
@@ -19,6 +18,7 @@ if ($_SESSION['level'] == "3") {
     header("Location: beranda.php");
     exit();
 }
+
 // Menandai halaman yang aktif
 $active_page = 'user_manager';
 
@@ -65,7 +65,41 @@ if (isset($_GET['delete'])) {
         exit();
     }
 }
+
+// Function to check if id_user is already registered
+function isIdUserRegistered($id_user, $conn)
+{
+    $sql = "SELECT id_user FROM tab_user WHERE id_user = '$id_user'";
+    $result = $conn->query($sql);
+    return ($result->num_rows > 0);
+}
+
 // Memeriksa apakah form tambah user telah di-submit
+if (isset($_POST['submit'])) {
+    // Mengambil data dari form
+    $id_user = $_POST['id_user'];
+
+    // Check if the id_user is already registered
+    if (isIdUserRegistered($id_user, $conn)) {
+        echo "NIM Sudah Terdaftar";
+        exit();
+    }
+
+    // Continue with the rest of the code to insert the user...
+
+    $password = $_POST['password'];
+    $nama_lengkap = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $no_hp = $_POST['no_hp'];
+    $level = $_POST['level'];
+    $prodi = $_POST['prodi'];
+    $semester = $_POST['semester'];
+
+    // Handle file uploads for pasfoto and foto_ktm
+    $pasfoto_filename = ""; // Variable to store pasfoto file name
+    $foto_ktm_filename = ""; // Variable to store foto_ktm file name
+
+   // Memeriksa apakah form tambah user telah di-submit
 if (isset($_POST['submit'])) {
     // Mengambil data dari form
     $id_user = $_POST['id_user'];
@@ -77,10 +111,31 @@ if (isset($_POST['submit'])) {
     $prodi = $_POST['prodi']; 
     $semester = $_POST['semester']; 
 
+    // Handle file uploads for pasfoto and foto_ktm
+    $pasfoto_filename = ""; // Variable to store pasfoto file name
+    $foto_ktm_filename = ""; // Variable to store foto_ktm file name
+
+    if ($_FILES['pasfoto']['error'] === 0) {
+        // File is uploaded successfully, move it to a desired directory
+        $pasfoto_tmp_name = $_FILES['pasfoto']['tmp_name'];
+        $pasfoto_extension = pathinfo($_FILES['pasfoto']['name'], PATHINFO_EXTENSION);
+        $pasfoto_filename = $id_ukm . "_" . $nama_lengkap . "." . $pasfoto_extension; // Format the filename
+        move_uploaded_file($pasfoto_tmp_name, "../assets/images/pasfoto" . $pasfoto_filename);
+    }
+
+    if ($_FILES['foto_ktm']['error'] === 0) {
+        // File is uploaded successfully, move it to a desired directory
+        $foto_ktm_tmp_name = $_FILES['foto_ktm']['tmp_name'];
+        $foto_ktm_extension = pathinfo($_FILES['foto_ktm']['name'], PATHINFO_EXTENSION);
+        $foto_ktm_filename = $id_ukm . "_" . $nama_lengkap . "." . $foto_ktm_extension; // Format the filename
+        move_uploaded_file($foto_ktm_tmp_name, "../assets/images/ktm" . $foto_ktm_filename);
+    }
+
     // Menyimpan data ke database
-    $sql = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level, prodi, semester)
-    VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', '$prodi', $semester)";
-        $result = $conn->query($sql);
+    $sql = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level, prodi, semester, pasfoto, foto_ktm)
+            VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', '$prodi', $semester, '$pasfoto_filename', '$foto_ktm_filename')";
+
+    $result = $conn->query($sql);
 
     if ($result) {
         // Redirect ke halaman daftar user setelah penyimpanan berhasil
@@ -92,8 +147,9 @@ if (isset($_POST['submit'])) {
         exit();
     }
 }
-
+}
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -204,7 +260,7 @@ if (isset($_POST['submit'])) {
 <div class="content">
     <h2>Daftar User</h2>
     <table class="table">
-        <thead>
+    <thead>
             <tr>
                 <th>ID User</th>
                 <th>Nama Lengkap</th>
@@ -213,9 +269,12 @@ if (isset($_POST['submit'])) {
                 <th>Email</th>
                 <th>No HP</th>
                 <th>Level</th>
+                <th>Pasfoto</th>
+                <th>Foto KTM</th>
                 <th>Aksi</th>
             </tr>
         </thead>
+
         <tbody>
     <?php
     // Fetch users from the database
@@ -233,6 +292,15 @@ if (isset($_POST['submit'])) {
             echo "<td>" . $row["email"] . "</td>";
             echo "<td>" . $row["no_hp"] . "</td>";
             echo "<td>" . $row["level"] . "</td>";
+                    // Pasfoto
+            $pasfoto_filename = $row["pasfoto"];
+            $pasfoto_path = "../assets/images/pasfoto/" . $pasfoto_filename;
+            echo "<td><img src='$pasfoto_path' alt='Pasfoto' width='100'></td>";
+
+            // Foto KTM
+            $foto_ktm_filename = $row["foto_ktm"];
+            $foto_ktm_path = "../assets/images/ktm/" . $foto_ktm_filename;
+            echo "<td><img src='$foto_ktm_path' alt='Foto KTM' width='100'></td>";
             // Menambahkan kondisi jika ID user adalah "admin"
     // Update link to open edit_user.php with the user ID as a query parameter
         if ($row["id_user"] == "admin") {
@@ -344,6 +412,14 @@ if (isset($_POST['submit'])) {
             <div class="form-group">
             <label for="no_hp">No. HP:</label>
             <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+            </div>
+            <div class="form-group">
+                <label for="pasfoto">Pasfoto:</label>
+                <input type="file" class="form-control" id="pasfoto" name="pasfoto" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="foto_ktm">Foto KTM:</label>
+                <input type="file" class="form-control" id="foto_ktm" name="foto_ktm" accept="image/*" required>
             </div>
             <div class="form-group">
                 <label for="level">Level:</label>

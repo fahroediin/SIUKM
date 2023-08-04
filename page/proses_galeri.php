@@ -95,10 +95,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $foto_kegiatan = $_FILES["foto_kegiatan"]["name"];
         $foto_kegiatan_extension = strtolower(pathinfo($foto_kegiatan, PATHINFO_EXTENSION));
         $nama_kegiatan = $_POST["nama_kegiatan"];
-
-        // Generate a unique filename based on the nama_kegiatan and the extension
-        $uniqueFilename = generateUniqueFilename($nama_kegiatan, $foto_kegiatan_extension);
-
+    
+        // Generate a unique filename based on the id_foto and the extension
+        $id_foto = generateIdFoto($tgl);
+        $uniqueFilename = $id_foto . "." . $foto_kegiatan_extension;
+    
         $targetFilePath = $targetDir . $uniqueFilename;
 
         // Check if the image file is an actual image or a fake image
@@ -162,7 +163,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
 <html>
 
 <head>
-<title>Galeri - SIUKM</title>
+<title>Manajemen Galeri - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -270,7 +271,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                 echo "<td>" . date('d', strtotime($row_galeri['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_galeri['tgl']))) - 1] . " " . date('Y', strtotime($row_galeri['tgl'])) . "</td>";
                 echo "<td>
                         <a href='edit_galeri.php?id_foto=" . $row_galeri['id_foto'] . "'>Edit</a>
-                        <a href='delete_galeri.php?id_foto=" . $row_galeri['id_foto'] . "'>Hapus</a>
+                        <a href='delete_galeri.php?id_foto=" . $row_galeri['id_foto'] . "' onclick='return confirmDelete(\"" . $row_galeri['nama_kegiatan'] . "\");'>Hapus</a>
                     </td>";
                 echo "</tr>";
             }
@@ -352,6 +353,12 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         }
     });
 </script>
-
+<script>
+    function confirmDelete(namaKegiatan) {
+        // Show the confirmation alert and ask for user confirmation
+        const confirmMessage = `Apakah yakin akan menghapus foto kegiatan "${namaKegiatan}"?`;
+        return confirm(confirmMessage);
+    }
+</script>
 </body>
 </html>

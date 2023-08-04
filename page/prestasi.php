@@ -9,7 +9,7 @@ session_start();
 error_reporting(0);
 
 // Mendapatkan nama depan dari session
-$nama_depan = $_SESSION["nama_depan"];
+$nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 
 // Inisialisasi variabel pesan error
@@ -141,10 +141,6 @@ $result = mysqli_query($conn, $query);
     <h1>Daftar Prestasi</h1>
     <div class="divider"></div>
 
-    <?php if ($level == 'admin'): ?>
-        <a href="tambah_prestasi.php" class="btn btn-primary">Tambah Prestasi</a>
-    <?php endif; ?>
-
    <!-- Filter form -->
    <form method="get">
         <label for="year">Filter by Year:</label>
@@ -221,9 +217,6 @@ $result = mysqli_query($conn, $query);
                 echo "<td>" . $row['penyelenggara'] . "</td>";
                 echo "<td>" . date("d", strtotime($row['tgl_prestasi'])) . " " . $indonesianMonths[date("n", strtotime($row['tgl_prestasi'])) - 1] . " " . date("Y", strtotime($row['tgl_prestasi'])) . "</td>";
                 echo "<td>" . $row['nama_ukm'] . "</td>";
-                if ($level == 'admin') {
-                    echo "<td><a href='edit_prestasi.php?id=" . $row['id_prestasi'] . "'>Edit</a> | <a href='hapus_prestasi.php?id=" . $row['id_prestasi'] . "' onclick='return confirm(\"Apakah Anda yakin ingin menghapus prestasi ini?\")'>Hapus</a></td>";
-                }
                 echo "</tr>";
                 $no++;
             }

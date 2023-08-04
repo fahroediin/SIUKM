@@ -235,64 +235,18 @@ $conn->close();
     
 </style>
 <script>
-function generateIdPrestasi($nama_prestasi, $id_ukm, $penyelenggara, $tgl_prestasi)
-{
-    // Menghapus karakter non-alfanumerik dari nama prestasi
-    $clean_nama_prestasi = preg_replace("/[^a-zA-Z0-9]/", "", $nama_prestasi);
-
-    // Mengambil 6 huruf pertama dari nama prestasi
-    $id_prestasi = substr($clean_nama_prestasi, 0, 6);
-
-    // Menghapus karakter non-alfanumerik dari id_ukm
-    $clean_id_ukm = preg_replace("/[^a-zA-Z0-9]/", "", $id_ukm);
-
-    // Mengambil 6 huruf pertama dari id_ukm
-    $id_prestasi .= substr($clean_id_ukm, 0, 6);
-
-    // Mengambil 6 huruf pertama dari nama penyelenggara
-    $clean_penyelenggara = preg_replace("/[^a-zA-Z0-9]/", "", $penyelenggara);
-    $id_prestasi .= substr($clean_penyelenggara, 0, 6);
-
-    // Mengubah format tanggal prestasi menjadi Ymd (misal: 2023-06-15 menjadi 20230615)
-    $tanggal_prestasi = date('Ymd', strtotime($tgl_prestasi));
-
-    // Mengambil 4 digit terakhir dari tahun tanggal prestasi
-    $id_prestasi .= substr($tanggal_prestasi, -4);
-
-    // Generate 4 random alphanumeric characters
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $random_chars = '';
-    for ($i = 0; $i < 4; $i++) {
-        $random_chars .= $characters[rand(0, strlen($characters) - 1)];
-    }
-
-    // Append the 4 random characters to the ID Prestasi
-    $id_prestasi .= $random_chars;
-
-    // Generate ID Prestasi until it is unique
-    do {
-        // Jika panjang ID Prestasi kurang dari 26 digit, tambahkan digit acak
-        while (strlen($id_prestasi) < 26) {
-            $id_prestasi .= $characters[rand(0, strlen($characters) - 1)];
-        }
-
-        // Check if ID Prestasi already exists in the database
-        $check_query = "SELECT COUNT(*) AS count FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
-        $check_result = $conn->query($check_query);
-        $check_data = $check_result->fetch_assoc();
-
-        if ($check_data['count'] > 0) {
-            // ID Prestasi already exists, reset the ID and generate again
-            $id_prestasi = substr($id_prestasi, 0, -4); // Remove the last 4 random characters
-            $id_prestasi .= $characters[rand(0, strlen($characters) - 1)];
+    // Define the updateNamaUKM function
+    function updateNamaUKM(selectElement) {
+        var selectedIdUkm = selectElement.value;
+        var namaUkmField = document.getElementById("nama_ukm");
+        
+        // Set the value of the "nama_ukm" field based on the selected "id_ukm"
+        if (selectedIdUkm in <?php echo json_encode($namaUKM); ?>) {
+            namaUkmField.value = <?php echo json_encode($namaUKM); ?>[selectedIdUkm];
         } else {
-            // ID Prestasi is unique, exit the loop
-            break;
+            namaUkmField.value = '';
         }
-    } while (true);
-
-    return $id_prestasi;
-}
+    }
 </script>
 <body>
     
@@ -384,52 +338,28 @@ function generateIdPrestasi($nama_prestasi, $id_ukm, $penyelenggara, $tgl_presta
             </div>
             <div class="form-group">
                 <label for="id_ukm">ID UKM:</label>
-                <select id="id_ukm_dropdown" class="form-control" name="id_ukm" required>
+                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
                     <option value="" selected disabled>Pilih ID UKM</option>
                     <?php
                     // Membuat opsi combobox dari hasil query
                     foreach ($namaUKM as $id_ukm => $nama_ukm) {
-                        echo "<option value='$id_ukm'>$id_ukm</option>";
+                        $selected = ($prestasi['id_ukm'] == $id_ukm) ? 'selected' : '';
+                        echo "<option value='$id_ukm' $selected>$id_ukm</option>";
                     }
                     ?>
                 </select>
             </div>
             <div class="form-group">
                 <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" readonly>
+                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $prestasi['nama_ukm']; ?>" readonly>
             </div>
             <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
             <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
-    <i class="fas fa-plus"></i> Tambah Anggota
+    <i class="fas fa-plus"></i> Tambah Kegiatan
 </button>
     </div>
         </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    // Function to fetch "Nama UKM" based on the selected "ID UKM"
-    function fetchNamaUKM(id_ukm) {
-        $.ajax({
-            type: "POST",
-            url: "get_nama_ukm.php", // The PHP file created in Step 1
-            data: { id_ukm: id_ukm },
-            dataType: "json",
-            success: function (data) {
-                // Update the "Nama UKM" textfield with the fetched data
-                $("#nama_ukm").val(data.nama_ukm);
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
-
-    // Event listener for the dropdown (id_ukm_dropdown)
-    $("#id_ukm_dropdown").on("change", function () {
-        var selectedUKMId = $(this).val();
-        fetchNamaUKM(selectedUKMId);
-    });
-</script>
 <script>
     // Function to confirm the delete action
     function confirmDelete() {
