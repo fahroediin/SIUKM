@@ -31,12 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($password !== $confirmPassword) {
         $error = "Password dan konfirmasi password tidak cocok";
     } else {
-        // Memeriksa apakah ID User (NIM) sudah digunakan
-        $query = "SELECT * FROM tab_user WHERE id_user = '$id_user'";
-        $result = mysqli_query($conn, $query);
-        if (mysqli_num_rows($result) > 0) {
-            $error = "ID User (NIM) sudah terdaftar. Silakan gunakan ID User (NIM) lain.";
-        } else {
+            // Memeriksa apakah ID User (NIM) sudah digunakan
+            $query = "SELECT * FROM tab_user WHERE id_user = '$id_user'";
+            $result = mysqli_query($conn, $query);
+            if (mysqli_num_rows($result) > 0) {
+                $error = "ID User (NIM) sudah terdaftar. Silakan gunakan ID User (NIM) lain.";
+            }
+            else {
             // Memasukkan data pengguna ke dalam tabel tab_user
             $query = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level) VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '3')";
             if (mysqli_query($conn, $query)) {
@@ -126,13 +127,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Registrasi Pengguna</h1>
 
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <div>
-            <label for="id_user">ID User (NIM):</label>
-            <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validateIDUser()">
+        <div>
+        <label for="id_user">ID User (NIM):</label>
+        <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validasiIdUser(event, 10)">
         </div>
+
+        <script>
+        function validasiIdUser(event, maxLength) {
+            const input = event.target;
+            const filteredValue = input.value.replace(/[^0-9]/g, '').slice(0, maxLength);
+            input.value = filteredValue;
+        }
+        </script>
+
         <div>
             <label for="password">Password:</label>
-            <input type="text" id="password" name="password" required placeholder="Masukkan password">
+            <input type="text" id="password" name="password" required placeholder="Masukkan password" pattern=".{6,30}" title="Password minimal 6 karakter dan maksimal 30 karakter">
         </div>
         <div>
             <label for="confirmPassword">Konfirmasi Password:</label>
@@ -141,24 +151,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p class="error-message">Password dan Konfirmasi Password tidak sesuai.</p>
             <?php endif; ?>
         </div>
+
         <div>
             <label for="nama_lengkap">Nama Lengkap:</label>
-            <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Masukkan Nama Lengkap">
+            <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Masukkan Nama Lengkap" oninput="validasiHuruf(event)">
         </div>
+
+        <script>
+        function validasiHuruf(event) {
+            const input = event.target;
+            const filteredValue = input.value.replace(/[^A-Za-z\s]/g, '');
+            input.value = filteredValue;
+        }
+        </script>
         <div>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required placeholder="Masukkan Email">
         </div>
         <div>
             <label for="no_hp">Nomor HP:</label>
-            <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" pattern="[0-9]{1,13}" title="Hanya angka dengan maksimal 13 digit diperbolehkan">
+            <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" oninput="validasiAngka(event, 15)">
         </div>
+
+        <script>
+        function validasiAngka(event, maxLength) {
+            const input = event.target;
+            const filteredValue = input.value.replace(/[^0-9]/g, '').slice(0, maxLength);
+            input.value = filteredValue;
+        }
+        </script>
+
+        <!-- Add this part -->
         <?php if ($error) : ?>
             <p class="error-message"><?php echo $error; ?></p>
-            <script>
-                alert("<?php echo $error; ?>"); // Add this line to display the error in an alert
-            </script>
         <?php endif; ?>
+
         <div>
             <button type="submit">Daftar</button>
         </div>
@@ -170,14 +197,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function showSnackbar(message) {
-            var snackbar = document.getElementById("snackbar");
-            snackbar.innerHTML = message;
-            snackbar.className = "show";
-            setTimeout(function() {
-                snackbar.className = snackbar.className.replace("show", "");
-            }, 3000);
-        }
+    function showSnackbar(message) {
+        var snackbar = document.getElementById("snackbar");
+        snackbar.innerHTML = message;
+        snackbar.className = "show";
+        setTimeout(function () {
+            snackbar.className = snackbar.className.replace("show", "");
+        }, 3000);
+    }
         function validateIDUser() {
         var idUserInput = document.getElementById('id_user');
         var idUserValue = idUserInput.value.trim();
@@ -203,7 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             ?>
         };
-
+        <div id="snackbar"></div>
     // Check if there is any form data to populate
     <?php if (isset($_SESSION['form_data'])) : ?>
         var formData = <?php echo json_encode($_SESSION['form_data']); ?>;

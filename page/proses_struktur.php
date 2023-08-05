@@ -182,7 +182,7 @@ if (isset($_POST['submit'])) {
 
                     // Menampilkan opsi untuk setiap baris data
                     while ($row_ukm = $result_ukm->fetch_assoc()) {
-                        $id_ukm = $row_ukm['id_ukm'];
+                        $id_ukm = $row_ukm['pasfoto'];
                         $nama_ukm = $row_ukm['nama_ukm'];
                         $selected = isset($_POST['id_ukm']) && $_POST['id_ukm'] == $id_ukm ? 'selected' : '';
                         echo "<option value='$id_ukm' $selected>$nama_ukm</option>";
@@ -194,7 +194,7 @@ if (isset($_POST['submit'])) {
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID UKM</th>
+                    <th>Foto</th>
                     <th>Jabatan</th>
                     <th>Nama Lengkap</th>
                     <th>NIM/NIDN</th>
@@ -321,15 +321,15 @@ if (isset($_POST['submit'])) {
 </div>
 <div class="form-group">
     <label for="nim">NIM:</label>
-    <input type="text" class="form-control" id="id_user" name="id_user" readonly>
+    <input type="text" class="form-control" id="nim" name="nim" readonly>
 </div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-const idAnggotaSelect = document.getElementById("id_anggota");
+const idAnggotaSelect = document.getElementById("id_anggota_dropdown");
 const namaLengkapField = document.getElementById("nama_lengkap");
-const idUserField = document.getElementById("id_user");
+const nimField = document.getElementById("nim");
 
 idAnggotaSelect.addEventListener("change", function() {
     const selectedOption = idAnggotaSelect.options[idAnggotaSelect.selectedIndex];
@@ -340,22 +340,23 @@ idAnggotaSelect.addEventListener("change", function() {
             .then(response => response.json())
             .then(data => {
                 namaLengkapField.value = data.nama_lengkap;
-                idUserField.value = data.id_user;
+                nimField.value = data.id_user;
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     } else {
-        // If no id_anggota is selected, reset the nama_lengkap and id_user fields
+        // If no id_anggota is selected, reset the nama_lengkap and nim fields
         namaLengkapField.value = "";
-        idUserField.value = "";
+        nimField.value = "";
     }
 });
 </script>
 
 
+
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="submit">Tambah Pengurus</button>
+                <button type="submit" class="btn btn-primary" name="submit">Simpan Perubahan</button>
             </div>
         </form>
     </div>
