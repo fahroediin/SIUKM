@@ -106,7 +106,7 @@ if (isset($_GET['logout'])) {
     <h1>Informasi Pengguna</h1>
  <!-- Tombol Ganti Password -->
  <a href="ganti_password_pengguna.php" class="btn btn-primary">Ganti Password</a>
- <a href="proses_update_pengguna.php" class="btn btn-primary">Update Data Diri</a>
+ <a href="update_pengguna.php" class="btn btn-primary">Update Data Diri</a>
     <hr class="divider">
     <div class="user-info">
     <div class="profile-container">

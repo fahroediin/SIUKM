@@ -66,27 +66,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prodi = $_POST['prodi'];
     $semester = $_POST['semester'];
 
-    // Menghindari SQL injection dengan prepared statement
-    $query = "UPDATE tab_user SET nama_lengkap=?, email=?, no_hp=?, prodi=?, semester=? WHERE id_user=?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "sssssi", $nama_lengkap, $email, $no_hp, $prodi, $semester, $id_user);
-    $updateResult = mysqli_stmt_execute($stmt);
-    
-    if ($updateResult) {
-        // Mengupdate data di dalam session
-        $_SESSION['nama_lengkap'] = $nama_lengkap;
-        $_SESSION['email'] = $email;
-        $_SESSION['no_hp'] = $no_hp;
-        $_SESSION['prodi'] = $prodi;
-        $_SESSION['semester'] = $semester;
+    // Handle file uploads for pasfoto and foto_ktm
+    if (isset($_FILES['pasfoto']) && isset($_FILES['foto_ktm'])) {
+        $pasfoto = $_FILES['pasfoto'];
+        $foto_ktm = $_FILES['foto_ktm'];
 
-        // Redirect ke halaman dashboard.php
-        header("Location: dashboard.php");
-        exit();
-    } else {
-        // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-        $error = "Error: " . mysqli_error($conn);
-        echo "<script>alert('$error');</script>";
+        // Generate new filenames based on id_user and nama_lengkap
+        $pasfotoFileName = $_SESSION['id_user'] . "_" . $_SESSION['nama_lengkap'] . "_" . uniqid() . "." . pathinfo($pasfoto['name'], PATHINFO_EXTENSION);
+        $fotoKtmFileName = $_SESSION['id_user'] . "_" . $_SESSION['nama_lengkap'] . "_" . uniqid() . "." . pathinfo($foto_ktm['name'], PATHINFO_EXTENSION);
+
+        // Move uploaded files to the respective directories
+        $pasfotoDestination = "../assets/images/pasfoto/" . $pasfotoFileName;
+        $fotoKtmDestination = "../assets/images/ktm/" . $fotoKtmFileName;
+
+        if (move_uploaded_file($pasfoto['tmp_name'], $pasfotoDestination) && move_uploaded_file($foto_ktm['tmp_name'], $fotoKtmDestination)) {
+            // File uploads successful, update the database with the new filenames
+            $query = "UPDATE tab_user SET nama_lengkap=?, email=?, no_hp=?, prodi=?, semester=?, pasfoto=?, foto_ktm=? WHERE id_user=?";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, "sssssssi", $nama_lengkap, $email, $no_hp, $prodi, $semester, $pasfotoFileName, $fotoKtmFileName, $id_user);
+            $updateResult = mysqli_stmt_execute($stmt);
+
+            if ($updateResult) {
+                // Mengupdate data di dalam session
+                $_SESSION['nama_lengkap'] = $nama_lengkap;
+                $_SESSION['email'] = $email;
+                $_SESSION['no_hp'] = $no_hp;
+                $_SESSION['prodi'] = $prodi;
+                $_SESSION['semester'] = $semester;
+
+                // Redirect ke halaman dashboard.php
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+                $error = "Error: " . mysqli_error($conn);
+                echo "<script>alert('$error');</script>";
+            }
+        } else {
+            // File uploads failed, handle the error accordingly
+            $error = "Error uploading files. Please try again.";
+            echo "<script>alert('$error');</script>";
+        }
     }
 }
 ?>
@@ -204,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </div>
     </div>
-    <form class="form-container" method="POST" action="">
+    <form class="form-container" method="POST" action="" enctype="multipart/form-data">
         <div class="form-group">
             <label for="id_user">ID User (NIM):</label>
             <input type="text" class="form-control" id="id_user" name="id_user" required value="<?php echo $_SESSION['id_user']; ?>" readonly>
@@ -238,6 +258,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="no_hp">Nomor Telepon:</label>
             <input type="text" class="form-control" id="no_hp" name="no_hp" required value="<?php echo $_SESSION['no_hp']; ?>">
         </div>
+        <!-- Pasfoto input -->
+    <div class="form-group">
+        <label for="pasfoto">Pasfoto:</label>
+        <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*" required>
+    </div>
+
+    <!-- Foto KTM input -->
+    <div class="form-group">
+        <label for="foto_ktm">Foto KTM:</label>
+        <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*" required>
+    </div>
+    
         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
             </div>
     </form>

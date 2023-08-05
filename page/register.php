@@ -13,7 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mendapatkan data dari form
     $id_user = $_POST['id_user'];
     $password = $_POST['password'];
-    $confirmPassword = $_POST['confirmPassword']; // Add this line to get the value of "Konfirmasi Password"
     $nama_lengkap = $_POST['nama_lengkap'];
     $email = $_POST['email'];
     $no_hp = $_POST['no_hp'];
@@ -24,20 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Format email tidak benar. Masukkan email yang valid.";
     } else {
-        // Other validation and database operations here
-    }
-
-    // Memeriksa apakah password dan konfirmasi password cocok
-    if ($password !== $confirmPassword) {
-        $error = "Password dan konfirmasi password tidak cocok";
-    } else {
-            // Memeriksa apakah ID User (NIM) sudah digunakan
-            $query = "SELECT * FROM tab_user WHERE id_user = '$id_user'";
-            $result = mysqli_query($conn, $query);
-            if (mysqli_num_rows($result) > 0) {
-                $error = "ID User (NIM) sudah terdaftar. Silakan gunakan ID User (NIM) lain.";
-            }
-            else {
             // Memasukkan data pengguna ke dalam tabel tab_user
             $query = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level) VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '3')";
             if (mysqli_query($conn, $query)) {
@@ -50,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -121,6 +105,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-top: 10px;
             font-size: 14px;
         }
+        .password-input {
+    position: relative;
+    }
+
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
+
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
     </style>
 </head>
 <body>
@@ -131,7 +130,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="id_user">ID User (NIM):</label>
         <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validasiIdUser(event, 10)">
         </div>
-
+    <!-- Add this part to display the error message -->
+    <?php if ($error) : ?>
+        <p class="error-message"><?php echo $error; ?></p>
+    <?php endif; ?>
+</div>
         <script>
         function validasiIdUser(event, maxLength) {
             const input = event.target;
@@ -140,17 +143,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         </script>
 
-        <div>
-            <label for="password">Password:</label>
-            <input type="text" id="password" name="password" required placeholder="Masukkan password" pattern=".{6,30}" title="Password minimal 6 karakter dan maksimal 30 karakter">
-        </div>
-        <div>
-            <label for="confirmPassword">Konfirmasi Password:</label>
-            <input type="text" id="confirmPassword" name="confirmPassword" required placeholder="Ulangi password">
-            <?php if ($error && $password !== $confirmPassword) : ?>
-                <p class="error-message">Password dan Konfirmasi Password tidak sesuai.</p>
-            <?php endif; ?>
-        </div>
+<div class="form-group">
+    <label for="password">Password:</label>
+    <div class="password-input">
+        <input type="password" class="form-control" id="password" name="password" required>
+        <i class="fas fa-eye" id="passwordToggle1"></i>
+    </div>
+</div>
+<div class="form-group">
+    <label for="konfirmasi_password">Konfirmasi Password:</label>
+    <div class="password-input">
+        <input type="password" class="form-control" id="konfirmasi_password" name="confirmPassword" required>
+        <i class="fas fa-eye" id="passwordToggle2"></i>
+    </div>
+
 
         <div>
             <label for="nama_lengkap">Nama Lengkap:</label>
@@ -172,7 +178,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="no_hp">Nomor HP:</label>
             <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" oninput="validasiAngka(event, 15)">
         </div>
-
         <script>
         function validasiAngka(event, maxLength) {
             const input = event.target;
@@ -180,12 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             input.value = filteredValue;
         }
         </script>
-
-        <!-- Add this part -->
-        <?php if ($error) : ?>
-            <p class="error-message"><?php echo $error; ?></p>
-        <?php endif; ?>
-
         <div>
             <button type="submit">Daftar</button>
         </div>
@@ -196,16 +195,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script>
-    function showSnackbar(message) {
-        var snackbar = document.getElementById("snackbar");
-        snackbar.innerHTML = message;
-        snackbar.className = "show";
-        setTimeout(function () {
-            snackbar.className = snackbar.className.replace("show", "");
-        }, 3000);
+    function validatePassword() {
+        var passwordInput = document.getElementById("password");
+        var confirmPasswordInput = document.getElementById("konfirmasi_password");
+        var password = passwordInput.value;
+        var confirmPassword = confirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
+            showSnackbar("Password tidak sesuai");
+            confirmPasswordInput.focus();
+            return false;
+        }
+
+        return true;
     }
-        function validateIDUser() {
+
+    function validateForm() {
+        return validateIDUser() && validatePassword();
+    }
+
+    function validateIDUser() {
         var idUserInput = document.getElementById('id_user');
         var idUserValue = idUserInput.value.trim();
         var numericRegex = /^[0-9]+$/;
@@ -220,17 +231,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             idUserInput.setCustomValidity('');
         }
     }
-      // Set focus to the appropriate field on page load
-      window.onload = function() {
-            <?php
-            if (isset($_POST['confirmPassword']) && $password !== $confirmPassword) {
-                echo 'document.getElementById("confirmPassword").focus();';
-            } elseif (isset($_POST['email']) && (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL))) {
-                echo 'document.getElementById("email").focus();';
-            }
-            ?>
-        };
-        <div id="snackbar"></div>
     // Check if there is any form data to populate
     <?php if (isset($_SESSION['form_data'])) : ?>
         var formData = <?php echo json_encode($_SESSION['form_data']); ?>;
@@ -250,5 +250,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
         </script>
     <?php endif; ?>
+    <script>
+    const passwordInput1 = document.getElementById("password");
+    const passwordToggle1 = document.getElementById("passwordToggle1");
+    const passwordInput2 = document.getElementById("konfirmasi_password");
+    const passwordToggle2 = document.getElementById("passwordToggle2");
+
+    passwordToggle1.addEventListener("click", function () {
+        if (passwordInput1.type === "password") {
+            passwordInput1.type = "text";
+            passwordToggle1.classList.remove("fa-eye");
+            passwordToggle1.classList.add("fa-eye-slash");
+        } else {
+            passwordInput1.type = "password";
+            passwordToggle1.classList.remove("fa-eye-slash");
+            passwordToggle1.classList.add("fa-eye");
+        }
+    });
+
+    passwordToggle2.addEventListener("click", function () {
+        if (passwordInput2.type === "password") {
+            passwordInput2.type = "text";
+            passwordToggle2.classList.remove("fa-eye");
+            passwordToggle2.classList.add("fa-eye-slash");
+        } else {
+            passwordInput2.type = "password";
+            passwordToggle2.classList.remove("fa-eye-slash");
+            passwordToggle2.classList.add("fa-eye");
+        }
+    });
+    </script>
 </body>
 </html>
