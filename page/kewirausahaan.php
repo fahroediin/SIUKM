@@ -450,7 +450,7 @@ h2 {
 
   </div>
 		</div>
-		<div class="divider">
+    <div class="card shadow mb-4">
     <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
     <?php
@@ -472,6 +472,7 @@ h2 {
     echo "</table>";
     ?>
 </div>
+  </div>
 
 </div>
 	</div>

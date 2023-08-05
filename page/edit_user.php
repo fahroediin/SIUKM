@@ -265,14 +265,14 @@ if (isset($_POST['update'])) {
             <input type="text" class="form-control" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required pattern="[0-9]+" title="Please enter numeric characters only">
               </div>
               <div class="form-group">
-                <label for="pasfoto">Pasfoto:</label>
-                <input type="file" class="form-control" id="pasfoto" name="pasfoto">
+                <label for="pasfoto">Foto:</label>
+                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto">
                 <img id="pasfoto-preview" src="" alt="Pasfoto Preview" style="max-width: 200px; margin-top: 10px;">
             </div>
 
             <div class="form-group">
                 <label for="foto_ktm">Foto KTM:</label>
-                <input type="file" class="form-control" id="foto_ktm" name="foto_ktm">
+                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm">
                 <img id="foto_ktm-preview" src="" alt="Foto KTM Preview" style="max-width: 200px; margin-top: 10px;">
             </div>
             <div class="form-group">

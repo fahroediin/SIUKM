@@ -266,7 +266,7 @@ if (isset($_POST['submit'])) {
                 <th>Email</th>
                 <th>No HP</th>
                 <th>Level</th>
-                <th>Pasfoto</th>
+                <th>Foto</th>
                 <th>Foto KTM</th>
                 <th>Aksi</th>
             </tr>

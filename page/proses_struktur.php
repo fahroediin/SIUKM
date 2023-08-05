@@ -182,7 +182,7 @@ if (isset($_POST['submit'])) {
 
                     // Menampilkan opsi untuk setiap baris data
                     while ($row_ukm = $result_ukm->fetch_assoc()) {
-                        $id_ukm = $row_ukm['pasfoto'];
+                        $id_ukm = $row_ukm['id_ukm'];
                         $nama_ukm = $row_ukm['nama_ukm'];
                         $selected = isset($_POST['id_ukm']) && $_POST['id_ukm'] == $id_ukm ? 'selected' : '';
                         echo "<option value='$id_ukm' $selected>$nama_ukm</option>";
@@ -198,6 +198,7 @@ if (isset($_POST['submit'])) {
                     <th>Jabatan</th>
                     <th>Nama Lengkap</th>
                     <th>NIM/NIDN</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -261,6 +262,7 @@ if (isset($_POST['submit'])) {
                         echo "<td>$jabatan</td>";
                         echo "<td>$nama_lengkap</td>";
                         echo "<td>$nim</td>";
+                        echo "<td><a href='hapus_data.php?nim=$nim'>Hapus</a></td>";
                         echo "</tr>";
                     }
                 }
