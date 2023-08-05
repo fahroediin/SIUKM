@@ -2,28 +2,38 @@
 // Memasukkan file db_connect.php
 require_once "db_connect.php";
 
-// Cek apakah ada permintaan POST
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Ambil nilai id_user dari permintaan POST
-    $id_user = $_POST["id_anggota"];
+// Check if the id_anggota parameter is set in the request
+if (isset($_GET['id_anggota'])) {
+    // Sanitize the input
+    $id_anggota = mysqli_real_escape_string($conn, $_GET['id_anggota']);
+    
+    // Query untuk mendapatkan data user berdasarkan id_anggota
+    $query = "SELECT td.nama_lengkap, tm.nim FROM tab_dau td 
+              JOIN tab_mahasiswa tm ON td.id_user = tm.id_user
+              WHERE td.id_anggota = '$id_anggota'";
 
-    // Query untuk mendapatkan data user berdasarkan id_user
-    $query = "SELECT nama_lengkap, id_user FROM tab_dau WHERE id_anggota = '$id_anggota'";
+    // Execute the query
     $result = mysqli_query($conn, $query);
 
-    // Cek apakah query berhasil dijalankan dan mengembalikan data
-    if ($result && mysqli_num_rows($result) > 0) {
-        // Ambil data dari hasil query
+    // Check if the query was successful
+    if ($result) {
+        // Fetch the row containing the nama_lengkap and nim
         $row = mysqli_fetch_assoc($result);
 
-        // Kirim data dalam format JSON
-        header("Content-Type: application/json");
-        echo json_encode($row);
+        // Check if the row was found
+        if ($row) {
+            // Return the nama_lengkap and nim as a response
+            echo "Nama Lengkap: " . $row['nama_lengkap'] . "<br>";
+            echo "NIM: " . $row['nim'];
+        } else {
+            // If no matching id_anggota was found, return an empty string as the response
+            echo "Data tidak ditemukan.";
+        }
     } else {
-        // Jika tidak ada data, kirimkan pesan kesalahan
-        echo json_encode(["error" => "User not found"]);
+        // If there was an error executing the query, return an empty string as the response
+        echo "Error executing the query.";
     }
 } else {
-    // Jika bukan permintaan POST, kirimkan pesan kesalahan
-    echo json_encode(["error" => "Invalid request"]);
+    // If the id_anggota parameter is not set, return an empty string as the response
+    echo "Parameter id_anggota tidak ditemukan.";
 }

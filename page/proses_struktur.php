@@ -299,7 +299,7 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
             <label for="id_anggota">ID Anggota:</label>
-            <select class="form-control" id="id_anggota" name="id_anggota" required>
+            <select class="form-control" id="id_anggota_dropdown" name="id_anggota" required>
                 <option value="">Pilih ID Anggota</option>
                 <?php
                 // Query to get data from tab_dau
@@ -313,7 +313,50 @@ if (isset($_POST['submit'])) {
                 }
                 ?>
             </select>
-                </div>
+            <script>
+            // Event listener for the dropdown (id_user)
+            document.getElementById("id_anggota_dropdown").addEventListener("change", function () {
+                var selectedAnggotaId = this.value;
+                var namaLengkapField = document.getElementsByName("nama_lengkap")[0];
+                var nimField = document.getElementsByName("nim")[0];    
+
+                if (selectedAnggotaId === "") {
+                    // Reset the text fields
+                    namaLengkapField.value = "";
+                    nimField.value = "";
+
+                    // Disable the text fields
+                    namaLengkapField.disabled = true;
+                    nimField.disabled = true;
+                } else {
+                }
+            });
+            </script>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function getAnggotaDetails() {
+                $.ajax({
+                    type: "POST",
+                    url: "get_anggota_details.php", // Replace with the correct PHP file to handle the AJAX request and database query for user data
+                    data: { id_user: userId },
+                    dataType: "json",
+                    success: function(data) {
+                        // Update the text fields with the fetched data
+                        $("input[name='nama_lengkap']").val(data.nama_lengkap);
+                        $("input[name='nim']").val(data.nim);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+            // Event listener for the dropdown (id_user)
+            $("select[name='id_anggota']").on("change", function() {
+                var selectedAnggotaId = $(this).val();
+                getAnggotaDetails(selectedAnggotaId);
+            });
+        </script>
                 <div class="form-group">
                 <label for="nama_lengkap">Nama Lengkap:</label>
                 <input type="text" class="form-control" id="nama_lengkap" id="nama_lengkap" readonly>
@@ -328,29 +371,7 @@ if (isset($_POST['submit'])) {
         </form>
     </div>
 
-    <script>
-    function getAnggotaDetails() {
-        $.ajax({
-            type: "POST",
-            url: "get_anggota_details.php", // Replace with the correct PHP file to handle the AJAX request and database query for user data
-            data: { id_user: userId },
-            dataType: "json",
-            success: function(data) {
-                // Update the text fields with the fetched data
-                $("input[name='nama_lengkap']").val(data.nama_lengkap);
-                $("input[name='nim']").val(data.nim);
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
-    // Event listener for the dropdown (id_user)
-    $("select[name='id_anggota']").on("change", function() {
-        var selectedAnggotaId = $(this).val();
-        getAnggotaDetails(selectedAnggotaId);
-    });
-</script>
+
    <script>
     function checkJabatan() {
         // Get the selected id_jabatan value from the form
