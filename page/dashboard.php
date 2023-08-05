@@ -41,7 +41,7 @@ if ($result) {
         $pasfoto = "../assets/images/pasfoto/" . $pasfotoFilename;
     } else {
         // If pasfoto field is empty or not set, provide a default image path
-        $pasfoto = "../assets/images/default_pasfoto.jpg"; // Change this to your desired default image path
+        $pasfoto = "../assets/images/default_profile_picture.png"; // Change this to your desired default image path
     }
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
@@ -64,6 +64,25 @@ function logout()
 if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
+}
+// Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
+$userId = $_SESSION['id_user'];
+$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+
+// Mengeksekusi query
+$result = mysqli_query($conn, $query);
+
+// Tambahkan query untuk menghitung jumlah snapshot dari tab_dau berdasarkan id_user
+$querySnapshot = "SELECT COUNT(*) AS total_snapshot FROM tab_dau WHERE id_user = '$userId'";
+$resultSnapshot = mysqli_query($conn, $querySnapshot);
+
+$totalSnapshot = 0; // Default value jika query tidak menghasilkan hasil
+if ($resultSnapshot) {
+    $snapshotData = mysqli_fetch_assoc($resultSnapshot);
+    $totalSnapshot = $snapshotData['total_snapshot'];
+} else {
+    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+    echo "Error: " . mysqli_error($conn);
 }
 ?>
 <!DOCTYPE html>
@@ -98,9 +117,7 @@ if (isset($_GET['logout'])) {
         }
 
         .user-info {
-            display: flex;
-            align-items: center;
-            margin-top: 20px; /* Add some spacing between the buttons and card */
+            margin-left: 320px; /* Add spacing between sidebar and user-info */
         }
 
                 .profil-picture {
@@ -117,14 +134,14 @@ if (isset($_GET['logout'])) {
            
         }
 
-        .label {
-    font-weight: bold;
-    color: #333;
-}
+                .label {
+            font-weight: bold;
+            color: #333;
+        }
 
-.value {
-    color: #555;
-}
+        .value {
+            color: #555;
+        }
 
         .divider {
             border: none;
@@ -143,63 +160,79 @@ if (isset($_GET['logout'])) {
 .btn:hover {
     background-color: #218838;
 }
+.wrapper {
+            flex: 1 0 auto; /* Buat wrapper "sticky" dengan flex-grow: 1 dan flex-shrink: 0 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 100px; /* Atur padding-bottom agar ada ruang di antara konten dan footer */
+        }
     </style>
 </head>
 
 <body>
     <div class="sidebar">
         <h2>Dashboard</h2>
-        <a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-        <a href="beranda.php" class="btn btn-primary <?php if ($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-        <a href="?logout=true" class="btn btn-primary <?php if ($active_page == 'logout') echo 'active'; ?>">Logout</a>
+        <a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="beranda.php" class="btn btn-primary <?php if ($active_page == 'beranda') echo 'active'; ?>"><i class="fas fa-home"></i> Beranda</a>
+        <a href="?logout=true" class="btn btn-primary <?php if ($active_page == 'logout') echo 'active'; ?>"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
-    <div class="content">
-        <h1>Informasi Pengguna</h1>
-       <!-- Tombol Ganti Password -->
-<a href="ganti_password_pengguna.php" class="btn btn-primary"><i class="fas fa-key"></i> Ganti Password</a>
-
-<!-- Tombol Update Data Diri -->
-<a href="update_pengguna.php" class="btn btn-primary"><i class="fas fa-user-edit"></i> Update Data Diri</a>
-        <hr class="divider">
-        <div class="card shadow user-info"> <!-- Add 'card' and 'shadow' classes here -->
-            <div class="row">
-                <!-- Left column for profile picture -->
-                <div class="col-md-4">
-                    <div class="profile-container">
-                        <img src="<?php echo $pasfoto; ?>" alt="Foto Profil" class="profil-picture">
+    <div class="wrapper">
+        <div class="content">
+            <h1>Informasi Pengguna</h1>
+            <div class="d-flex mb-3"> <!-- Add 'd-flex' class to create a flex container -->
+                <!-- Tombol Ganti Password -->
+                <a href="ganti_password_pengguna.php" class="btn btn-primary mr-2"><i class="fas fa-key"></i> Ganti Password</a>
+                <!-- Tombol Update Data Diri -->
+                <a href="update_pengguna.php" class="btn btn-primary"><i class="fas fa-user-edit"></i> Update Data Diri</a>
+            </div>
+            <hr class="divider">
+            <div class="card shadow user-info">
+                <div class="row">
+                    <!-- Left column for profile picture -->
+                    <div class="col-md-4">
+                        <div class="profile-container">
+                            <img src="<?php echo $pasfoto; ?>" alt="Foto Profil" class="profil-picture">
+                        </div>
                     </div>
-                </div>
-                <!-- Right column for user information -->
-                <div class="col-md-8">
-                    <div class="profile-details">
-                        <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
-                        <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
-                        <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
-                        <p><span class="label">Prodi:</span> <span class="value"><?php echo $prodi; ?></span></p>
-                        <p><span class="label">Semester:</span> <span class="value"><?php echo $semester; ?></span></p>
+                    <!-- Right column for user information -->
+                    <div class="col-md-8">
+                        <div class="profile-details">
+                            <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
+                            <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
+                            <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
+                            <p><span class="label">Prodi:</span> <span class="value"><?php echo $prodi; ?></span></p>
+                            <p><span class="label">Semester:</span> <span class="value"><?php echo $semester; ?></span></p>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="card shadow">
+                <h2>Total UKM yang diikuti</h2>
+                <p><?php echo $totalSnapshot; ?></p>
+            </div>
         </div>
     </div>
+
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
-<script>
-  // Ambil elemen toggle button dan content
-  const toggleBtn = document.querySelector(".toggle-btn");
-  const content = document.querySelector(".content");
+    <script>
+        // Ambil elemen toggle button dan content
+        const toggleBtn = document.querySelector(".toggle-btn");
+        const content = document.querySelector(".content");
 
-  // Tambahkan event listener untuk toggle button
-  toggleBtn.addEventListener("click", function () {
-    // Toggle class 'collapsed' pada content dan sidebar
-    content.classList.toggle("collapsed");
-    document.querySelector(".sidebar").classList.toggle("collapsed");
-  });
-</script>
+        // Tambahkan event listener untuk toggle button
+        toggleBtn.addEventListener("click", function () {
+            // Toggle class 'collapsed' pada content dan sidebar
+            content.classList.toggle("collapsed");
+            document.querySelector(".sidebar").classList.toggle("collapsed");
+        });
+    </script>
 </body>
-
 </html>

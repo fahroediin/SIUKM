@@ -225,10 +225,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
     </div>
     <form class="form-container" method="POST" action="" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="id_user">ID User (NIM):</label>
-            <input type="text" class="form-control" id="id_user" name="id_user" required value="<?php echo $_SESSION['id_user']; ?>" readonly>
+    <div>
+        <label for="id_user">ID User (NIM):</label>
+        <input type="text" id="id_user" class="form-control" name="id_user" required placeholder="Masukkan ID User (NIM)" value="<?php echo $_SESSION['id_user']; ?>" oninput="validasiIdUser(event, 10)">
         </div>
+        <script>
+        function validasiIdUser(event, maxLength) {
+            const input = event.target;
+            const filteredValue = input.value.replace(/[^0-9]/g, '').slice(0, maxLength);
+            input.value = filteredValue;
+        }
+        </script>
         <div class="form-group">
             <label for="nama_lengkap">Nama Lengkap:</label>
             <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required value="<?php echo $_SESSION['nama_lengkap']; ?>">

@@ -233,7 +233,6 @@ if (mysqli_num_rows($result) === 0) {
         <h2>Manajemen Pengguna</h2>
         <a href="dashboard.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
         <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-        <a href="proses_update_pengguna.php" class="btn btn-primary <?php if($active_page == 'proses_update_pengguna') echo 'active'; ?>">Update</a>
     </div>
     <div class="container">
         <h2 class="text-center">GANTI PASSWORD</h2>
