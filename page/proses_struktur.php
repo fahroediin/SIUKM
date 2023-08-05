@@ -112,6 +112,7 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <style>
     .card {
@@ -148,39 +149,7 @@ if (isset($_POST['submit'])) {
         background-color: #0056b3;
     }
 </style>
-<script>
-    // Event listener for the dropdown (id_anggota)
-    document.getElementById("id_anggota").addEventListener("change", function () {
-        var selectedIdAnggota = this.value;
-        var namaLengkapField = document.getElementById("nama_lengkap");
-        var nimField = document.getElementById("id_user");
 
-        if (selectedIdAnggota === "") {
-            // Reset the text fields
-            namaLengkapField.value = "";
-            nimField.value = "";
-        } else {
-            // Make an AJAX request to fetch the details based on the selected id_anggota
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    var data = JSON.parse(this.responseText);
-                    if (data) {
-                        // Update the fields with the retrieved data
-                        namaLengkapField.value = data.nama_lengkap;
-                        nimField.value = data.nim;
-                    } else {
-                        // Reset the fields if data is not found
-                        namaLengkapField.value = "";
-                        nimField.value = "";
-                    }
-                }
-            };
-            xhttp.open("GET", "get_anggota_details.php?id_anggota=" + selectedIdAnggota, true);
-            xhttp.send();
-        }
-    });
-    </script>
 <body>
    <!-- Sidebar -->
 <div class="sidebar">
@@ -193,7 +162,7 @@ if (isset($_POST['submit'])) {
     <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
     <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-    <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
 </div>
 
@@ -329,49 +298,59 @@ if (isset($_POST['submit'])) {
                 </select>
             </div>
             <div class="form-group">
-                <label for="id_anggota">ID Anggota:</label>
-                <select class="form-control" id="id_anggota" name="id_anggota" required onchange="fetchAnggotaDetails()">
-                    <option value="">-- Pilih ID Anggota --</option>
-                    <?php
-                    // Query to get data from tab_dau
-                    $sql_anggota = "SELECT id_anggota FROM tab_dau";
-                    $result_anggota = $conn->query($sql_anggota);
+            <label for="id_anggota">ID Anggota:</label>
+            <select class="form-control" id="id_anggota" name="id_anggota" required>
+                <option value="">Pilih ID Anggota</option>
+                <?php
+                // Query to get data from tab_dau
+                $sql_anggota = "SELECT id_anggota FROM tab_dau";
+                $result_anggota = $conn->query($sql_anggota);
 
-                    // Display options for each row of data
-                    while ($row_anggota = $result_anggota->fetch_assoc()) {
-                        $id_anggota = $row_anggota['id_anggota'];
-                        echo "<option value='$id_anggota'>$id_anggota</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-
-            <div class="form-group">
+                // Display options for each row of data
+                while ($row_anggota = $result_anggota->fetch_assoc()) {
+                    $id_anggota = $row_anggota['id_anggota'];
+                    echo "<option value='$id_anggota'>$id_anggota</option>";
+                }
+                ?>
+            </select>
+                </div>
+                <div class="form-group">
                 <label for="nama_lengkap">Nama Lengkap:</label>
-                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required readonly>
-            </div>
+                <input type="text" class="form-control" id="nama_lengkap" id="nama_lengkap" readonly>
+                </div>
+                <div class="form-group">
+                <label for="nim">NIM:</label>
+                <input type="text" class="form-control" id="nim" id="nim" readonly>
+                </div>
             <div class="form-group">
-                <label for="nim">NIM/NIDN:</label>
-                <input type="text" class="form-control" id="nim" name="nim" required maxlength="20" readonly>
-            </div>
-
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
+                <button type="submit" class="btn btn-primary" name="submit">Tambah Pengurus</button>
             </div>
         </form>
     </div>
 
-    <!-- Script untuk mengatur perubahan lebar sidebar -->
     <script>
-        const sidebar = document.querySelector('.sidebar');
-        document.addEventListener('DOMContentLoaded', function() {
-            // Menambahkan event listener pada tombol collapse
-            document.querySelector('#collapse-button').addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-            });
+    function getAnggotaDetails() {
+        $.ajax({
+            type: "POST",
+            url: "get_anggota_details.php", // Replace with the correct PHP file to handle the AJAX request and database query for user data
+            data: { id_user: userId },
+            dataType: "json",
+            success: function(data) {
+                // Update the text fields with the fetched data
+                $("input[name='nama_lengkap']").val(data.nama_lengkap);
+                $("input[name='nim']").val(data.nim);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
         });
-    </script>
+    }
+    // Event listener for the dropdown (id_user)
+    $("select[name='id_anggota']").on("change", function() {
+        var selectedAnggotaId = $(this).val();
+        getAnggotaDetails(selectedAnggotaId);
+    });
+</script>
    <script>
     function checkJabatan() {
         // Get the selected id_jabatan value from the form

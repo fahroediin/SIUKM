@@ -178,7 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <th>Program Studi</th>
                 <th>Semester</th>
                 <th>Pasfoto</th>
-                <th>ID UKM</th>
+                <th>Foto KTM</th>
                 <th>Nama UKM</th>
                 <th>Bergabung</th>
                 <th>Aksi</th>
@@ -200,7 +200,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<td><img src='../assets/images/pasfoto/" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
         // Display the "Foto_KTM" image
         echo "<td><img src='../assets/images/ktm/" . $row['foto_ktm'] . "' alt='Foto KTM' class='img-thumbnail' style='max-height: 100px;'></td>";
-        echo "<td>" . $row['id_ukm'] . "</td>";
         echo "<td>" . $row['nama_ukm'] . "</td>";
         echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
         echo "<td><a href='delete_anggota.php?id_anggota=" . $row['id_anggota'] . "' class='btn btn-danger btn-sm delete-button' onclick='return confirmDelete()'>Hapus</a></td>";

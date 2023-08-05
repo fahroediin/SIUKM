@@ -8,8 +8,7 @@ session_start();
 // Inisialisasi variabel pesan error
 $error = '';
 
-// Menonaktifkan pesan error
-error_reporting(0);
+
 
 // Mengambil data struktur organisasi dari tabel tab_strukm
 $query = "SELECT * FROM tab_strukm";
@@ -22,8 +21,35 @@ if (!$result) {
     exit();
 }
 
-// Mendapatkan data UKM-info berupa visi dan misi
-$query = "SELECT * FROM tab_ukm WHERE id_ukm = 'penelitian'";
+// Directory path for the logos
+$logoDirectory = '../assets/images/logoukm/';
+$defaultLogo = $logoDirectory . 'logo-default.png';
+
+// Query to get the logo URL for the "pramuka" UKM
+$query = "SELECT logo_ukm FROM tab_ukm WHERE id_ukm = 'penelitian'";
+$logoResult = mysqli_query($conn, $query);
+
+// Memeriksa apakah query berhasil dieksekusi
+if (!$logoResult) {
+  // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+  echo "Error: " . mysqli_error($conn);
+  exit();
+}
+
+// Get the logo URL
+$row = mysqli_fetch_assoc($logoResult);
+$logo_ukm = $row['logo_ukm'];
+
+// Check if the logo file exists, otherwise use the default logo
+if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
+  $logo_src = $logoDirectory . $logo_ukm;
+} else {
+  $logo_src = $defaultLogo;
+}
+
+
+// Query to get the information for the "pramuka" UKM
+$query = "SELECT visi, misi, sejarah, nama_ukm FROM tab_ukm WHERE id_ukm = 'penelitian'";
 $infoResult = mysqli_query($conn, $query);
 
 // Memeriksa apakah query berhasil dieksekusi
@@ -87,7 +113,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     // Menambahkan data ke array struktur berdasarkan id_ukm dan id_jabatan
     $struktur[$id_jabatan][$id_ukm][] = array("nim" => $nim, "nama_lengkap" => $nama_lengkap);
 }
-// Query to get kegiatan data for the "racana" UKM
+// Query to get kegiatan data for the "pramuka" UKM
 $query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = 'penelitian'";
 $kegiatanResult = mysqli_query($conn, $query);
 
@@ -115,52 +141,15 @@ function formatDateIndonesia($date) {
   global $indonesianMonths;
   return date('d', strtotime($date)) . " " . $indonesianMonths[intval(date('m', strtotime($date))) - 1] . " " . date('Y', strtotime($date));
 }
-// Directory path for the logos
-$logoDirectory = '../assets/images/logoukm/';
-$defaultLogo = $logoDirectory . 'logo-default.png';
-
-// Query to get the logo URL for the "pramuka" UKM
-$query = "SELECT logo_ukm FROM tab_ukm WHERE id_ukm = 'penelitian'";
-$logoResult = mysqli_query($conn, $query);
-
-// Memeriksa apakah query berhasil dieksekusi
-if (!$logoResult) {
-  // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-  echo "Error: " . mysqli_error($conn);
-  exit();
-}
-
-// Get the logo URL
-$row = mysqli_fetch_assoc($logoResult);
-$logo_ukm = $row['logo_ukm'];
-
-
 $query = "SELECT instagram, facebook FROM tab_ukm WHERE id_ukm = 'penelitian'";
 $socialMediaResult = mysqli_query($conn, $query);
 
-// Memeriksa apakah query berhasil dieksekusi
-if (!$logoResult) {
-  // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-  echo "Error: " . mysqli_error($conn);
-  exit();
-}
-
-// Get the logo URL
-$row = mysqli_fetch_assoc($logoResult);
-$logo_ukm = $row['logo_ukm'];
 $row = mysqli_fetch_assoc($socialMediaResult);
 $instagram = $row['instagram'];
 $facebook = $row['facebook'];
 
 $instagram = "https://www.instagram.com/" . $instagram;
 $facebook = "https://www.facebook.com/" . $facebook;
-
-// Check if the logo file exists, otherwise use the default logo
-if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
-  $logo_src = $logoDirectory . $logo_ukm;
-} else {
-  $logo_src = $defaultLogo;
-}
 ?>
 
 <!DOCTYPE html>

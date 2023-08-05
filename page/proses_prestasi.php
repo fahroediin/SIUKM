@@ -355,7 +355,7 @@ $conn->close();
             </div>
             <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
             <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
-    <i class="fas fa-plus"></i> Tambah Kegiatan
+    <i class="fas fa-plus"></i> Tambah Prestasi
 </button>
     </div>
         </form>

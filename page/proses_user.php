@@ -260,7 +260,7 @@ if (isset($_POST['submit'])) {
 
 <!-- Data User -->
 <div class="content">
-    <h2>Daftar User</h2>
+    <h2>Data User</h2>
     <table class="table">
     <thead>
             <tr>
