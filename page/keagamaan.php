@@ -154,11 +154,12 @@ if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
 <html>
 <head>
 	<title>KEAGAMAAN - SIUKM STMIK KOMPUTAMA MAJENANG</title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <script src="../assets/js/script.js"></script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/script.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -319,6 +320,26 @@ p {
     text-align: center; 
     font-size: 18px; 
   }
+  .nav-greeting {
+  margin-right: 15px;
+}
+
+/* Adjust the color to match your navbar's text color */
+.nav-link.btn-signout {
+  color: white;
+}
+
+/* Optional: Style the logout button as needed */
+.nav-link.btn-signout {
+  background-color: #f00; /* Replace with your desired background color */
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+/* Optional: Hover effect on the logout button */
+.nav-link.btn-signout:hover {
+  background-color: #c00; /* Replace with your desired hover background color */
+}
     </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -357,25 +378,19 @@ p {
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
       <?php
-				// Cek apakah pengguna sudah login
-				if (!isset($_SESSION['level'])) {
-					// Jika belum login, arahkan ke halaman login.php
-					echo '<a class="nav-link btn btn-signin" href="login.php">Sign In</a>';
-				} else {
-					// Jika sudah login, cek level pengguna
-					// Jika sudah login, cek level pengguna
-					if ($_SESSION['level'] == "3") {
-						// Jika level 3, arahkan ke halaman dashboard.php
-						echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
-					} elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
-						// Jika level 1 atau admin, arahkan ke halaman admin.php
-						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
-					} elseif ($_SESSION['level'] == "2") {
-						// Jika level 2, arahkan ke halaman kemahasiswaan.php
-						echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
-					}
+        if (!isset($_SESSION['level'])) {
+          echo '<a class="nav-link btn btn-signin" href="login.php">Sign In</a>';
+        } else {
+          if ($_SESSION['level'] == "3") {
+            echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+          } elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
+            echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+          } elseif ($_SESSION['level'] == "2") {
+            echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+          }
         }
-			?>
+        echo '<a class="nav-link btn btn-signout" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>';
+        ?>
       </li>
     </ul>
   </div>

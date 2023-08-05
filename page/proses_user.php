@@ -428,9 +428,11 @@ if (isset($_POST['submit'])) {
                     <option value="1">Admin</option>
                 </select>
             </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="submit">Tambah</button>
-            </div>
+            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+            <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
+    <i class="fas fa-plus"></i> Tambah Pengguna
+</button>
+    </div>
         </form>
     </div>
     

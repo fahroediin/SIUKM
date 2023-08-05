@@ -167,6 +167,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
@@ -321,9 +322,12 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                                 <label for="tgl">Tanggal:</label>
                                 <input type="date" id="tgl" name="tgl" class="form-control" required>
                             </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
+                                        <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+                                        <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
+                                <i class="fas fa-plus"></i> Tambah Foto
+                            </button>
+    </div>
                         </form>
                     </div>
                 </div>

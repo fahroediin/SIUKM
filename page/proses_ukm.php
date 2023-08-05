@@ -132,6 +132,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <script>
@@ -272,7 +273,11 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <label for="misi">Misi:</label>
                 <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="misi" name="misi" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary" onclick="showConfirmation(event)">Simpan</button>
+            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+            <button type="submit" class="btn btn-primary btn-sm btn-medium"  onclick="showConfirmation(event)" name="submit">
+    <i class="fas fa-save"></i> Simpan
+</button>
+    </div>
         </form>
     </div>
 
