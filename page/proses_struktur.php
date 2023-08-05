@@ -51,9 +51,9 @@ function isJabatanExists($conn, $id_ukm, $id_jabatan)
     $row = $result->fetch_assoc();
     return $row['count'] > 0;
 }
-function updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim)
+function updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota)
 {
-    $sql = "UPDATE tab_strukm SET nama_lengkap = ?, nim = ? WHERE id_ukm = ? AND id_jabatan = ?";
+    $sql = "UPDATE tab_strukm SET nama_lengkap = ?, nim = ?, id_anggota WHERE id_ukm = ? AND id_jabatan = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssss", $nama_lengkap, $nim, $id_ukm, $id_jabatan);
     $result = $stmt->execute();
@@ -66,14 +66,15 @@ if (isset($_POST['submit'])) {
     $id_jabatan = $_POST['id_jabatan'];
     $nama_lengkap = $_POST['nama_lengkap'];
     $nim = $_POST['nim'];
+    $id_anggota = $_POST['id_anggota'];
 
     // Check if the selected id_jabatan already exists for the chosen id_ukm
-    if ($id_jabatan !== '6' && isJabatanExists($conn, $id_ukm, $id_jabatan)) {
+    if ($id_jabatan !== '6' && isJabatanExists($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota)) {
         // Show a confirmation message to the user asking whether they want to update or not
         $confirmation = confirm("Jabatan Sudah ada. Apakah Anda ingin memperbarui data?");
         if ($confirmation) {
             // If the user confirms, proceed with the update
-            if (updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim)) {
+            if (updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota)) {
                 // Redirect to the page after successful update
                 header("Location: proses_struktur.php");
                 exit();
@@ -89,9 +90,9 @@ if (isset($_POST['submit'])) {
         }
     } else {
         // Insert the data into the database
-        $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim, id_anggota) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $id_ukm, $id_jabatan, $nama_lengkap, $nim);
+        $stmt->bind_param("sssss", $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota);
         $result = $stmt->execute();
 
         if (!$result) {
@@ -194,11 +195,10 @@ if (isset($_POST['submit'])) {
         <table class="table">
             <thead>
                 <tr>
-                    <th>Foto</th>
+                    <th>ID UKM</th>
                     <th>Jabatan</th>
                     <th>Nama Lengkap</th>
                     <th>NIM/NIDN</th>
-                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -262,7 +262,6 @@ if (isset($_POST['submit'])) {
                         echo "<td>$jabatan</td>";
                         echo "<td>$nama_lengkap</td>";
                         echo "<td>$nim</td>";
-                        echo "<td><a href='hapus_data.php?nim=$nim'>Hapus</a></td>";
                         echo "</tr>";
                     }
                 }
