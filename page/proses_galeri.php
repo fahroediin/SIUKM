@@ -332,27 +332,27 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-$(document).ready(function() {
-    $("#id_ukm_dropdown").change(function() {
-        // Ambil nilai ID UKM yang dipilih oleh pengguna
-        var id_ukm = $(this).val();
+        $(document).ready(function() {
+            $("#id_ukm_dropdown").change(function() {
+                // Ambil nilai ID UKM yang dipilih oleh pengguna
+                var id_ukm = $(this).val();
 
-        // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
-        $.ajax({
-            url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
-            method: "POST",
-            data: { id_ukm: id_ukm },
-            success: function(response) {
-                // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
-                $("#nama_ukm").val(response);
-            },
-            error: function(xhr, status, error) {
-                // Tangani error jika ada
-                console.error(error);
-            }
+                // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
+                $.ajax({
+                    url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
+                    method: "POST",
+                    data: { id_ukm: id_ukm },
+                    success: function(response) {
+                        // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
+                        $("#nama_ukm").val(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Tangani error jika ada
+                        console.error(error);
+                    }
+                });
+            });
         });
-    });
-});
 </script>
 <script>
     function confirmDelete(namaKegiatan) {

@@ -185,20 +185,10 @@ if (isset($_POST['submit'])) {
         border-radius: 4px;
         box-sizing: border-box;
     }
-
-    .btn {
-        padding: 8px 12px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+     th {
+        white-space: nowrap;
     }
 
-    .btn:hover {
-        background-color: #0056b3;
-    }
-    
     .password-input {
     position: relative;
     }
@@ -214,33 +204,38 @@ if (isset($_POST['submit'])) {
     transform: translateY(-50%);
     cursor: pointer;
     }
-     /* Update the Edit button styles */
-     .btn.btn-edit {
+    /* Add the following CSS to align the buttons horizontally */
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Style for all buttons */
+    .btn {
         padding: 8px 12px;
-        background-color: #007bff; /* Blue color */
+        background-color: #007bff;
         color: #fff;
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        text-decoration: none; /* Remove underline from links */
+        display: inline-block;
+        margin-right: 5px; /* Add some spacing between buttons */
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Update the Edit button styles */
+    .btn.btn-edit {
         margin-right: 8px; /* Add a little space between the buttons */
     }
 
     /* Update the Delete button styles */
     .btn.btn-delete {
-        padding: 8px 12px;
         background-color: red;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none; /* Remove underline from links */
     }
-           /* Tambahkan gaya CSS berikut untuk mengatur tata letak tombol */
-        .action-buttons {
-        display: flex;
-        justify-content: space-between;
-    }
+
 </style>
 <body>
 <div class="sidebar">
@@ -304,20 +299,22 @@ if (isset($_POST['submit'])) {
             $foto_ktm_path = "../assets/images/ktm/" . $foto_ktm_filename;
             echo "<td><img src='$foto_ktm_path' alt='Foto KTM' width='100'></td>";
             // Menambahkan kondisi jika ID user adalah "admin"
-    // Update link to open edit_user.php with the user ID as a query parameter
-        if ($row["id_user"] == "admin") {
-            // For the admin user, show only the Edit button
-            echo "<td><a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a></td>";
-        } else {
-            // For other users, show both Edit and Hapus (Delete) buttons
-                // Update link to open edit_user.php with the user ID as a query parameter
-                echo "<td>
-                <a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>
-                <a class='btn btn-delete' href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a>
-              </td>";
+       // Action buttons for each row
+       echo "<td>";
+       if ($row["id_user"] == "admin") {
+           // For the admin user, show only the Edit button
+           echo "<a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>";
+       } else {
+           // For other users, show both Edit and Delete buttons
+           echo "<div class='action-buttons'>
+                   <a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>
+                   <a class='btn btn-delete' href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a>
+                 </div>";
+       }
+       echo "</td>";
             }
         }
-    }
+
     ?>
 </tbody>
     </table>

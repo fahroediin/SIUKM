@@ -314,7 +314,6 @@ $conn->close();
         </tr>
     <?php endforeach; ?>
 </tbody>
-
     </table>
 </div>
     <!-- Form Tambah Prestasi -->
