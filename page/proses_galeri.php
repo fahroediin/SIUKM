@@ -286,16 +286,19 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                         <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                             enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="id_ukm">ID UKM:</label>
-                                <select id="id_ukm" name="id_ukm" class="form-control" required>
-                                    <option value="" selected disabled>Pilih ID UKM</option>
-                                    <?php
-                                        // Membuat opsi combobox dari hasil query
-                                        while ($row_ukm = mysqli_fetch_assoc($result_ukm)) {
-                                            echo "<option value='" . $row_ukm['id_ukm'] . "'>" . $row_ukm['id_ukm'] . "</option>";
-                                        }
-                                    ?>
-                                </select>
+                            <label for="id_ukm">ID UKM:</label>
+                <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                    <option value="">Pilih ID UKM</option>
+                    <?php
+                    // Fetch data from the tab_ukm table and populate the dropdown options
+                    $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm"; // Add 'nama_ukm' to the SELECT query
+                    $ukmResult = mysqli_query($conn, $ukmQuery);
+
+                    while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+                        echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
+                    }
+                    ?>
+                </select>
                             </div>
                             <div class="form-group">
                                 <label for="nama_ukm">Nama UKM:</label>
@@ -327,31 +330,29 @@ $result_galeri = mysqli_query($conn, $query_galeri);
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+$(document).ready(function() {
+    $("#id_ukm_dropdown").change(function() {
+        // Ambil nilai ID UKM yang dipilih oleh pengguna
+        var id_ukm = $(this).val();
 
-  <!-- Add your JavaScript code here to populate the nama_ukm field -->
-<script>
-    const idUkmSelect = document.getElementById("id_ukm");
-    const namaUkmField = document.getElementById("nama_ukm");
-
-    idUkmSelect.addEventListener("change", function() {
-        const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
-        const idUkm = selectedOption.value;
-        if (idUkm) {
-            // Make an AJAX request to get the nama_ukm based on the selected id_ukm
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `get_nama_ukm.php?id_ukm=${idUkm}`, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    // Update the nama_ukm field with the fetched value
-                    namaUkmField.value = xhr.responseText;
-                }
-            };
-            xhr.send();
-        } else {
-            // If no id_ukm is selected, reset the nama_ukm field
-            namaUkmField.value = "";
-        }
+        // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
+        $.ajax({
+            url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
+            method: "POST",
+            data: { id_ukm: id_ukm },
+            success: function(response) {
+                // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
+                $("#nama_ukm").val(response);
+            },
+            error: function(xhr, status, error) {
+                // Tangani error jika ada
+                console.error(error);
+            }
+        });
     });
+});
 </script>
 <script>
     function confirmDelete(namaKegiatan) {
