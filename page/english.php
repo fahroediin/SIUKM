@@ -269,6 +269,7 @@ h2 {
         padding: 8px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        white-space: nowrap;
     }
 
     th.table-heading {
@@ -316,6 +317,10 @@ h2 {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
 }
+p {
+    text-align: center; 
+    font-size: 18px; 
+  }
     </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -452,6 +457,7 @@ h2 {
     <div class="card shadow mb-4">
     <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
+    <p><?php echo $nama_ukm; ?></p>
     <?php
     $id_ukm_target = 'english';
 

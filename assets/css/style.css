@@ -312,102 +312,108 @@ footer a:hover {
 }
 
 /* CSS untuk tata letak sidebar */
-       .sidebar {
-            width: 200px;
-            background-color: #3F72AF;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            transition: width 0.3s;
-            z-index: 1000;
-        }
+.sidebar {
+  width: 200px;
+  background-color: #3F72AF;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  transition: width 0.3s;
+  z-index: 1000;
+}
 
-        .sidebar.collapsed {
-            width: 70px;
-        }
+/* Gaya teks pada sidebar */
+.sidebar h2 {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
 
-        .sidebar h2 {
-            color: #fff;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
+/* Gaya tombol pada sidebar */
+.sidebar .btn {
+  background-color: #112D4E;
+  color: #fff;
+  display: block;
+  margin-bottom: 10px;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
 
-        .sidebar .btn {
-            background-color: #112D4E;
-            color: #fff;
-            display: block;
-            margin-bottom: 10px;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
+/* Gaya tombol hover pada sidebar */
+.sidebar .btn:hover {
+  background-color: #3F72AF;
+}
 
-        .sidebar .btn:hover {
-            background-color: #3F72AF;
-        }
+/* Gaya margin untuk tombol pertama dan terakhir pada sidebar */
+.sidebar .btn:first-child {
+  margin-top: 0;
+}
 
-        .sidebar .btn:first-child {
-            margin-top: 0;
-        }
+.sidebar .btn:last-child {
+  margin-bottom: 0;
+}
 
-        .sidebar .btn:last-child {
-            margin-bottom: 0;
-        }
+/* CSS untuk konten utama */
+.content {
+  margin-left: 200px; /* Atur margin kiri sesuai dengan lebar sidebar */
+  padding: 10px;
+  transition: margin-left 0.3s;
+}
 
-        /* CSS untuk konten utama */
-        .content {
-            margin-left: 200px; /* Atur margin kiri sesuai dengan lebar sidebar */
-            padding: 10px;
-            transition: margin-left 0.3s;
-        }
+/* Gaya konten utama saat sidebar menyusut */
+.content.collapsed {
+  margin-left: 70px;
+}
 
-        .content.collapsed {
-            margin-left: 70px;
-        }
+/* CSS untuk toggle button */
+.toggle-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
+  cursor: pointer;
+}
 
-        /* CSS untuk toggle button */
-        .toggle-btn {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1100;
-        }
+/* Gaya garis toggle button */
+.toggle-btn span {
+  display: block;
+  width: 30px;
+  height: 5px;
+  background-color: #000;
+  margin-bottom: 5px;
+  transition: transform 0.3s;
+}
 
-        .toggle-btn span {
-            display: block;
-            width: 30px;
-            height: 5px;
-            background-color: #000;
-            margin-bottom: 5px;
-            transition: transform 0.3s;
-        }
+/* Gaya garis toggle button saat sidebar menyusut */
+.toggle-btn.collapsed span:first-child {
+  transform: rotate(45deg) translate(6px, 6px);
+}
 
-        .toggle-btn.collapsed span:first-child {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
+.toggle-btn.collapsed span:nth-child(2) {
+  opacity: 0;
+}
 
-        .toggle-btn.collapsed span:nth-child(2) {
-            opacity: 0;
-        }
+.toggle-btn.collapsed span:last-child {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
 
-        .toggle-btn.collapsed span:last-child {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        .card {
-          width: 50%;
-          margin: 0 auto;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
+/* Gaya untuk card pada halaman */
+.card {
+  width: 100%;
+  max-width: 600px; /* Sesuaikan ukuran card sesuai kebutuhan */
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
   
       .form-group {
           margin-bottom: 15px;

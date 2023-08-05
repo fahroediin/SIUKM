@@ -85,6 +85,34 @@ function getProfilePicturePath($userId) {
     // If no matching file is found, return the default profile picture path
     return "../assets/images/pasfoto/default_profile_picture.png";
 }
+// Prepare the SQL query to get the number of snapshots for the current user
+$sqlSnapshotCount = "SELECT COUNT(*) AS snapshot_count FROM tab_user";
+
+// Execute the query to get the snapshot count
+$resultSnapshotCount = mysqli_query($conn, $sqlSnapshotCount);
+
+if ($resultSnapshotCount) {
+    // Fetch the snapshot count
+    $snapshotCount = mysqli_fetch_assoc($resultSnapshotCount)['snapshot_count'];
+} else {
+    // If the query fails, handle the error accordingly
+    $snapshotCount = 0;
+    echo "Error: " . mysqli_error($conn);
+}
+// Prepare the SQL query to get the number of snapshots for tab_ukm
+$sqlUkmSnapshotCount = "SELECT COUNT(*) AS ukm_snapshot_count FROM tab_ukm";
+
+// Execute the query to get the ukm snapshot count
+$resultUkmSnapshotCount = mysqli_query($conn, $sqlUkmSnapshotCount);
+
+if ($resultUkmSnapshotCount) {
+    // Fetch the ukm snapshot count
+    $ukmSnapshotCount = mysqli_fetch_assoc($resultUkmSnapshotCount)['ukm_snapshot_count'];
+} else {
+    // If the query fails, handle the error accordingly
+    $ukmSnapshotCount = 0;
+    echo "Error: " . mysqli_error($conn);
+}
 ?>
 
 <!DOCTYPE html>
@@ -97,6 +125,11 @@ function getProfilePicturePath($userId) {
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
+        .container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh; /* Set the container to take the full height of the viewport */
+    }
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -123,24 +156,52 @@ function getProfilePicturePath($userId) {
         .navbar .logout-btn:hover {
             text-decoration: underline;
         }
+  .content {
+        /* Add some padding or margin to create space between navbar and content */
+        padding-top: 20px; /* Adjust this value as needed */
+    }
+   /* Sidebar styles */
+   .sidebar {
+        width: 250px;
+        height: 100vh;
+        background-color: #f8f9fa;
+        padding: 20px;
+        transition: width 0.3s ease-in-out; /* Add transition for smooth animation */
+    }
 
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
+    .collapsed .sidebar {
+        width: 60px; /* Collapsed width for the sidebar */
+    }
 
-        .sidebar a {
-            display: block;
-            margin-bottom: 10px;
-            color: #000;
-            text-decoration: none;
-        }
+    .sidebar img {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        .sidebar a.active {
-            font-weight: bold;
-        }
+    .sidebar a {
+        display: block;
+        padding: 10px;
+        margin-bottom: 10px;
+        color: #000;
+        text-decoration: none;
+        transition: background-color 0.3s ease-in-out; /* Add transition for background color change */
+    }
+
+    .sidebar a:hover {
+        background-color: #eaeaea; /* Add a subtle background color change on hover */
+    }
+
+    .sidebar a.active {
+        font-weight: bold;
+        color: #007bff; /* Highlight the active link with a different color */
+    }
+
 
         .toggle-btn {
             display: none;
@@ -153,36 +214,7 @@ function getProfilePicturePath($userId) {
                 cursor: pointer;
             }
         }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .profile-container {
-            margin-right: 20px;
-        }
-
-        .profil-picture {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .profile-details {
-            display: flex;
-            flex-direction: column;
-        }
         
-        .profile-details p {
-            margin-bottom: 5px;
-        }
-
-        .profile-details .label {
-            font-weight: bold;
-        }
     </style>
 </head>
 <!DOCTYPE html>
@@ -208,9 +240,9 @@ function getProfilePicturePath($userId) {
             Logout
         </div>
     </div>
-    <div class="container">
-        <div class="sidebar">
-        <h2>Dashboard Admin</h2>
+    <div class="sidebar">
+    <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+    <!-- Other sidebar links -->
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
             <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
@@ -223,41 +255,12 @@ function getProfilePicturePath($userId) {
             <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
         </div>
         
+
         <div class="content">
             <h1>Dashboard Admin</h1>
             <hr class="divider">
-            <div class="user-info">
-            <div class="profile-container">
-    <?php
-    // Check if the user has a profile picture set
-    if (!empty($_SESSION['pasfoto'])) {
-        $profilePicturePath = '../assets/images/pasfoto/' . $_SESSION['pasfoto'];
-        // Check if the profile picture file exists
-        if (file_exists($profilePicturePath)) {
-            echo '<img src="' . $profilePicturePath . '" alt="Foto Profil" class="profil-picture">';
-        } else {
-            // If the profile picture file does not exist, show a default image
-            echo '<img src="../assets/images/pasfoto/default_profile_picture.png" alt="Default Profil Picture" class="profil-picture">';
-        }
-    } else {
-        // If no profile picture is set, display a default image
-        echo '<img src="../assets/images/pasfoto/default_profile_picture.png" alt="Default Profil Picture" class="profil-picture">';
-    }
-    ?>
-</div>
 
-    <div class="profile-details">
-        <p><span class="label">Nama:</span> <span class="value"><?php echo $_SESSION['nama_lengkap']; ?></span></p>
-        <p><span class="label">Email:</span> <span class="value"><?php echo $_SESSION['email']; ?></span></p>
-        <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $_SESSION['no_hp']; ?></span></p>
-        <!-- Add the "Update Data" button here -->
-        <a href="update_data.php" class="btn btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                <path d="M6.146 13.354a.5.5 0 0 0 .708 0l8-8a.5.5 0 0 0 0-.708l-1.5-1.5a.5.5 0 0 0-.708 0L6 10.293 2.854 7.146a.5.5 0 1 0-.708.708l3 3zM2 14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4.414l-2 2V13a.5.5 0 0 1-1 0V6.414l-8-8L3.414 1H2v12z"/>
-            </svg>
-            Update Data
-        </a>
-        <!-- End of "Update Data" button -->
+    
     </div>
 </div>
     </div>
@@ -266,22 +269,22 @@ function getProfilePicturePath($userId) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Ambil elemen toggle button dan sidebar
-        const toggleBtn = document.querySelector('.toggle-btn');
-        const sidebar = document.querySelector('.sidebar');
+    // Ambil elemen toggle button dan sidebar
+    const toggleBtn = document.querySelector('.toggle-btn');
+    const sidebar = document.querySelector('.sidebar');
 
-        // Tambahkan event listener untuk toggle button
-        toggleBtn.addEventListener('click', () => {
-            // Toggle class 'collapsed' pada sidebar
-            sidebar.classList.toggle('collapsed');
-        });
+    // Tambahkan event listener untuk toggle button
+    toggleBtn.addEventListener('click', () => {
+        // Toggle class 'collapsed' pada sidebar
+        sidebar.classList.toggle('collapsed');
+    });
 
-        // Fungsi untuk logout
-        function logout() {
-            // Redirect ke halaman logout
-            window.location.href = "?logout=true";
-        }
-    </script>
+    // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+</script>
 </body>
 
 </html>

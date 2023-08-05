@@ -173,56 +173,55 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     <style>
        
 
-        .card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 600px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+       .card {
+           border: 1px solid #ccc;
+           border-radius: 8px;
+           padding: 20px;
+           max-width: 600px;
+           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+       }
 
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+       .card-body {
+           display: flex;
+           flex-direction: column;
+           gap: 10px;
+       }
 
-        .card-body div {
-            display: flex;
-            flex-direction: column;
-        }
+       .card-body div {
+           display: flex;
+           flex-direction: column;
+       }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+       label {
+           font-weight: bold;
+           margin-bottom: 5px;
+       }
 
-        select,
-        input[type="text"],
-        input[type="date"],
-        button {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
+       select,
+       input[type="text"],
+       input[type="date"],
+       button {
+           padding: 8px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+           font-size: 16px;
+       }
 
-        select {
-            width: 100%;
-        }
+       select {
+           width: 100%;
+       }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+       button {
+           background-color: #007bff;
+           color: #fff;
+           cursor: pointer;
+           transition: background-color 0.3s ease;
+       }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-
-    </style>
+       button:hover {
+           background-color: #0056b3;
+       }
+   </style>
  <!-- Sidebar -->
  <div class="sidebar">
     <h2>Manajemen Galeri</h2>
@@ -327,7 +326,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                                         <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
                                 <i class="fas fa-plus"></i> Tambah Foto
                             </button>
-    </div>
+                                </div>
                         </form>
                     </div>
                 </div>
