@@ -246,7 +246,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <label for="sejarah">Sejarah:</label>
                 <textarea class="form-control" placeholder="Isikan sejarah UKM" id="sejarah" name="sejarah" rows="5"></textarea>
             </div>
-                        <div class="form-group">
+                    <div class="form-group">
                 <label for="logo_ukm">Logo UKM:</label>
                 <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm">
                 <!-- Add this img tag to display the logo preview -->

@@ -218,20 +218,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="col-md-6">
                     <label for="id_user">ID User:</label>
                     <select class="form-control" name="id_user" id="id_user_dropdown" required>
-            <option value="">------------Pilih ID User------------</option>
-            <?php
-            // Fetch data from the tab_user table and populate the dropdown options
-            $userQuery = "SELECT id_user FROM tab_user"; // Select only the id_user column
-            $userResult = mysqli_query($conn, $userQuery);
+                    <option value="">------------Pilih ID User------------</option>
+                    <?php
+                    // Fetch data from the tab_user table and populate the dropdown options
+                    $userQuery = "SELECT id_user FROM tab_user"; // Select only the id_user column
+                    $userResult = mysqli_query($conn, $userQuery);
 
-            while ($userRow = mysqli_fetch_assoc($userResult)) {
-                // Use a regular expression to check if the id_user contains only digits (numbers)
-                if (preg_match('/^\d+$/', $userRow['id_user'])) {
-                    echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . '</option>';
-                }
-            }
-            ?>
-        </select>
+                    while ($userRow = mysqli_fetch_assoc($userResult)) {
+                        // Use a regular expression to check if the id_user contains only digits (numbers)
+                        if (preg_match('/^\d+$/', $userRow['id_user'])) {
+                            echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
 
         <script>
             // Event listener for the dropdown (id_user)

@@ -312,7 +312,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                             <div class="form-group">
                                 <label for="foto_kegiatan">Foto Kegiatan:</label>
                                 <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required
-                                    class="form-control">
+                                class="form-control-file">
                             </div>
                             <div class="form-group">
                                 <label for="tgl">Tanggal:</label>

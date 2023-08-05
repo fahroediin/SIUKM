@@ -417,11 +417,11 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="pasfoto">Pasfoto:</label>
-                <input type="file" class="form-control" id="pasfoto" name="pasfoto" accept="image/*" required>
+                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*" required>
             </div>
             <div class="form-group">
                 <label for="foto_ktm">Foto KTM:</label>
-                <input type="file" class="form-control" id="foto_ktm" name="foto_ktm" accept="image/*" required>
+                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*" required>
             </div>
             <div class="form-group">
                 <label for="level">Level:</label>

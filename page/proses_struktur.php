@@ -313,58 +313,47 @@ if (isset($_POST['submit'])) {
                 }
                 ?>
             </select>
-            <script>
-            // Event listener for the dropdown (id_user)
-            document.getElementById("id_anggota_dropdown").addEventListener("change", function () {
-                var selectedAnggotaId = this.value;
-                var namaLengkapField = document.getElementsByName("nama_lengkap")[0];
-                var nimField = document.getElementsByName("nim")[0];    
-
-                if (selectedAnggotaId === "") {
-                    // Reset the text fields
-                    namaLengkapField.value = "";
-                    nimField.value = "";
-
-                    // Disable the text fields
-                    namaLengkapField.disabled = true;
-                    nimField.disabled = true;
-                } else {
-                }
-            });
-            </script>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            function getAnggotaDetails() {
-                $.ajax({
-                    type: "POST",
-                    url: "get_anggota_details.php", // Replace with the correct PHP file to handle the AJAX request and database query for user data
-                    data: { id_user: userId },
-                    dataType: "json",
-                    success: function(data) {
-                        // Update the text fields with the fetched data
-                        $("input[name='nama_lengkap']").val(data.nama_lengkap);
-                        $("input[name='nim']").val(data.nim);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(error);
-                    }
-                });
-            }
-            // Event listener for the dropdown (id_user)
-            $("select[name='id_anggota']").on("change", function() {
-                var selectedAnggotaId = $(this).val();
-                getAnggotaDetails(selectedAnggotaId);
+    <!-- Add the text fields to be auto-populated -->
+    <div class="form-group">
+    <label for="nama_lengkap">Nama Lengkap:</label>
+    <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" readonly>
+</div>
+<div class="form-group">
+    <label for="nim">NIM:</label>
+    <input type="text" class="form-control" id="id_user" name="id_user" readonly>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+const idAnggotaSelect = document.getElementById("id_anggota");
+const namaLengkapField = document.getElementById("nama_lengkap");
+const idUserField = document.getElementById("id_user");
+
+idAnggotaSelect.addEventListener("change", function() {
+    const selectedOption = idAnggotaSelect.options[idAnggotaSelect.selectedIndex];
+    const idAnggota = selectedOption.value;
+
+    if (idAnggota) {
+        fetch(`get_anggota_details.php?id_anggota=${idAnggota}`)
+            .then(response => response.json())
+            .then(data => {
+                namaLengkapField.value = data.nama_lengkap;
+                idUserField.value = data.id_user;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
             });
-        </script>
-                <div class="form-group">
-                <label for="nama_lengkap">Nama Lengkap:</label>
-                <input type="text" class="form-control" id="nama_lengkap" id="nama_lengkap" readonly>
-                </div>
-                <div class="form-group">
-                <label for="nim">NIM:</label>
-                <input type="text" class="form-control" id="nim" id="nim" readonly>
-                </div>
+    } else {
+        // If no id_anggota is selected, reset the nama_lengkap and id_user fields
+        namaLengkapField.value = "";
+        idUserField.value = "";
+    }
+});
+</script>
+
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" name="submit">Tambah Pengurus</button>
             </div>

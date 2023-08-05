@@ -6,34 +6,38 @@ require_once "db_connect.php";
 if (isset($_GET['id_anggota'])) {
     // Sanitize the input
     $id_anggota = mysqli_real_escape_string($conn, $_GET['id_anggota']);
-    
-    // Query untuk mendapatkan data user berdasarkan id_anggota
-    $query = "SELECT td.nama_lengkap, tm.nim FROM tab_dau td 
-              JOIN tab_mahasiswa tm ON td.id_user = tm.id_user
-              WHERE td.id_anggota = '$id_anggota'";
 
-    // Execute the query
-    $result = mysqli_query($conn, $query);
+    // Prepare the SQL query to fetch the nama_lengkap and id_user based on the given id_anggota
+    $query = "SELECT nama_lengkap, id_user FROM tab_dau WHERE id_anggota = ?";
 
-    // Check if the query was successful
-    if ($result) {
-        // Fetch the row containing the nama_lengkap and nim
-        $row = mysqli_fetch_assoc($result);
+    // Prepare the statement
+    if ($stmt = mysqli_prepare($conn, $query)) {
+        // Bind the parameters
+        mysqli_stmt_bind_param($stmt, "s", $id_anggota);
 
-        // Check if the row was found
-        if ($row) {
-            // Return the nama_lengkap and nim as a response
-            echo "Nama Lengkap: " . $row['nama_lengkap'] . "<br>";
-            echo "NIM: " . $row['nim'];
+        // Execute the statement
+        mysqli_stmt_execute($stmt);
+
+        // Bind the result variables
+        mysqli_stmt_bind_result($stmt, $nama_lengkap, $id_user);
+
+        // Fetch the row containing the nama_lengkap and id_user
+        if (mysqli_stmt_fetch($stmt)) {
+            // Return the nama_lengkap and id_user values as a response
+            $response = array(
+                'nama_lengkap' => $nama_lengkap,
+                'id_user' => $id_user
+            );
+            echo json_encode($response);
         } else {
-            // If no matching id_anggota was found, return an empty string as the response
-            echo "Data tidak ditemukan.";
+            // If no matching id_anggota was found, return an empty response
+            echo json_encode(array());
         }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
     } else {
-        // If there was an error executing the query, return an empty string as the response
-        echo "Error executing the query.";
+        // If there was an error preparing the statement, return an empty response
+        echo json_encode(array());
     }
-} else {
-    // If the id_anggota parameter is not set, return an empty string as the response
-    echo "Parameter id_anggota tidak ditemukan.";
 }
