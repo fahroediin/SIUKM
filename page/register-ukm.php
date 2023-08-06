@@ -82,8 +82,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mkdir($ktm_dir, 0777, true);
     }
 
-    $nama_pasfoto = $_FILES["pasfoto"]["name"];
-    $nama_foto_ktm = $_FILES["foto_ktm"]["name"];
+    $pasfoto_tmp_name = $_FILES['pasfoto']['tmp_name'];
+    $pasfoto_extension = pathinfo($_FILES['pasfoto']['name'], PATHINFO_EXTENSION);
+    $nama_pasfoto = $id_user . "_" . $nama_lengkap . "." . $pasfoto_extension;
+    $foto_ktm_tmp_name = $_FILES['foto_ktm']['tmp_name'];
+    $foto_ktm_extension = pathinfo($_FILES['foto_ktm']['name'], PATHINFO_EXTENSION);
+    $nama_foto_ktm = $id_user . "_" . $nama_lengkap . "." . $foto_ktm_extension;
 
     // Pindahkan file yang di-upload ke folder tujuan
     if (move_uploaded_file($_FILES["pasfoto"]["tmp_name"], $pasfoto_dir . $nama_pasfoto) &&
