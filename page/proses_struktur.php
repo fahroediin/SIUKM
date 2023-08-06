@@ -110,9 +110,9 @@ if (isset($_POST['submit'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <style>
     .card {
@@ -158,40 +158,57 @@ if (isset($_POST['submit'])) {
         border-radius: 50%;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    .sidebar {
+        text-align: center; /* Center the contents horizontally */
+    }
 </style>
 
-<body>
-<div class="navbar">
-        <div class="navbar-brand">Dashboard</div>
-        <div class="logout-btn" onclick="logout()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm1.354 4.646a.5.5 0 0 1 .146.354L10.5 8l-1.646 1.646a.5.5 0 0 1-.708-.708L9.793 8.5l-1.647-1.646a.5.5 0 0 1 .708-.708L10.5 7.293l1.646-1.647a.5.5 0 0 1 .354-.147zM8 4.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-.5-.5z"/>
-            </svg>
-            Logout
-        </div>
-    </div>
 
    <!-- Sidebar -->
+
    <div class="sidebar">
-    <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-    <h2>Struktur</h2>
+    <a href="beranda.php">
+  <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+</a>
+<h2><i>Struktur</i></h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-            <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
-            <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
-            <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
-            <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-            <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
-            <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-            <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
-            <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
-        </div>
+            <p style="text-align: center;">--Manajemen--</p>
+    <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
+    <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
+    <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
+    <a href="proses_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
+    <a href="proses_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
 
+<script>
+    // Function to wrap buttons with a border, except for the Logout button
+    function wrapButtonsWithBorder() {
+        const buttons = document.querySelectorAll('.btn-manajemen');
+        buttons.forEach((button) => {
+            if (!button.getAttribute('id') || button.getAttribute('id') !== 'logout-btn') {
+                button.style.border = '1px solid #ccc';
+                button.style.borderRadius = '5px';
+                button.style.padding = '8px';
+                button.style.margin = '5px';
+            }
+        });
+    }
 
+    // Call the function to apply the border to the buttons
+    wrapButtonsWithBorder();
+</script>
+
+        <body>
  <!-- Konten -->
  <div class="content">
     <div class="card">
-        <h2>Kelola Struktur Organisasi</h2>
+        <h2 style="text-align: center;">Kelola Struktur Organisasi</h2>
         <form method="post" action="proses_struktur.php">
             <div class="form-group">
                 <select class="form-control" id="id_ukm" name="id_ukm" required onchange="this.form.submit()">

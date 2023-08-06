@@ -318,7 +318,6 @@ footer a:hover {
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   position: fixed;
-  text-align: center;
   top: 0;
   left: 0;
   bottom: 0;
@@ -332,7 +331,12 @@ footer a:hover {
   font-size: 20px;
   margin-bottom: 10px;
 }
-
+#logout-btn {
+  margin-top: 40px;
+  position: flex;
+  bottom: 20px;
+  left: 20px;
+}
 /* Gaya tombol pada sidebar */
 .sidebar .btn {
   background-color: #112D4E;
