@@ -202,6 +202,10 @@ function calculateTPAScore($jawaban)
 	display: flex;
 	align-items: center;
 	}
+	body {
+  margin-bottom: 150px; /* memberikan jarak 50px antara body dengan footer */
+}
+
 
 	.logout-container {
 	display: flex;
@@ -405,6 +409,15 @@ function calculateTPAScore($jawaban)
 .navbar .nav-link:hover,
 .navbar .nav-link:focus {
   color: #fff;
+}
+.jumbotron {
+  background-color: #f8f9fa;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
   </style>
@@ -1752,6 +1765,7 @@ function calculateTPAScore($jawaban)
 					</div>
 				</div>
             </div>
+		
 
 			<div class="button-container">
 			<button id="previousBtn" onclick="previousQuestion()" disabled>Previous</button>
