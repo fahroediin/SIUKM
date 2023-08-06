@@ -12,12 +12,6 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
-// Memeriksa level pengguna
-if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
-    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
-    header("Location: beranda.php");
-    exit();
-}
 
 // Fungsi logout
 function logout() {
@@ -36,7 +30,7 @@ if (isset($_GET['logout'])) {
     logout();
 }
 // Menandai halaman yang aktif
-$active_page = 'proses_update_pengguna';
+$active_page = 'update_pengguna';
 
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
@@ -211,6 +205,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         from {bottom: 30px; opacity: 1;}
         to {bottom: 0; opacity: 0;}
     }
+    .sidebar img {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar {
+        text-align: center; /* Center the contents horizontally */
+    }
 </style>
 <script>
         function showSnackbar(message) {
@@ -223,12 +230,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 </head>
+<div class="sidebar">
+    <a href="beranda.php">
+  <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+</a>
+<h2><i>Dashboard</i></h2>
+<a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <p style="text-align: center;">--Manajemen--</p>
+            <a href="?logout=1" class="btn btn-primary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </a>
+</div>
+<script>
+    // Function to wrap buttons with a border, except for the Logout button
+    function wrapButtonsWithBorder() {
+        const buttons = document.querySelectorAll('.btn-manajemen');
+        buttons.forEach((button) => {
+            if (!button.getAttribute('id') || button.getAttribute('id') !== 'logout-btn') {
+                button.style.border = '1px solid #ccc';
+                button.style.borderRadius = '5px';
+                button.style.padding = '8px';
+                button.style.margin = '5px';
+            }
+        });
+    }
+
+    // Call the function to apply the border to the buttons
+    wrapButtonsWithBorder();
+</script>
 <body>
-    <div class="sidebar">
-        <h2>Manajemen Pengguna</h2>
-        <a href="dashboard.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-        <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-    </div>
     <div class="container">
 <h2 class="text-center">UPDATE DATA</h2>
 <div class="container">

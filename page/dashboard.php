@@ -5,6 +5,11 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Check if id_user is sent through the form submission
+if (isset($_POST['id_user'])) {
+    $id_user = $_POST['id_user'];
+}
+
 // Menandai halaman yang aktif
 $active_page = 'dashboard';
 
@@ -13,6 +18,22 @@ if (!isset($_SESSION['id_user'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
+}
+
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke beranda.php setelah logout
+    header("Location: beranda.php");
+    exit();
+}
+
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
 }
 
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
@@ -48,23 +69,7 @@ if ($result) {
     echo "Error: " . mysqli_error($conn);
 }
 
-// Fungsi logout
-function logout()
-{
-    // Menghapus semua data session
-    session_unset();
-    // Menghancurkan session
-    session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
-    header("Location: beranda.php");
-    exit();
-}
 
-// Memeriksa apakah tombol logout diklik
-if (isset($_GET['logout'])) {
-    // Memanggil fungsi logout
-    logout();
-}
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
 $userId = $_SESSION['id_user'];
 $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
@@ -84,6 +89,11 @@ if ($resultSnapshot) {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
 }
+// Query to fetch data from tab_dau based on id_user
+$querySnapshotData = "SELECT nama_ukm, id_anggota, sjk_bergabung FROM tab_dau WHERE id_user = '$userId'";
+
+// Execute the query to fetch snapshot data
+$resultSnapshotData = mysqli_query($conn, $querySnapshotData);
 ?>
 <!DOCTYPE html>
 <html>
@@ -93,12 +103,21 @@ if ($resultSnapshot) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-
     <style>
+  .navbar .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            color: #fff;
+        }
 
+        .navbar .logout-btn:hover {
+            text-decoration: underline;
+        }
 
  .card {
             background-color: #007bff;
@@ -117,7 +136,7 @@ if ($resultSnapshot) {
         }
 
         .user-info {
-            margin-left: 320px; /* Add spacing between sidebar and user-info */
+             /* Add spacing between sidebar and user-info */
         }
 
                 .profil-picture {
@@ -168,54 +187,143 @@ if ($resultSnapshot) {
             justify-content: center;
             padding-bottom: 100px; /* Atur padding-bottom agar ada ruang di antara konten dan footer */
         }
+        .white-box {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    } .sidebar img {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar {
+        text-align: center; /* Center the contents horizontally */
+    }
+    p {
+        color: black;
+    }
+    .scrollable-content {
+        height: 300px; /* Set the desired fixed height for the scrollable area */
+        overflow-y: auto; /* Enable vertical scrolling when content overflows */
+        /* Optional: Add padding to the scrollable area */
+    }
     </style>
 </head>
 
-<body>
-    <div class="sidebar">
-        <h2>Dashboard</h2>
-        <a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="beranda.php" class="btn btn-primary <?php if ($active_page == 'beranda') echo 'active'; ?>"><i class="fas fa-home"></i> Beranda</a>
-        <a href="?logout=true" class="btn btn-primary <?php if ($active_page == 'logout') echo 'active'; ?>"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
 
-    <div class="wrapper">
+<div class="sidebar">
+    <a href="beranda.php">
+  <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+</a>
+<h2><i>Dashboard</i></h2>
+<a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <p style="text-align: center;">--Manajemen--</p>
+            <a href="?logout=1" class="btn btn-primary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </a>
+</div>
+<script>
+    // Function to wrap buttons with a border, except for the Logout button
+    function wrapButtonsWithBorder() {
+        const buttons = document.querySelectorAll('.btn-manajemen');
+        buttons.forEach((button) => {
+            if (!button.getAttribute('id') || button.getAttribute('id') !== 'logout-btn') {
+                button.style.border = '1px solid #ccc';
+                button.style.borderRadius = '5px';
+                button.style.padding = '8px';
+                button.style.margin = '5px';
+            }
+        });
+    }
+
+    // Call the function to apply the border to the buttons
+    wrapButtonsWithBorder();
+</script>
+<body>
         <div class="content">
             <h1>Informasi Pengguna</h1>
-            <div class="d-flex mb-3"> <!-- Add 'd-flex' class to create a flex container -->
-                <!-- Tombol Ganti Password -->
-                <a href="ganti_password_pengguna.php" class="btn btn-primary mr-2"><i class="fas fa-key"></i> Ganti Password</a>
-                <!-- Tombol Update Data Diri -->
-                <a href="update_pengguna.php" class="btn btn-primary"><i class="fas fa-user-edit"></i> Update Data Diri</a>
-            </div>
             <hr class="divider">
-            <div class="card shadow user-info">
-                <div class="row">
-                    <!-- Left column for profile picture -->
-                    <div class="col-md-4">
-                        <div class="profile-container">
-                            <img src="<?php echo $pasfoto; ?>" alt="Foto Profil" class="profil-picture">
-                        </div>
-                    </div>
-                    <!-- Right column for user information -->
-                    <div class="col-md-8">
-                        <div class="profile-details">
-                            <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
-                            <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
-                            <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
-                            <p><span class="label">Prodi:</span> <span class="value"><?php echo $prodi; ?></span></p>
-                            <p><span class="label">Semester:</span> <span class="value"><?php echo $semester; ?></span></p>
+            <div class="wrapper">
+    <div class="col-md-12 col-sm-12">
+        <div class="white-box">
+            <div class="row row-in">
+                <div class="col-md-8">
+                    <div class="card shadow user-info">
+                        <div class="row">
+                            <!-- Left column for profile picture -->
+                            <div class="col-md-4">
+                                <div class="profile-container">
+                                    <img src="<?php echo $pasfoto; ?>" alt="Foto Profil" class="profil-picture">
+                                </div>
+                            </div>
+                            <!-- Right column for user information -->
+                            <div class="col-md-8">
+                                <div class="profile-details">
+                                    <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
+                                    <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
+                                    <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
+                                    <p><span class="label">Prodi:</span> <span class="value"><?php echo $prodi; ?></span></p>
+                                    <p><span class="label">Semester:</span> <span class="value"><?php echo $semester; ?></span></p>
+                                </div>
+                                <!-- Tombol Ganti Password -->
+                                <a href="ganti_password_pengguna.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>
+                                <!-- Tombol Update Data Diri -->
+                                <a href="update_pengguna.php" class="btn btn-primary mt-2"><i class="fas fa-user-edit"></i> Update Data Diri</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-4"> <!-- Adjust the column size according to your needs -->
+                    <!-- Content for jumlah UKM yang diikuti -->
+                    <div class="card shadow">
+                        <h4 class="mb-3">Jumlah UKM yang diikuti</h4>
+                        <p class="font-weight-bold" style="font-size: 50px;"><?php echo $totalSnapshot; ?></p>
+                    </div>
 
-            <div class="card shadow">
-                <h2>Total UKM yang diikuti</h2>
-                <p><?php echo $totalSnapshot; ?></p>
+                    <!-- Content for UKM yang diikuti -->
+                    <div class="card shadow mt-4 scrollable-content">
+                        <h4 class="mb-3">Daftar UKM yang diikuti</h4>
+                        <?php
+                    // Array of Indonesian month names
+                    $indonesianMonths = array(
+                        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    );
+
+                    // Check if there are any snapshots for the user
+                    if (mysqli_num_rows($resultSnapshotData) > 0) {
+                        while ($snapshot = mysqli_fetch_assoc($resultSnapshotData)) {
+                            echo '<p><span class="label">UKM:</span> ' . $snapshot['nama_ukm'] . '</p>';
+                            echo '<p><span class="label">ID Anggota:</span> ' . $snapshot['id_anggota'] . '</p>';
+                    
+                            // Convert sjk_bergabung to the desired date format
+                            $dateComponents = explode('-', $snapshot['sjk_bergabung']);
+                            $day = intval($dateComponents[2]);
+                            $monthIndex = intval($dateComponents[1]) - 1; // Since the array is 0-based index
+                            $year = intval($dateComponents[0]);
+                    
+                            $sjk_bergabung_formatted = $day . ' ' . $indonesianMonths[$monthIndex] . ' ' . $year;
+                            echo '<p><span class="label">Bergabung:</span> ' . $sjk_bergabung_formatted . '</p>';
+                    
+                            echo '<hr class="divider">';
+                        }
+                    } else {
+                        echo '<p>Tidak ada data snapshot untuk pengguna ini.</p>';
+                    }                    
+                    ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+
 
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="script.js"></script>
