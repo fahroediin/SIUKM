@@ -196,7 +196,7 @@ if ($resultGaleriSnapshotCount) {
 /* CSS untuk garis pembatas vertikal */
 .divider-vertical {
     height: 100px; /* Sesuaikan tinggi dengan konten yang ada */
-
+ 
 }
 
 /* CSS untuk card */
@@ -211,7 +211,6 @@ if ($resultGaleriSnapshotCount) {
 .col-in img {
     display: nowrap; /* Agar gambar berada di tengah kolom */
     margin: 0 auto; /* Agar gambar berada di tengah vertikal */
-
     vertical-align: middle;
   }
 .col-in p {
@@ -219,15 +218,15 @@ if ($resultGaleriSnapshotCount) {
     vertical-align: middle;
     font-size: 18px;
   }
+  .custom-card {
+        height: 200px;
+    }
   
     </style>
 </head>
 <body>
 <div class="navbar">
-    <div class="navbar-brand">Dashboard</div>
-    <div class="user-info">
-        <span>Welcome, <?php echo $_SESSION['nama_lengkap']; ?></span>
-    </div>
+    <div class="navbar-brand">.</div>
     <div class="logout-btn" onclick="logout()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm1.354 4.646a.5.5 0 0 1 .146.354L10.5 8l-1.646 1.646a.5.5 0 0 1-.708-.708L9.793 8.5l-1.647-1.646a.5.5 0 0 1 .708-.708L10.5 7.293l1.646-1.647a.5.5 0 0 1 .354-.147zM8 4.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-.5-.5z"/>
@@ -239,7 +238,7 @@ if ($resultGaleriSnapshotCount) {
 
     <div class="sidebar">
     <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-
+    <h2>Dashboard</h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
             <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
@@ -251,6 +250,7 @@ if ($resultGaleriSnapshotCount) {
             <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
             <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
         </div>
+
         
         <div class="content">
             <h1>Dashboard</h1>
@@ -259,75 +259,82 @@ if ($resultGaleriSnapshotCount) {
             <div class="col-md-12col-sm-12">
             <div class="white-box">
                 <div class="row row-in">
-                    <!-- Gambar User -->
-                    <div class="col-md-3 col-sm-6">
-                        <div class="col-in row">
-                            <div class="col-md-6 col-sm-6 col-xs-6">
-                                <img src="../assets/images/dashboard/user.png" alt="User Snapshot" style="width: 60px; height: 60px;">
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-xs-6">
-                            <p style="font-size: 60px; margin-top: -20px;"><?php echo $snapshotCount; ?></p>
-                                </div>
-                                <div class="col-md-12 col-sm-12 col-xs-6">
-                                    <p style="font-size: 18px; margin-top: 10px;">Total Pengguna</p>
-                                </div>
-                            </div>
-                    </div>
 
-                    <!-- Garis Pembatas Vertikal -->
-                    <div class="col-sm-0 divider-vertical"></div>
-
-                    <!-- Gambar UKM -->
-                    <div class="col-md-3 col-sm-6">
-                        <div class="col-in row">
-                            <div class="col-md-6 col-sm-6 col-xs-6">
-                                <img src="../assets/images/dashboard/ukm.png" alt="UKM Snapshot"  style="width: 60px; height: 60px;">
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6">
-                                <p style="font-size: 60px; margin-top: -20px;"><?php echo $ukmSnapshotCount; ?></p>
-                            </div>
-                            <div class="col-md-12 col-sm-6 col-xs-6">                           
-                                <p style="font-size: 15px; margin-top: 10px;">Total UKM</p>
-                            </div>
+                
+        <div class="col-md-3 col-sm-6">
+            <div class="card custom-card" style="background-color: #91C8E4;">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 col-sm-6">
+                            <img src="../assets/images/dashboard/user.png" alt="User Snapshot" style="width: 60px; height: 60px;">
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <p style="font-size: 55px;"><?php echo $snapshotCount; ?></p>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                        <p style="font-size: 20px; margin-top: 10px; font-weight: bold; font-style: italic;">Total User</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Garis Pembatas Vertikal -->
-                    <div class="col-sm-0 divider-vertical"></div>
-
-                    <!-- Gambar PACAB -->
-                    <div class="col-md-3 col-sm-6">
-                        <div class="col-in row">
-                            <div class="col-md-6 col-sm-6 col-xs-6">
-                                <img src="../assets/images/dashboard/calabar.png" alt="PACAB Snapshot"  style="width: 60px; height: 60px;">
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6">
-                                <p style="font-size: 60px; margin-top: -20px;"><?php echo $pacabSnapshotCount; ?></p>
-                            </div>
-                            <div class="col-md-12 col-sm-6 col-xs-6">                           
-                                <p style="font-size: 15px; margin-top: 10px;">Total Pendaftar Baru</p>
-                            </div>
+     
+        <div class="col-md-3 col-sm-6">
+            <div class="card custom-card" style="background-color: #F6F6C9;">
+                <div class="card-body">
+                    <div class="row align-items-center"> 
+                        <div class="col-md-6 col-sm-6">
+                            <img src="../assets/images/dashboard/ukm.png" alt="UKM Snapshot" style="width: 60px; height: 60px;">
                         </div>
-                            </div>
-                            <!-- Garis Pembatas Vertikal -->
-                            <div class="col-sm-0 divider-vertical"></div>
-
-                            <!-- Gambar PACAB -->
-                            <div class="col-md-3 col-sm-6">
-                                <div class="col-in row">
-                                    <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <img src="../assets/images/dashboard/gallery.png" alt="Galeri Snapshot"  style="width: 60px; height: 60px;">
-                                        </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <p style="font-size: 60px; margin-top: -20px;"><?php echo $galeriSnapshotCount; ?></p>
-                                    </div>
-                                    <div class="col-md-12 col-sm-6 col-xs-6">                           
-                                        <p style="font-size: 15px; margin-top: 10px;">Total Foto Galeri</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-md-6 col-sm-6">
+                            <p style="font-size: 55px;"><?php echo $ukmSnapshotCount; ?></p>
+                        </div>
+                        <div class="col-md-12 col-sm-12"> 
+                        <p style="font-size: 20px; margin-top: 10px; font-weight: bold; font-style: italic;">Total UKM</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+        <div class="card custom-card" style="background-color: #E8AA42;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <img src="../assets/images/dashboard/calabar.png" alt="Pacab Snapshot" style="width: 60px; height: 60px;">
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <p style="font-size: 55px;"><?php echo $pacabSnapshotCount; ?></p>
+                        </div>
+                        <div class="col-md-12">
+                        <p style="font-size: 20px; margin-top: 10px; font-weight: bold; font-style: italic;">Pendaftar Baru</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card custom-card" style="background-color: #5B9A8B;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <img src="../assets/images/dashboard/gallery.png" alt="Gallery Snapshot" style="width: 60px; height: 60px;">
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <p style="font-size: 55px;"><?php echo $galeriSnapshotCount; ?></p>
+                        </div>
+                        <div class="col-md-12 col-sm-6">                           
+                        <p style="font-size: 20px; margin-top: 10px; font-weight: bold; font-style: italic;">Foto Gallery</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
    <script>
     // Fungsi untuk logout

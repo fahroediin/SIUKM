@@ -86,7 +86,7 @@ $active_page = 'calon_anggota';
 <body>
     
 <div class="navbar">
-        <div class="navbar-brand">Dashboard</div>
+        <div class="navbar-brand">.</div>
         <div class="logout-btn" onclick="logout()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm1.354 4.646a.5.5 0 0 1 .146.354L10.5 8l-1.646 1.646a.5.5 0 0 1-.708-.708L9.793 8.5l-1.647-1.646a.5.5 0 0 1 .708-.708L10.5 7.293l1.646-1.647a.5.5 0 0 1 .354-.147zM8 4.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-.5-.5z"/>
@@ -109,9 +109,8 @@ $active_page = 'calon_anggota';
             <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
             <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
         </div>
-            </div>
+        
                     <div class="content">
-                    <div class="container">
                     <h2>Daftar Calon Anggota</h2>
                     <table class="table table-striped">
                         <thead>
@@ -129,7 +128,8 @@ $active_page = 'calon_anggota';
                                 <th>Foto UKM</th>
                                 <th>Alasan</th>
                                 <th>Nilai TPA</th>
-                                <th>Aksi</th> <!-- Kolom "Aksi" untuk tombol "Update" dan "Delete" -->
+                                <th>Diterima/Tidak</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -150,8 +150,10 @@ $active_page = 'calon_anggota';
                                 echo "<td>" . $row['nama_ukm'] . "</td>";
                                 echo "<td>" . $row['email'] . "</td>";
                                 echo "<td>" . $row['no_hp'] . "</td>";
-                                echo "<td><img src='../assets/images/" . $row['pasfoto'] . "' width='100'></td>";
-                                echo "<td><img src='../assets/images/" . $row['foto_ktm'] . "' width='100'></td>";
+                                                            // Display pasfoto image
+                                echo "<td><img src='../assets/images/pasfoto/" . $row['pasfoto'] . "' width='100'></td>";
+                                // Display foto_ktm image
+                                echo "<td><img src='../assets/images/ktm/" . $row['foto_ktm'] . "' width='100'></td>";
                                 echo "<td>" . $row['alasan'] . "</td>";
                                 echo "<td>" . $row['nilai_tpa'] . "</td>";
                                 echo "<td>";
@@ -162,7 +164,7 @@ $active_page = 'calon_anggota';
                                 echo "<button class='btn btn-success' onclick='updateNilaiTPA(" . $row['id_calabar'] . ", \"Lolos\")'>Lolos</button>";
                                 echo "<button class='btn btn-danger' onclick='updateNilaiTPA(" . $row['id_calabar'] . ", \"Tidak Lolos\")'>Tidak Lolos</button>";
                                 echo "</div>";
-                                echo "</td>";
+                             
                                 // Tombol "Delete"
                                 echo "<td>";
                                 echo "<button class='btn btn-danger' onclick='deleteData(" . $row['id_calabar'] . ")'>Delete</button>";
@@ -178,7 +180,7 @@ $active_page = 'calon_anggota';
                 </div>
             </div>
         </div>
-    </div>
+
     
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
