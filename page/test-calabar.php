@@ -12,12 +12,6 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
-// Memeriksa level pengguna
-if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
-    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
-    header("Location: beranda.php");
-    exit();
-}
 
 // Fungsi logout
 function logout() {
@@ -163,7 +157,7 @@ function calculateTPAScore($jawaban)
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<link rel="stylesheet" href="../assets/css/style.css">
+
 	  <!-- Pustaka MathJax -->
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -173,9 +167,9 @@ function calculateTPAScore($jawaban)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 	<style>
+		
 	body {
 	width: 100%;
 	margin: 0;
@@ -400,6 +394,18 @@ function calculateTPAScore($jawaban)
 		opacity: 0;
 	}
 	}
+	.navbar {
+  background-color: #3F72AF;
+}
+
+.navbar .nav-link {
+  color: #fff;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #fff;
+}
 
   </style>
   <script>

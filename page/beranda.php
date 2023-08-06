@@ -8,9 +8,9 @@ session_start();
 // Menonaktifkan pesan error
 error_reporting(0);
 
-
 // Mendapatkan nama depan dan level dari session
 $nama_lengkap = $_SESSION["nama_lengkap"];
+$id_user = $_SESSION["id_user"];
 $level = $_SESSION["level"];
 
 
@@ -143,17 +143,17 @@ $level = $_SESSION["level"];
 		</div>
 		<div class="row mx-7">
     <div class="col-md-12 text-right">
-				<?php
-			// Cek apakah pengguna sudah login
-			if (isset($_SESSION['id_user'])) {
-				// Jika sudah login, arahkan ke halaman register-ukm.php
-				echo '<button class="btn btn-lg btn-primary" onclick="location.href=\'register-ukm.php\';">DAFTAR SEKARANG</button>';
-			} else {
-				// Jika belum login, arahkan ke halaman login.php
-				echo '<button class="btn btn-lg btn-primary" onclick="location.href=\'login.php\';">DAFTAR SEKARANG</button>';
-			}
-			?>
-		</div>
+        <?php
+        // Cek apakah pengguna sudah login berdasarkan session id_user
+        if (isset($_SESSION['id_user'])) {
+            // Jika sudah login, arahkan ke halaman register-ukm.php
+            echo '<a class="btn btn-lg btn-primary" href="register-ukm.php">DAFTAR SEKARANG</a>';
+        } else {
+            // Jika belum login, arahkan ke halaman login.php
+            echo '<a class="btn btn-lg btn-primary" href="login.php">DAFTAR SEKARANG</a>';
+        }
+        ?>
+    </div>
 </div>
 	</div>
 </body>

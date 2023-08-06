@@ -7,16 +7,9 @@ session_start();
 
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
-    // Jika belum login, redirect ke halaman login.php
-    header("Location: login.php");
-    exit();
-}
-
-// Memeriksa level pengguna
-if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
-    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
-    header("Location: beranda.php");
-    exit();
+  // Jika belum login, redirect ke halaman login.php
+  header("Location: login.php");
+  exit();
 }
 
 // Fungsi logout
@@ -74,8 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Generate 4 digit angka acak
   $randomDigits = rand(1000, 9999);
 
-  // Menggabungkan NIM dengan angka acak
-  $id_calabar = $nim . $randomDigits;
+  $id_calabar = $id_user . $randomDigits;
 
    // Pastikan form di-submit dan kedua file berhasil di-upload sebelum melanjutkan
    if (isset($_FILES["pasfoto"]) && isset($_FILES["foto_ktm"])) {
@@ -120,6 +112,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 }
+// Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
+$query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+$result_ukm = mysqli_query($conn, $query_ukm);
 ?>
 <!DOCTYPE html>
 <html>
@@ -392,19 +387,19 @@ button[type=reset]:hover {
         <a class="nav-link" href="galeri.php">Galeri</a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-          Pilih UKM
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="racana.php">Pramuka</a>
-						<a class="dropdown-item" href="wanacetta.php">Wanaceta</a>
-						<a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-						<a class="dropdown-item" href="ecc.php">ECC</a>
-						<a class="dropdown-item" href="riset.php">Riset</a>
-						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hsr.php">HSR</a>
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+						Pilih UKM
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
+						<a class="dropdown-item" href="mapala.php">Mapala</a>
+						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
+						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
+						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
 					</div>
-      </li>
+				</li>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
@@ -468,23 +463,22 @@ button[type=reset]:hover {
             <label for="no_hp">Nomor HP:</label>
             <input type="text" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required  readonly>
         </div>
-        <!-- Tambahkan div untuk combobox ID UKM -->
-        <div>
-          <label for="id_ukm">ID UKM:</label>
-          <select id="id_ukm" name="id_ukm" required onchange="updateNamaUKM(this)">
-            <option value="" selected disabled>Pilih ID UKM Yang Diminati</option>
-            <?php
-            // Membuat opsi combobox dari hasil query
-            foreach ($namaUKM as $id_ukm => $nama_ukm) {
-              echo "<option value='$id_ukm'>$id_ukm</option>";
-            }
-            ?>
-          </select>
-        </div>
         <div class="form-group">
-          <label for="nama_ukm">Nama UKM:</label>
-          <input type="text" id="nama_ukm" name="nama_ukm" readonly>
-        </div>
+                                <label for="id_ukm">ID UKM:</label>
+                                <select id="id_ukm" name="id_ukm" class="form-control" required>
+                                    <option value="" selected disabled>Pilih ID UKM</option>
+                                    <?php
+                                        // Membuat opsi combobox dari hasil query
+                                        while ($row_ukm = mysqli_fetch_assoc($result_ukm)) {
+                                            echo "<option value='" . $row_ukm['id_ukm'] . "'>" . $row_ukm['id_ukm'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_ukm">Nama UKM:</label>
+                                <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
+                            </div>
         <div class="form-group">
             <label for="pasfoto">Upload pas foto:</label>
             <input type="file" id="pasfoto" name="pasfoto" accept="image/*">
@@ -616,24 +610,38 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
       modal.style.display = "none";
     }
   }
-  function updateNamaUKM(select) {
-        var id_ukm = select.value;
-        var nama_ukmField = document.getElementById("nama_ukm");
+  const idUkmSelect = document.getElementById("id_ukm");
+    const namaUkmField = document.getElementById("nama_ukm");
 
-        // Mengirim permintaan AJAX ke server
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                // Mengambil respons dari server
-                var nama_ukm = this.responseText;
+    idUkmSelect.addEventListener("change", function() {
+        const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
+        const idUkm = selectedOption.value;
+        if (idUkm) {
+            // Mengirim permintaan AJAX ke server
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Mengambil respons dari server dalam bentuk JSON
+                    var data = JSON.parse(this.responseText);
+                    if (data.error) {
+                        // Handle error response from the server
+                        console.error(data.error);
+                        namaUkmField.value = ""; // Clear the field in case of an error
+                    } else {
+                        // Update nama_ukm field with the retrieved data
+                        namaUkmField.value = data.nama_ukm;
+                    }
+                }
+            };
 
-                // Mengatur nilai field nama_ukm dengan respons dari server
-                nama_ukmField.value = nama_ukm;
-            }
-        };
-        xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
-        xhttp.send();
-    }
+            // Send the AJAX request to the server
+            xhttp.open("GET", "get_data_ukm.php?id_ukm=" + idUkm, true);
+            xhttp.send();
+        } else {
+            // If no id_ukm is selected, reset the nama_ukm field
+            namaUkmField.value = "";
+        }
+    });
     // Fungsi untuk logout
     function logout() {
         // Redirect ke halaman logout
