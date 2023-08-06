@@ -312,6 +312,7 @@ h2 {
 
     .card-text {
         font-size: 18px; /* Increase the font size for the card text */
+        text-align: left;
     }
 .card:hover {
     transform: translateY(-5px);
@@ -391,7 +392,7 @@ p {
           </div>
             <div>
                 <h2><?php echo $nama_ukm; ?></h2>
-                <p><?php echo $sejarah; ?></p>
+                <p style="text-align: justify;"><?php echo $sejarah; ?></p>
             </div>
         </div>
 
