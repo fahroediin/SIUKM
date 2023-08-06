@@ -5,6 +5,36 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Memeriksa apakah pengguna sudah login
+if (!isset($_SESSION['id_user'])) {
+    // Jika belum login, redirect ke halaman login.php
+    header("Location: login.php");
+    exit();
+}
+
+// Memeriksa level pengguna
+if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
+    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
+    header("Location: beranda.php");
+    exit();
+}
+
+// Fungsi logout
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke beranda.php setelah logout
+    header("Location: beranda.php");
+    exit();
+}
+
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
+}
 // Menandai halaman yang aktif
 $active_page = 'proses_update_pengguna';
 
@@ -37,23 +67,6 @@ if ($result) {
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
-}
-
-// Fungsi logout
-function logout() {
-    // Menghapus semua data session
-    session_unset();
-    // Menghancurkan session
-    session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
-    header("Location: beranda.php");
-    exit();
-}
-
-// Memeriksa apakah tombol logout diklik
-if (isset($_GET['logout'])) {
-    // Memanggil fungsi logout
-    logout();
 }
 
 // Memeriksa apakah form telah disubmit

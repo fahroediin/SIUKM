@@ -12,6 +12,30 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
+// Memeriksa level pengguna
+if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
+    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
+    header("Location: beranda.php");
+    exit();
+}
+
+// Fungsi logout
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke beranda.php setelah logout
+    header("Location: beranda.php");
+    exit();
+}
+
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
+}
+
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
 $userId = $_SESSION['id_user'];
 $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
@@ -609,6 +633,11 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
         };
         xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
         xhttp.send();
+    }
+    // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
     }
 </script>
 </html>

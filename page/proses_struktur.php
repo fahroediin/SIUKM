@@ -5,7 +5,6 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
     // Jika belum login, redirect ke halaman login.php
@@ -14,18 +13,14 @@ if (!isset($_SESSION['id_user'])) {
 }
 
 // Memeriksa level pengguna
-if ($_SESSION['level'] == "3") {
-    // Jika level adalah "3", redirect ke halaman beranda.php
+if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
+    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
     header("Location: beranda.php");
     exit();
 }
 
-// Menandai halaman yang aktif
-$active_page = 'struktur';
-
 // Fungsi logout
-function logout()
-{
+function logout() {
     // Menghapus semua data session
     session_unset();
     // Menghancurkan session
@@ -40,6 +35,10 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+
+// Menandai halaman yang aktif
+$active_page = 'struktur';
+
 
 function isJabatanExists($conn, $id_ukm, $id_jabatan)
 {
@@ -149,23 +148,44 @@ if (isset($_POST['submit'])) {
     .btn:hover {
         background-color: #0056b3;
     }
+    .sidebar img {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 </style>
 
 <body>
+<div class="navbar">
+        <div class="navbar-brand">Dashboard</div>
+        <div class="logout-btn" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm1.354 4.646a.5.5 0 0 1 .146.354L10.5 8l-1.646 1.646a.5.5 0 0 1-.708-.708L9.793 8.5l-1.647-1.646a.5.5 0 0 1 .708-.708L10.5 7.293l1.646-1.647a.5.5 0 0 1 .354-.147zM8 4.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-.5-.5z"/>
+            </svg>
+            Logout
+        </div>
+    </div>
+
    <!-- Sidebar -->
-<div class="sidebar">
-    <h2>Manajemen Struktur</h2>
-    <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-    <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
-    <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
-    <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
-    <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
-    <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-    <a href="kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
-    <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
-</div>
+   <div class="sidebar">
+    <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+    <h2>Struktur</h2>
+            <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
+            <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
+            <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
+            <a href="proses_dau.php" class="btn btn-primary <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+            <a href="proses_prestasi.php" class="btn btn-primary <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
+            <a href="proses_user.php" class="btn btn-primary <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
+            <a href="proses_ukm.php" class="btn btn-primary <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
+            <a href="proses_galeri.php" class="btn btn-primary <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
+            <a href="proses_kegiatan.php" class="btn btn-primary <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+            <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+        </div>
 
 
  <!-- Konten -->
@@ -391,6 +411,11 @@ idAnggotaSelect.addEventListener("change", function() {
         // Reset the values of nama_lengkap and nim fields to empty
         document.getElementById('nama_lengkap').value = '';
         document.getElementById('nim').value = '';
+    }
+    // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
     }
 </script>
 </body>

@@ -19,9 +19,6 @@ if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
     exit();
 }
 
-// Menandai halaman yang aktif
-$active_page = 'dashboard';
-
 // Fungsi logout
 function logout() {
     // Menghapus semua data session
@@ -38,6 +35,9 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+
+// Menandai halaman yang aktif
+$active_page = 'dashboard';
 
 // Memeriksa apakah query berhasil dieksekusi
 // Assuming you have a table named 'tab_user'
@@ -99,6 +99,7 @@ if ($resultSnapshotCount) {
     $snapshotCount = 0;
     echo "Error: " . mysqli_error($conn);
 }
+
 // Prepare the SQL query to get the number of snapshots for tab_ukm
 $sqlUkmSnapshotCount = "SELECT COUNT(*) AS ukm_snapshot_count FROM tab_ukm";
 
@@ -113,39 +114,55 @@ if ($resultUkmSnapshotCount) {
     $ukmSnapshotCount = 0;
     echo "Error: " . mysqli_error($conn);
 }
+
+
+// Prepare the SQL query to get the number of snapshots for the current user
+$pacabSnapshotCount = "SELECT COUNT(*) AS pacab_snapshot_count FROM tab_pacab";
+
+// Execute the query to get the snapshot count
+$resultPacabSnapshotCount = mysqli_query($conn, $pacabSnapshotCount);
+
+if ($resultPacabSnapshotCount) {
+    // Fetch the snapshot count for the user's id_pacab
+    $pacabSnapshotCount = mysqli_fetch_assoc($resultPacabSnapshotCount)['pacab_snapshot_count'];
+} else {
+    // If the query fails, handle the error accordingly
+    $pacabSnapshotCount = 0;
+    echo "Error: " . mysqli_error($conn);
+}
+// Prepare the SQL query to get the number of snapshots for a specific id_foto
+$galeriSnapshotCountQuery = "SELECT COUNT(*) AS galeri_snapshot_count FROM tab_galeri";
+
+// Execute the query to get the snapshot count
+$resultGaleriSnapshotCount = mysqli_query($conn, $galeriSnapshotCountQuery);
+
+if ($resultGaleriSnapshotCount) {
+    // Fetch the snapshot count for the specified id_foto
+    $galeriSnapshotCount = mysqli_fetch_assoc($resultGaleriSnapshotCount)['galeri_snapshot_count'];
+} else {
+    // If the query fails, handle the error accordingly
+    $galeriSnapshotCount = 0;
+    echo "Error: " . mysqli_error($conn);
+}
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Admin</title>
+    <title>Dashboard Admin - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
-        .container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh; /* Set the container to take the full height of the viewport */
-    }
-        .navbar {
+          .navbar .user-info {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background-color: #007bff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            gap: 10px;
         }
-
-        .navbar .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .navbar .logout-btn {
+       .navbar .logout-btn {
             display: flex;
             align-items: center;
             gap: 5px;
@@ -156,24 +173,7 @@ if ($resultUkmSnapshotCount) {
         .navbar .logout-btn:hover {
             text-decoration: underline;
         }
-  .content {
-        /* Add some padding or margin to create space between navbar and content */
-        padding-top: 20px; /* Adjust this value as needed */
-    }
-   /* Sidebar styles */
-   .sidebar {
-        width: 250px;
-        height: 100vh;
-        background-color: #f8f9fa;
-        padding: 20px;
-        transition: width 0.3s ease-in-out; /* Add transition for smooth animation */
-    }
-
-    .collapsed .sidebar {
-        width: 60px; /* Collapsed width for the sidebar */
-    }
-
-    .sidebar img {
+        .sidebar img {
         display: block;
         margin: 0 auto;
         margin-bottom: 20px;
@@ -183,66 +183,62 @@ if ($resultUkmSnapshotCount) {
         border-radius: 50%;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
-    .sidebar a {
-        display: block;
-        padding: 10px;
-        margin-bottom: 10px;
-        color: #000;
-        text-decoration: none;
-        transition: background-color 0.3s ease-in-out; /* Add transition for background color change */
-    }
-
-    .sidebar a:hover {
-        background-color: #eaeaea; /* Add a subtle background color change on hover */
-    }
-
-    .sidebar a.active {
-        font-weight: bold;
-        color: #007bff; /* Highlight the active link with a different color */
-    }
+    .card-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
 
 
-        .toggle-btn {
-            display: none;
-        }
+/* CSS untuk garis pembatas vertikal */
+.divider-vertical {
+    height: 100px; /* Sesuaikan tinggi dengan konten yang ada */
+    border-right: 1px solid #ccc; /* Atur warna dan ketebalan garis sesuai keinginan */
+}
 
-        @media (max-width: 768px) {
-            .toggle-btn {
-                display: block;
-                font-size: 20px;
-                cursor: pointer;
-            }
-        }
-        
-    </style>
-</head>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard Admin</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-    <style>
-       
+/* CSS untuk card */
+.white-box {
+    background-color: #fff; /* Atur warna latar belakang card */
+    padding: 10px; /* Sesuaikan padding dengan kebutuhan */
+    border-radius: 5px; /* Atur radius border sesuai keinginan */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Atur bayangan card sesuai keinginan */
+}
+
+/* CSS untuk gambar */
+.col-in img {
+    display: nowrap; /* Agar gambar berada di tengah kolom */
+    margin: 0 auto; /* Agar gambar berada di tengah vertikal */
+    width: 80px;
+    height: 80px;
+    vertical-align: middle;
+  }
+.col-in p {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+    margin-left: 10px; /* Atur jarak antara gambar dan teks */
+  }
+  
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-brand">Dashboard</div>
-        <div class="logout-btn" onclick="logout()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm1.354 4.646a.5.5 0 0 1 .146.354L10.5 8l-1.646 1.646a.5.5 0 0 1-.708-.708L9.793 8.5l-1.647-1.646a.5.5 0 0 1 .708-.708L10.5 7.293l1.646-1.647a.5.5 0 0 1 .354-.147zM8 4.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-.5-.5z"/>
-            </svg>
-            Logout
-        </div>
+<div class="navbar">
+    <div class="navbar-brand">Dashboard</div>
+    <div class="user-info">
+        <span>Welcome, <?php echo $_SESSION['nama_lengkap']; ?></span>
     </div>
+    <div class="logout-btn" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm1.354 4.646a.5.5 0 0 1 .146.354L10.5 8l-1.646 1.646a.5.5 0 0 1-.708-.708L9.793 8.5l-1.647-1.646a.5.5 0 0 1 .708-.708L10.5 7.293l1.646-1.647a.5.5 0 0 1 .354-.147zM8 4.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-.5-.5z"/>
+        </svg>
+        Logout
+    </div>
+</div>
+
+
     <div class="sidebar">
     <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-    <!-- Other sidebar links -->
+    <h2>Dashboard</h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <a href="beranda.php" class="btn btn-primary <?php if($active_page == 'beranda') echo 'active'; ?>">Beranda</a>
             <a href="proses_struktur.php" class="btn btn-primary <?php if($active_page == 'struktur') echo 'active'; ?>">Kepengurusan</a>
@@ -255,30 +251,84 @@ if ($resultUkmSnapshotCount) {
             <a href="calon_anggota.php" class="btn btn-primary <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
         </div>
         
-
         <div class="content">
-            <h1>Dashboard Admin</h1>
+            <h1>Dashboard</h1>
             <hr class="divider">
+            <div class="wrapper">
+            <div class="col-lg-12 col-lg-12 col-sm-12">
+            <div class="white-box">
+                <div class="row row-in">
+                    <!-- Gambar User -->
+                    <div class="col-md-2 col-sm-6">
+                        <div class="col-in row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <img src="../assets/images/dashboard/user.png" alt="User Snapshot" style="width: 60px; height: 60px;">
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                            <p style="font-size: 60px; margin-top: -20px;"><?php echo $snapshotCount; ?></p>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <p style="font-size: 18px; margin-top: 10px;">Total Pengguna</p>
+                                </div>
+                            </div>
+                    </div>
 
-    
-    </div>
-</div>
-    </div>
+                    <!-- Garis Pembatas Vertikal -->
+                    <div class="col-sm-0 divider-vertical"></div>
+
+                    <!-- Gambar UKM -->
+                    <div class="col-md-2 col-sm-6">
+                        <div class="col-in row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <img src="../assets/images/dashboard/ukm.png" alt="UKM Snapshot"  style="width: 60px; height: 60px;">
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                <p style="font-size: 60px; margin-top: -20px;"><?php echo $ukmSnapshotCount; ?></p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-xs-6">                           
+                                <p style="font-size: 15px; margin-top: 10px;">Total UKM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Garis Pembatas Vertikal -->
+                    <div class="col-sm-0 divider-vertical"></div>
+
+                    <!-- Gambar PACAB -->
+                    <div class="col-md-2 col-sm-6">
+                        <div class="col-in row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <img src="../assets/images/dashboard/calabar.png" alt="PACAB Snapshot"  style="width: 60px; height: 60px;">
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                <p style="font-size: 60px; margin-top: -20px;"><?php echo $pacabSnapshotCount; ?></p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-xs-6">                           
+                                <p style="font-size: 15px; margin-top: 10px;">Total Pendaftar Baru</p>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Garis Pembatas Vertikal -->
+                     <div class="col-sm-0 divider-vertical"></div>
+
+                    <!-- Gambar PACAB -->
+                    <div class="col-md-2 col-sm-6">
+                        <div class="col-in row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <img src="../assets/images/dashboard/gallery.png" alt="PACAB Snapshot"  style="width: 60px; height: 60px;">
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                <p style="font-size: 60px; margin-top: -20px;"><?php echo $galeriSnapshotCount;?></p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-xs-6">                           
+                                <p style="font-size: 15px; margin-top: 10px;">Total Foto Galeri</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
-    <script src="script.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-    // Ambil elemen toggle button dan sidebar
-    const toggleBtn = document.querySelector('.toggle-btn');
-    const sidebar = document.querySelector('.sidebar');
-
-    // Tambahkan event listener untuk toggle button
-    toggleBtn.addEventListener('click', () => {
-        // Toggle class 'collapsed' pada sidebar
-        sidebar.classList.toggle('collapsed');
-    });
-
+   <script>
     // Fungsi untuk logout
     function logout() {
         // Redirect ke halaman logout

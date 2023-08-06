@@ -5,14 +5,22 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-// Mendapatkan nama depan dan level dari session
-$nama_lengkap = $_SESSION["nama_lengkap"];
-$level = $_SESSION["level"];
-$id_calabar = $_SESSION['id_calabar'];
+// Memeriksa apakah pengguna sudah login
+if (!isset($_SESSION['id_user'])) {
+    // Jika belum login, redirect ke halaman login.php
+    header("Location: login.php");
+    exit();
+}
+
+// Memeriksa level pengguna
+if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
+    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
+    header("Location: beranda.php");
+    exit();
+}
 
 // Fungsi logout
-function logout()
-{
+function logout() {
     // Menghapus semua data session
     session_unset();
     // Menghancurkan session
@@ -27,6 +35,12 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
+
+// Mendapatkan nama depan dan level dari session
+$nama_lengkap = $_SESSION["nama_lengkap"];
+$level = $_SESSION["level"];
+$id_calabar = $_SESSION['id_calabar'];
+
 
 // Mendapatkan nomor soal yang sedang aktif
 $currentQuestion = isset($_GET['question']) ? intval($_GET['question']) : 1;
