@@ -382,7 +382,7 @@ if ($resultGaleriSnapshotCount) {
 <div class="wrapper">
             <div class="col-md-12col-sm-12">
                 <div class="row row-in">
-<div class="container" style="margin-top: 20px; float: left;">
+            <div class="container" style="margin-top: 20px; float: left;">
             <div class="card user-card shadow user-info">
                 <div class="row">
                     <!-- Left column for profile picture -->

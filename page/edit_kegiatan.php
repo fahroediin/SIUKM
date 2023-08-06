@@ -5,6 +5,11 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+
+// Menandai halaman yang aktif
+$active_page = 'kegiatan';
+
+
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
     // Jika belum login, redirect ke halaman login.php
@@ -120,6 +125,21 @@ if (isset($_POST['update'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <style>
+         .sidebar img {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar {
+        text-align: center; /* Center the contents horizontally */
+    }
+    </style>
 </head>
 
 <body>
@@ -163,7 +183,7 @@ if (isset($_POST['update'])) {
 
 <div class="content">
     <div class="card">
-        <h2>Edit Kegiatan</h2>
+        <h2 style="text-align: center;">Edit Kegiatan</h2>
         <form method="POST">
             <input type="hidden" name="id_kegiatan" value="<?php echo $kegiatan['id_kegiatan']; ?>">
             <div class="form-group">
@@ -192,9 +212,11 @@ if (isset($_POST['update'])) {
                 <input type="date" class="form-control" id="tgl" name="tgl"
                     value="<?php echo $kegiatan['tgl']; ?>" required>
             </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="update">Update</button>
-            </div>
+            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+                                        <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
+                                <i class="fas fa-plus"></i> Tambah Kegiatan
+                            </button>
+                                </div>
         </form>
     </div>
 </div>
