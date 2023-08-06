@@ -12,83 +12,77 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
-// Fungsi logout
-function logout() {
-    // Menghapus semua data session
-    session_unset();
-    // Menghancurkan session
-    session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
-    header("Location: beranda.php");
-    exit();
-}
-
-// Memeriksa apakah tombol logout diklik
-if (isset($_GET['logout'])) {
-    // Memanggil fungsi logout
-    logout();
-}
-
 
 // Menandai halaman yang aktif
-$active_page = 'view_dau';
+$active_page = 'view_kegiatan';
 
-// Memperoleh data anggota UKM dari tabel tab_dau
-$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
-$result = mysqli_query($conn, $query);
+
+
+$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
+$result_kegiatan = mysqli_query($conn, $query_kegiatan);
 ?>
-
 
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Data Anggota UKM - SIUKM</title>
+<title>Kegiatan - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-</head>
-<style>
-        /* Tambahkan gaya CSS berikut untuk mengatur layout sidebar dan konten */
-        .container {
+    <style>
+       
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .sidebar {
-            flex: 0 0 20%; /* Lebar sidebar 20% dari container */
+        .card-body div {
+            display: flex;
+            flex-direction: column;
         }
 
-        .content {
-            flex: 0 0 80%; /* Lebar konten 80% dari container */
-
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        /* Gaya CSS tambahan untuk mengatur tampilan tabel dan form */
-        .table {
+        select,
+        input[type="text"],
+        input[type="date"],
+        button {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        select {
             width: 100%;
         }
-        th {
-        white-space: nowrap;
-        }
-        .delete-button {
-        background-color: red;
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .form-row .form-control {
-            flex: 1;
-            margin-right: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
+        button:hover {
+            background-color: #0056b3;
         }
         .sidebar img {
         display: block;
@@ -105,12 +99,11 @@ $result = mysqli_query($conn, $query);
     }
     </style>
 
-
 <div class="sidebar">
     <a href="beranda.php">
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
-<h2><i>Anggota UKM</i></h2>
+<h2><i>Jadwal Kegiatan</i></h2>
 <a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
             <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
@@ -125,6 +118,7 @@ $result = mysqli_query($conn, $query);
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
 </div>
+
 <script>
     // Function to wrap buttons with a border, except for the Logout button
     function wrapButtonsWithBorder() {
@@ -144,49 +138,37 @@ $result = mysqli_query($conn, $query);
 </script>
 <body>
 <div class="content">
-    <h2>Data Anggota UKM</h2>
-    <div class="form-group">
-    <table class="table table-bordered table-striped">
+    <h2>Data Kegiatan</h2>
+    <table class="table">
         <thead>
             <tr>
-                <th>ID Anggota</th>
-                <th>ID User</th>
-                <th>Nama Lengkap</th>
-                <th>No. HP</th>
-                <th>Email</th>
-                <th>Program Studi</th>
-                <th>Semester</th>
-                <th>Pasfoto</th>
-                <th>Foto KTM</th>
-                <th>Nama UKM</th>
-                <th>Bergabung</th>
-            </tr>
-        </thead>
-        <tbody>
+            <th>ID Kegiatan</th>
+            <th>ID UKM</th>
+            <th>Nama UKM</th>
+            <th>Nama Kegiatan</th>
+            <th>Tanggal</th>
+        </tr>
+    </thead>
+    <tbody>
     <?php
-    // Loop melalui hasil query untuk menampilkan data anggota UKM
-    while ($row = mysqli_fetch_assoc($result)) {
+    // Define Indonesian month names
+    $indonesianMonths = array(
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    );
+
+    while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
+        // Output table rows
         echo "<tr>";
-        echo "<td>" . $row['id_anggota'] . "</td>";
-        echo "<td>" . $row['id_user'] . "</td>";
-        echo "<td>" . $row['nama_lengkap'] . "</td>";
-        echo "<td>" . $row['no_hp'] . "</td>";
-        echo "<td>" . $row['email'] . "</td>";
-        echo "<td>" . $row['prodi'] . "</td>";
-        echo "<td>" . $row['semester'] . "</td>";
-        // Display the "Pasfoto" image
-        echo "<td><img src='../assets/images/pasfoto/" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
-        // Display the "Foto_KTM" image
-        echo "<td><img src='../assets/images/ktm/" . $row['foto_ktm'] . "' alt='Foto KTM' class='img-thumbnail' style='max-height: 100px;'></td>";
-        echo "<td>" . $row['nama_ukm'] . "</td>";
-        echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
+        echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
+        echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
+        echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
+        echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
+        echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
         echo "</tr>";
     }
     ?>
 </tbody>
-
-    </table>
-        </div>
-
+</table>
 </body>
 </html>

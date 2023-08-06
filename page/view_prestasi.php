@@ -5,21 +5,14 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Menandai halaman yang aktif
+$active_page = 'view_prestasi';
+
+
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
-    exit();
-}
-
-// Fungsi logout
-function logout() {
-    // Menghapus semua data session
-    session_unset();
-    // Menghancurkan session
-    session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
-    header("Location: beranda.php");
     exit();
 }
 
@@ -29,20 +22,26 @@ if (isset($_GET['logout'])) {
     logout();
 }
 
+// Mengambil data dari tabel tab_prestasi
+$sql = "SELECT * FROM tab_prestasi";
+$result = $conn->query($sql);
 
-// Menandai halaman yang aktif
-$active_page = 'view_dau';
+// Memeriksa apakah terdapat data prestasi
+if ($result->num_rows > 0) {
+    // Mengubah data hasil query menjadi array asosiatif
+    $prestasi_data = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    // Jika tidak ada data prestasi
+    $prestasi_data = [];
+}
 
-// Memperoleh data anggota UKM dari tabel tab_dau
-$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
-$result = mysqli_query($conn, $query);
+// Menutup koneksi database
+$conn->close();
 ?>
-
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Anggota UKM - SIUKM</title>
+    <title>Prestasi - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -51,46 +50,55 @@ $result = mysqli_query($conn, $query);
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
 <style>
-        /* Tambahkan gaya CSS berikut untuk mengatur layout sidebar dan konten */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
+    .card {
+        width: 100%; /* Set the width to 100% to make the card responsive */
+        max-width: 400px; /* Add max-width to limit the card's width */
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-        .sidebar {
-            flex: 0 0 20%; /* Lebar sidebar 20% dari container */
-        }
-
-        .content {
-            flex: 0 0 80%; /* Lebar konten 80% dari container */
-
-        }
-
-        /* Gaya CSS tambahan untuk mengatur tampilan tabel dan form */
-        .table {
-            width: 100%;
-        }
-        th {
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     th {
         white-space: nowrap;
-        }
-        .delete-button {
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .delete-button {
         background-color: red;
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
+    }
+        /* Tambahkan gaya CSS berikut untuk mengatur tata letak tombol */
+        .action-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .form-row .form-control {
-            flex: 1;
-            margin-right: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .sidebar img {
+    .action-buttons button {
+        flex: 1;
+        margin-right: 5px;
+    }
+    .sidebar img {
         display: block;
         margin: 0 auto;
         margin-bottom: 20px;
@@ -103,14 +111,13 @@ $result = mysqli_query($conn, $query);
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
-    </style>
-
+</style>
 
 <div class="sidebar">
     <a href="beranda.php">
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
-<h2><i>Anggota UKM</i></h2>
+<h2><i>Prestasi</i></h2>
 <a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
             <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
@@ -125,6 +132,7 @@ $result = mysqli_query($conn, $query);
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
 </div>
+
 <script>
     // Function to wrap buttons with a border, except for the Logout button
     function wrapButtonsWithBorder() {
@@ -142,51 +150,43 @@ $result = mysqli_query($conn, $query);
     // Call the function to apply the border to the buttons
     wrapButtonsWithBorder();
 </script>
-<body>
+        <body>
+  <!-- Data Prestasi -->
+  
 <div class="content">
-    <h2>Data Anggota UKM</h2>
-    <div class="form-group">
-    <table class="table table-bordered table-striped">
+    <h2>Data Prestasi</h2>
+    <table class="table">
         <thead>
             <tr>
-                <th>ID Anggota</th>
-                <th>ID User</th>
-                <th>Nama Lengkap</th>
-                <th>No. HP</th>
-                <th>Email</th>
-                <th>Program Studi</th>
-                <th>Semester</th>
-                <th>Pasfoto</th>
-                <th>Foto KTM</th>
+                <th>ID Prestasi</th>
+                <th>Nama Prestasi</th>
+                <th>Penyelenggara</th>
+                <th>Tanggal Prestasi</th>
+                <th>ID UKM</th>
                 <th>Nama UKM</th>
-                <th>Bergabung</th>
             </tr>
         </thead>
         <tbody>
     <?php
-    // Loop melalui hasil query untuk menampilkan data anggota UKM
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>" . $row['id_anggota'] . "</td>";
-        echo "<td>" . $row['id_user'] . "</td>";
-        echo "<td>" . $row['nama_lengkap'] . "</td>";
-        echo "<td>" . $row['no_hp'] . "</td>";
-        echo "<td>" . $row['email'] . "</td>";
-        echo "<td>" . $row['prodi'] . "</td>";
-        echo "<td>" . $row['semester'] . "</td>";
-        // Display the "Pasfoto" image
-        echo "<td><img src='../assets/images/pasfoto/" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
-        // Display the "Foto_KTM" image
-        echo "<td><img src='../assets/images/ktm/" . $row['foto_ktm'] . "' alt='Foto KTM' class='img-thumbnail' style='max-height: 100px;'></td>";
-        echo "<td>" . $row['nama_ukm'] . "</td>";
-        echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
-        echo "</tr>";
-    }
-    ?>
-</tbody>
+    // Define Indonesian month names
+    $indonesianMonths = array(
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    );
 
+    foreach ($prestasi_data as $prestasi) :
+    ?>
+        <tr>
+            <td><?php echo $prestasi['id_prestasi']; ?></td>
+            <td><?php echo $prestasi['nama_prestasi']; ?></td>
+            <td><?php echo $prestasi['penyelenggara']; ?></td>
+            <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
+            <td><?php echo $prestasi['id_ukm']; ?></td>
+            <td><?php echo $prestasi['nama_ukm']; ?></td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
     </table>
-        </div>
 
 </body>
 </html>
