@@ -135,8 +135,9 @@ if (isset($_POST['submit'])) {
     }
 
     // Menyimpan data ke database
-    $sql = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level, prodi, semester, pasfoto, foto_ktm)
-            VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', '$prodi', $semester, '$pasfoto_filename', '$foto_ktm_filename')";
+$sql = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level, prodi, semester, pasfoto, foto_ktm)
+VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', '$prodi', '$semester', '$pasfoto_filename', '$foto_ktm_filename')";
+
 
     $result = $conn->query($sql);
 
@@ -166,6 +167,21 @@ if (isset($_POST['submit'])) {
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
 <style>
+            .password-input {
+    position: relative;
+    }
+
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
+
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
     .card {
         width: 100%; /* Set the width to 100% to make the card responsive */
         max-width: 400px; /* Add max-width to limit the card's width */
@@ -381,19 +397,19 @@ if (isset($_POST['submit'])) {
         <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="id_user">ID User:</label>
-                <input type="text" class="form-control" id="id_user" name="id_user" required>
+                <input type="text" class="form-control" id="id_user" maxlength="15" name="id_user" required>
             </div>
             <div class="form-group">
             <label for="password">Password:</label>
             <div class="password-input">
-                <input type="password" class="form-control" id="password" name="password" required>
+                <input type="password" class="form-control" id="password" maxlength="30" name="password" required>
                 <i class="fas fa-eye" id="passwordToggle1"></i>
             </div>
             </div>
             <div class="form-group">
                 <label for="konfirmasi_password">Konfirmasi Password:</label>
                 <div class="password-input">
-                <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password" required>
+                <input type="password" class="form-control" id="konfirmasi_password" maxlength="30" name="konfirmasi_password" required>
                 <i class="fas fa-eye" id="passwordToggle2"></i>
             </div>
             <div class="form-group">
@@ -402,7 +418,7 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="prodi">Program Studi:</label>
-                <select id="prodi" name="prodi" class="form-control" required>
+                <select id="prodi" name="prodi" class="form-control">
                     <option value="" selected>Pilih Program Studi</option>
                     <option value="Teknik Informatika">Teknik Informatika</option>
                     <option value="Sistem Informasi">Sistem Informasi</option>
@@ -411,7 +427,7 @@ if (isset($_POST['submit'])) {
             
             <div class="form-group">
                 <label for="semester">Semester:</label>
-                <select id="semester" name="semester" class="form-control" required>
+                <select id="semester" name="semester" class="form-control">
                     <option value="" selected>Pilih Semester</option>
                     <?php
                     for ($i = 1; $i <= 14; $i++) {
@@ -422,21 +438,21 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" name="email">
             </div>
             <div class="form-group">
             <label for="no_hp">No. HP:</label>
-            <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+            <input type="text" class="form-control" id="no_hp" name="no_hp">
             </div>
             <div class="form-group">
                 <label for="pasfoto">Pasfoto:</label>
-                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*" required>
+                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*">
             </div>
             <div class="form-group">
                 <label for="foto_ktm">Foto KTM:</label>
-                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*" required>
+                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*">
             </div>
-            <div class="form-group">
+            <div class="form-group" required>
                 <label for="level">Level:</label>
                 <select id="level" name="level" class="form-control">
                     <option value="3">User</option>

@@ -62,8 +62,15 @@ if ($result) {
         $pasfoto = "../assets/images/pasfoto/" . $pasfotoFilename;
     } else {
         // If pasfoto field is empty or not set, provide a default image path
-        $pasfoto = "../assets/images/default_profile_picture.png"; // Change this to your desired default image path
+        $pasfoto = "../assets/images/pasfoto/default_profile_picture.png"; // Change this to your desired default image path
     }
+    
+    // Check if semester and prodi are empty
+    if (empty($semester) || empty($prodi)) {
+        $semester = "Lengkapi data dirimu";
+        $prodi = "Lengkapi data dirimu";
+    }
+    
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
@@ -222,7 +229,7 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Dashboard</i></h2>
-<a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+<a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
             <a href="?logout=1" class="btn btn-primary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </a>
@@ -313,7 +320,7 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
                             echo '<hr class="divider">';
                         }
                     } else {
-                        echo '<p>Tidak ada data snapshot untuk pengguna ini.</p>';
+                        echo '<p>Kamu belum mengikuti UKM manapun, ekspresikan dirimu dengan bergabung UKM.</p>';
                     }                    
                     ?>
                     </div>

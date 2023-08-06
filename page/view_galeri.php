@@ -38,7 +38,7 @@ function generateUniqueFilename($filename, $extension) {
 }
 
 // Menandai halaman yang aktif
-$active_page = 'galeri';
+$active_page = 'view_galeri';
 
 // Function to generate a random 4-digit number
 function generateRandomNumber()
@@ -252,16 +252,16 @@ $result_galeri = mysqli_query($conn, $query_galeri);
  <div class="sidebar">
     <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
     <h2><i>Galeri</i></h2>
-    <a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
-    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
-    <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="view_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
-    <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
-    <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+    <p style="text-align: center;">--Monitoring--</p>
+            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
+    <a href="view_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_user') echo 'active'; ?>">User Manager</a>
+    <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
+    <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
+    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>

@@ -311,7 +311,7 @@ if (isset($_POST['update'])) {
 
 <div class="content">
     <div class="card">
-        <h2>Edit User</h2>
+        <h2 style="text-align: center;">Edit User</h2>
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="id_user" value="<?php echo $row['id_user']; ?>">
             <div class="form-group">

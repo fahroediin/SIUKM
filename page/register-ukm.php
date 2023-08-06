@@ -321,6 +321,9 @@ button[type=reset]:hover {
       bottom: 30px;
       font-size: 17px;
     }
+    #nim {
+            display: none;
+        }
 
     #snackbar.show {
       visibility: visible;
@@ -452,13 +455,40 @@ button[type=reset]:hover {
                 <input type="text" name="nama_lengkap" value="<?php echo $row['nama_lengkap']; ?>" required readonly>
             </div>
             <div>
-                <label for="semester">Semester:</label>
-                <input type="text" id="semester" name="semester" value="<?php echo $row['semester']; ?>" required  readonly>
-            </div>
             <div>
-                <label for="prodi">Program Studi:</label>
-                <input type="text" id="prodi" name="prodi" value="<?php echo $row['prodi']; ?>" required  readonly>
-            </div>
+    <label for="semester">Semester:</label>
+    <select id="semester" name="semester" required>
+        <option value="" <?php echo ($row['semester'] === null) ? 'selected' : ''; ?>>--Pilih Semester--</option>
+        <?php
+        // Loop untuk menampilkan opsi angka 1 hingga 14
+        for ($i = 1; $i <= 14; $i++) {
+            // Periksa apakah nilai saat ini cocok dengan nilai dari database, jika cocok, tandai sebagai selected
+            $selected = ($i == $row['semester']) ? 'selected' : '';
+            echo "<option value='$i' $selected>$i</option>";
+        }
+        ?>
+    </select>
+</div>
+
+<div>
+    <label for="prodi">Program Studi:</label>
+    <select id="prodi" name="prodi" required>
+        <option value="" <?php echo ($row['prodi'] === null) ? 'selected' : ''; ?>>--Pilih Prodi--</option>
+        <?php
+        // Daftar program studi yang tersedia
+        $prodi_options = array("Teknik Informatika", "Sistem Informasi");
+        
+        // Loop untuk menampilkan opsi program studi
+        foreach ($prodi_options as $prodi) {
+            // Periksa apakah nilai saat ini cocok dengan nilai dari database, jika cocok, tandai sebagai selected
+            $selected = ($prodi == $row['prodi']) ? 'selected' : '';
+            echo "<option value='$prodi' $selected>$prodi</option>";
+        }
+        ?>
+    </select>
+</div>
+
+
             <div class="form-group">
             <label for="email">Email:</label>
             <input type="text" id="email" name="email" value="<?php echo $row['email']; ?>" required  readonly>
@@ -592,6 +622,18 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
 | Connect with us on <a href="https://www.facebook.com/stmikkomputama"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
   <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
 </svg> Facebook</a></footer>
+<script>
+    function fillNIM() {
+      var id_userField = document.getElementById("id_user");
+      var nimField = document.getElementById("nim");
+
+      // Mengisi textfield nim dengan nilai id_user
+      nimField.value = id_userField.value;
+    }
+
+    // Menambahkan event listener untuk textfield id_user
+    document.getElementById("id_user").addEventListener("input", fillNIM);
+  </script>
 <script>
   // Mendapatkan elemen modal, tombol, dan span penutup modal
   var modal = document.getElementById("myModal");

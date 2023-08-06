@@ -285,13 +285,13 @@ if (mysqli_num_rows($result) > 0) {
 		<form action="" method="POST">
 		<div class="container-form">
 		<div class="form-group">
-			<label for="username">Username:</label>
-			<input type="text" class="form-control" id="username" name="username" required>
+		<label for="username">Username:</label>
+		<input type="text" class="form-control" id="username" name="username" maxlength="15" required>
 		</div>
 		<div class="form-group">
 			<label for="password">Password:</label>
 			<div class="password-input">
-				<input type="password" class="form-control" id="password" name="password" required>
+				<input type="password" class="form-control" id="password" name="password" maxlength="30" required>
 				<i class="fas fa-eye" id="passwordToggle"></i>
 			</div>
 		</div>

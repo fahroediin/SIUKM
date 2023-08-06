@@ -203,7 +203,7 @@ $result = mysqli_query($conn, $query);
 </a>
 <h2><i>Dashboard</i></h2>
 <a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
+<p style="text-align: center;">--Monitoring--</p>
             <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
@@ -256,13 +256,11 @@ $result = mysqli_query($conn, $query);
                                     <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
                                     <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
                                     <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
-                                    <p><span class="label">Prodi:</span> <span class="value"><?php echo $prodi; ?></span></p>
-                                    <p><span class="label">Semester:</span> <span class="value"><?php echo $semester; ?></span></p>
                                 </div>
                                 <!-- Tombol Ganti Password -->
-                                <a href="ganti_password_pengguna.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>
+                                <a href="ganti_password_kemahasiswaan.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>
                                 <!-- Tombol Update Data Diri -->
-                                <a href="update_pengguna.php" class="btn btn-primary mt-2"><i class="fas fa-user-edit"></i> Update Data Diri</a>
+                                <a href="update_kemahasiswaan.php" class="btn btn-primary mt-2"><i class="fas fa-user-edit"></i> Update Data Diri</a>
                             </div>
                         </div>
                     </div>
