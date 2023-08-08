@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Show the alert message
             echo '<script>showSnackbar();</script>';
             // Redirect ke halaman test-calabar.php
-            header("Location: test-calabar.php");
+            header("Location: sukses_register_ukm.php");
             exit();
         } else {
             echo "Error: " . mysqli_error($conn);

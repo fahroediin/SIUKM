@@ -214,6 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>No</th>
                 <th>ID Anggota</th>
                 <th>ID User</th>
                 <th>Nama Lengkap</th>
@@ -230,9 +231,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </thead>
         <tbody>
     <?php
+      $counter = 1;
     // Loop melalui hasil query untuk menampilkan data anggota UKM
     while ($row = mysqli_fetch_assoc($result)) {
+    
         echo "<tr>";
+        echo "<td>" . $counter . "</td>"; // Display the counter value
         echo "<td>" . $row['id_anggota'] . "</td>";
         echo "<td>" . $row['id_user'] . "</td>";
         echo "<td>" . $row['nama_lengkap'] . "</td>";
@@ -248,6 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
         echo "<td><a href='delete_anggota.php?id_anggota=" . $row['id_anggota'] . "' class='btn btn-danger btn-sm delete-button' onclick='return confirmDelete()'>Hapus</a></td>";
         echo "</tr>";
+        $counter++;
     }
     ?>
 </tbody>

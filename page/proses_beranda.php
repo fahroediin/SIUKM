@@ -1,0 +1,237 @@
+<?php
+// Memasukkan file db_connect.php
+require_once "db_connect.php";
+
+// Memulai session
+session_start();
+
+// Memeriksa apakah pengguna sudah login
+if (!isset($_SESSION['id_user'])) {
+    // Jika belum login, redirect ke halaman login.php
+    header("Location: login.php");
+    exit();
+}
+
+// Memeriksa level pengguna
+if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
+    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
+    header("Location: beranda.php");
+    exit();
+}
+
+// Function to generate a unique filename for image uploads
+function generateUniqueFilename($filename, $extension) {
+    $filename = preg_replace("/[^a-zA-Z0-9]/", "", $filename); // Remove non-alphanumeric characters
+    $filename = str_replace(" ", "", $filename); // Remove spaces
+    return $filename . "." . $extension;
+}
+
+// Function to upload an image and return the uploaded filename
+function uploadImage($fileInputName, $targetDir) {
+    if (isset($_FILES[$fileInputName]["name"]) && $_FILES[$fileInputName]["name"] != "") {
+        $imageFileName = $_FILES[$fileInputName]["name"];
+        $imageFileExtension = strtolower(pathinfo($imageFileName, PATHINFO_EXTENSION));
+
+        // Generate a unique filename for the image
+        $uniqueFilename = generateUniqueFilename($imageFileName, $imageFileExtension);
+        $targetFilePath = $targetDir . $uniqueFilename;
+
+        // Move the uploaded file to the target directory
+        if (move_uploaded_file($_FILES[$fileInputName]["tmp_name"], $targetFilePath)) {
+            return $uniqueFilename;
+        } else {
+            return false; // File upload failed
+        }
+    }
+    return null; // File not uploaded
+}
+
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validate and sanitize form inputs
+    $informasi = mysqli_real_escape_string($conn, $_POST["informasi"]);
+
+    // Define the target directory for image uploads
+    $targetDir = "../assets/images/carousel/";
+
+    // Upload foto1, foto2, and foto3 (if provided)
+    $foto1 = uploadImage("foto1", $targetDir);
+    $foto2 = uploadImage("foto2", $targetDir);
+    $foto3 = uploadImage("foto3", $targetDir);
+
+    // Prepare the SQL query to insert/update data into tab_beranda table
+    if ($_POST["action"] === "edit") {
+        // Edit existing data in tab_beranda
+        $sql = "UPDATE tab_beranda SET informasi = ?, foto1 = ?, foto2 = ?, foto3 = ?";
+    } else {
+        // Insert new data into tab_beranda
+        $sql = "INSERT INTO tab_beranda (informasi, foto1, foto2, foto3) VALUES (?, ?, ?, ?)";
+    }
+
+    // Prepare the statement
+    $stmt = $conn->prepare($sql);
+
+    // Bind the parameters
+    $stmt->bind_param("ssss", $informasi, $foto1, $foto2, $foto3);
+
+    // Execute the query
+    if ($stmt->execute()) {
+        // Redirect to the same page with a success parameter
+        header("Location: proses_beranda.php?success=1");
+        exit();
+    } else {
+        // Handle the error condition, for example:
+        echo "Sorry, there was an error saving the data.";
+        exit();
+    }
+}
+
+// Fetch existing data from the tab_beranda table
+$query_beranda = "SELECT * FROM tab_beranda";
+$result_beranda = mysqli_query($conn, $query_beranda);
+$row_beranda = mysqli_fetch_assoc($result_beranda);
+
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Manajemen Galeri - SIUKM</title>
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <style>
+           .sidebar {
+        text-align: center; /* Center the contents horizontally */
+    }
+        .sidebar img {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+       .card {
+           border: 1px solid #ccc;
+           border-radius: 8px;
+           padding: 20px;
+           max-width: 600px;
+           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+       }
+
+       .card-body {
+           display: flex;
+           flex-direction: column;
+           gap: 10px;
+       }
+
+       .card-body div {
+           display: flex;
+           flex-direction: column;
+       }
+
+       label {
+           font-weight: bold;
+           margin-bottom: 5px;
+       }
+
+       select,
+       input[type="text"],
+       input[type="date"],
+       button {
+           padding: 8px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+           font-size: 16px;
+       }
+
+       select {
+           width: 100%;
+       }
+
+       button {
+           background-color: #007bff;
+           color: #fff;
+           cursor: pointer;
+           transition: background-color 0.3s ease;
+       }
+
+       button:hover {
+           background-color: #0056b3;
+       }
+       
+   </style>
+
+ <!-- Sidebar -->
+ <div class="sidebar">
+    <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+    <h2><i>Galeri</i></h2>
+    <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
+            <p style="text-align: center;">--Manajemen--</p>
+            <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
+    <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
+    <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
+    <a href="proses_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
+    <a href="proses_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
+
+<script>
+    // Function to wrap buttons with a border, except for the Logout button
+    function wrapButtonsWithBorder() {
+        const buttons = document.querySelectorAll('.btn-manajemen');
+        buttons.forEach((button) => {
+            if (!button.getAttribute('id') || button.getAttribute('id') !== 'logout-btn') {
+                button.style.border = '1px solid #ccc';
+                button.style.borderRadius = '5px';
+                button.style.padding = '8px';
+                button.style.margin = '5px';
+            }
+        });
+    }
+
+    // Call the function to apply the border to the buttons
+    wrapButtonsWithBorder();
+</script>
+<body>
+<div class="content">
+            <div class="row justify-content-center">
+                <!-- Wrap the form with a card component -->
+                <div class="card">
+    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="<?php echo isset($row_beranda) ? 'edit' : 'add'; ?>">
+        <div>
+            <label for="informasi">Informasi:</label>
+            <textarea id="informasi" name="informasi" rows="4" cols="50"><?php echo isset($row_beranda) ? $row_beranda['informasi'] : ''; ?></textarea>
+        </div>
+        <div>
+            <label for="foto1">Foto 1:</label>
+            <input type="file" id="foto1" name="foto1" accept="image/*">
+        </div>
+        <div>
+            <label for="foto2">Foto 2:</label>
+            <input type="file" id="foto2" name="foto2" accept="image/*">
+        </div>
+        <div>
+            <label for="foto3">Foto 3:</label>
+            <input type="file" id="foto3" name="foto3" accept="image/*">
+        </div>
+        <button type="submit">Simpan</button>
+    </form>
+</div>
+</div>
+</body>
+</html>

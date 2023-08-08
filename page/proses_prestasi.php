@@ -308,6 +308,7 @@ $conn->close();
     <table class="table">
         <thead>
             <tr>
+                <th>No</th>
                 <th>ID Prestasi</th>
                 <th>Nama Prestasi</th>
                 <th>Penyelenggara</th>
@@ -324,10 +325,11 @@ $conn->close();
         'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
         'Agustus', 'September', 'Oktober', 'November', 'Desember'
     );
-
+    $counter = 1;
     foreach ($prestasi_data as $prestasi) :
     ?>
         <tr>
+        <td><?php echo $counter; ?></td>
             <td><?php echo $prestasi['id_prestasi']; ?></td>
             <td><?php echo $prestasi['nama_prestasi']; ?></td>
             <td><?php echo $prestasi['penyelenggara']; ?></td>
@@ -349,7 +351,10 @@ $conn->close();
                 </form>
             </td>
         </tr>
-    <?php endforeach; ?>
+        
+    <?php 
+       $counter++;
+endforeach; ?>
 </tbody>
     </table>
 </div>
