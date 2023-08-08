@@ -330,7 +330,7 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
                 <th>No HP</th>
                 <th>Level</th>
                 <th>Foto</th>
-                <th>Foto KTM</th>
+                <th>Foto Identitas</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -362,7 +362,7 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
                     // Foto KTM
                     $foto_ktm_filename = $row["foto_ktm"];
                     $foto_ktm_path = "../assets/images/ktm/" . $foto_ktm_filename;
-                    echo "<td><img src='$foto_ktm_path' alt='Foto KTM' width='100'></td>";
+                    echo "<td><img src='$foto_ktm_path' alt='Foto Identitas' width='100'></td>";
 
                     // Menambahkan kondisi jika ID user adalah "admin"
                     // Action buttons for each row
@@ -520,27 +520,35 @@ function logout() {
         <h2 style="text-align: center;">Tambah Pengguna</h2>
         <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="id_user">*ID User:</label>
-                <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
-                <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
-            </div>
-            <script>
-                            document.getElementById("id_user").addEventListener("input", function(event) {
-                let input = event.target.value;
-                input = input.slice(0, 10); // Membatasi panjang maksimal menjadi 10 karakter
-                event.target.value = input;
+            <div class="form-group">
+    <label for="id_user">*ID User:</label>
+    <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
+    <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
+</div>
 
-                let errorElement = document.getElementById("id-user-error");
-                if (input.length < 5 || input.length > 10 || !isValidIdUser(input)) {
-                    errorElement.textContent = "ID User harus menggunakan huruf/angka minimal 5 dan maksimal 10 karakter!";
-                    event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
-                } else {
-                    errorElement.textContent = "";
-                    event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
-                }
-            });
+<script>
+    document.getElementById("id_user").addEventListener("input", function(event) {
+        let input = event.target.value;
+        
+        // Remove characters that are not letters or numbers using a regular expression
+        input = input.replace(/[^a-zA-Z0-9]/g, '');
 
-            </script>
+        // Limit the length to a maximum of 10 characters
+        input = input.slice(0, 10);
+
+        event.target.value = input;
+
+        let errorElement = document.getElementById("id-user-error");
+        if (input.length < 5 || input.length > 10) {
+            errorElement.textContent = "ID User harus memiliki minimal 5 dan maksimal 10 karakter!";
+            event.target.classList.add("is-invalid");
+        } else {
+            errorElement.textContent = "";
+            event.target.classList.remove("is-invalid");
+        }
+    });
+</script>
+
   <div class="form-group">
     <label for="password">*Password:</label>
     <div class="password-input">
@@ -679,7 +687,7 @@ function logout() {
     }
     </script>
 <div class="form-group">
-    <label for="no_hp">No. HP:</label>
+    <label for="no_hp">*No. HP:</label>
     <input type="text" class="form-control" id="no_hp" placeholder="Wajib diisi" name="no_hp" maxlength="13" required>
     <div class="invalid-feedback" id="no-hp-error" style="color: red;"></div>
 </div>
@@ -710,9 +718,9 @@ function logout() {
                 <img id="pasfotoPreview" src="" alt="Pasfoto Preview" width="100">
             </div>
             <div class="form-group">
-                <label for="foto_ktm">Foto KTM:</label>
+                <label for="foto_ktm">Foto Identitas:</label>
                 <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*">
-                <img id="fotoKtmPreview" src="" alt="Foto KTM Preview" width="100">
+                <img id="fotoKtmPreview" src="" alt="Foto Identitas Preview" width="100">
             </div>
             <div class="form-group" required>
                 <label for="level">Level:</label>

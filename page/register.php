@@ -129,29 +129,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Registrasi Pengguna</h1>
 
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <div>
-        <label for="id_user">ID User (NIM):</label>
-        <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
-            <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
-        </div>
-        <script>
-    document.getElementById("id_user").addEventListener("input", function(event) {
-        let input = event.target.value;
-        input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
-        input = input.slice(0, 10); // Membatasi panjang maksimal menjadi 10 karakter
-        event.target.value = input;
+    <div>
+    <label for="id_user">ID User (NIM):</label>
+    <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
+    <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
+</div>
+<script>
+document.getElementById("id_user").addEventListener("input", function(event) {
+    let input = event.target.value;
+    input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
+    input = input.slice(0, 10); // Membatasi panjang maksimal menjadi 10 karakter
+    event.target.value = input;
 
-        let errorElement = document.getElementById("id-user-error");
-        if (input.length < 9 || input.length > 10) {
-            errorElement.textContent = "ID User harus berupa angka dengan panjang minimal 9 dan maksimal 10 digit!";
-            event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
-        } else {
-            errorElement.textContent = "";
-            event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
-        }
-    });
-        </script>
-
+    let errorElement = document.getElementById("id-user-error");
+    if (input.length < 9 || input.length > 10 || !/^[0-9]+$/.test(input)) {
+        errorElement.textContent = "ID User harus NIM dengan panjang minimal 9 dan maksimal 10 digit angka!";
+        event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+    } else {
+        errorElement.textContent = "";
+        event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+    }
+});
+</script>
 <div class="form-group">
     <label for="password">Password:</label>
     <div class="password-input">
@@ -164,14 +163,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="password-input">
         <input type="password" class="form-control" id="konfirmasi_password" name="confirmPassword" required>
         <i class="fas fa-eye" id="passwordToggle2"></i>
-    </div>
-
-
-        <div>
-            <label for="nama_lengkap">Nama Lengkap:</label>
-            <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Masukkan Nama Lengkap" oninput="validasiHuruf(event)">
+        <div class="invalid-feedback" id="passwordMismatchFeedback">
+            Password tidak sesuai.
         </div>
+    </div>
+</div>
+<script>
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('konfirmasi_password');
+    const mismatchFeedback = document.getElementById('passwordMismatchFeedback');
 
+    confirmPasswordInput.addEventListener('input', () => {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            mismatchFeedback.style.display = 'block';
+            confirmPasswordInput.setCustomValidity('Password tidak sesuai');
+        } else {
+            mismatchFeedback.style.display = 'none';
+            confirmPasswordInput.setCustomValidity('');
+        }
+    });
+</script>
+    <div>
+    <label for="nama_lengkap">Nama Lengkap:</label>
+    <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Masukkan Nama Lengkap" oninput="validasiHuruf(event)">
+    <div id="invalid-error" class="invalid-feedback" style="color: red;"></div>
+</div>
+
+<script>
+document.getElementById("nama_lengkap").addEventListener("input", function(event) {
+    let input = event.target.value;
+    input = input.replace(/[^A-Za-z\s]/g, ''); // Menghapus karakter non-huruf
+    input = input.slice(0, 70); // Membatasi panjang maksimal menjadi 70 karakter
+    event.target.value = input;
+
+    let errorElement = document.getElementById("invalid-error");
+    if (input.length < 1 || input.length > 70) {
+        errorElement.textContent = "Nama lengkap harus terdiri dari huruf saja dan memiliki panjang 1-70 karakter!";
+        event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+    } else {
+        errorElement.textContent = "";
+        event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+    }
+});
+</script>
         <script>
         function validasiHuruf(event) {
             const input = event.target;
@@ -179,86 +213,108 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             input.value = filteredValue;
         }
         </script>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required placeholder="Masukkan Email">
-        </div>
-        <div>
-            <label for="no_hp">Nomor HP:</label>
-            <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" oninput="validasiAngka(event, 15)">
-        </div>
-        <script>
-        function validasiAngka(event, maxLength) {
-            const input = event.target;
-            const filteredValue = input.value.replace(/[^0-9]/g, '').slice(0, maxLength);
-            input.value = filteredValue;
-        }
-        </script>
+
+
+       <div>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required placeholder="Masukkan Email">
+    <div id="email-error" class="invalid-feedback" style="color: red;"></div>
+</div>
+
+<script>
+document.getElementById("email").addEventListener("input", function(event) {
+    let input = event.target.value;
+
+    let errorElement = document.getElementById("email-error");
+    if (!validateEmail(input)) {
+        errorElement.textContent = "Email harus memiliki format yang valid (contoh: nama@example.com)";
+        event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+    } else {
+        errorElement.textContent = "";
+        event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+    }
+});
+
+function validateEmail(email) {
+    // Menggunakan regular expression untuk memeriksa format email
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|co\.id|net|org|edu|gov|mil|biz|info|name|museum|us|ca|uk|au|eu|jp|ae|in|cn|br|ch|es|fr|it|kr|ru|sa|se|za)$/i;
+    return emailPattern.test(email);
+}
+</script>
+
+<div>
+    <label for="no_hp">Nomor HP:</label>
+    <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" oninput="validasiNomorHP(event)">
+    <div id="no-hp-error" class="invalid-feedback" style="color: red;"></div>
+</div>
+
+<script>
+document.getElementById("no_hp").addEventListener("input", function(event) {
+    validasiNomorHP(event);
+});
+
+function validasiNomorHP(event) {
+    const input = event.target;
+    let filteredValue = input.value.replace(/\D/g, ''); // Menghapus karakter non-angka
+    filteredValue = filteredValue.slice(0, 13); // Membatasi panjang maksimal menjadi 13 karakter
+
+    let errorElement = document.getElementById("no-hp-error");
+    const minLength = 10;
+    const maxLength = 13;
+
+    if (filteredValue.length < minLength || filteredValue.length > maxLength) {
+        errorElement.textContent = `Nomor HP harus terdiri dari ${minLength} - ${maxLength} digit angka.`;
+        input.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+    } else if (!filteredValue.startsWith("08")) {
+        errorElement.textContent = "Nomor HP harus diawali dengan '08'.";
+        input.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+    } else {
+        errorElement.textContent = "";
+        input.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+    }
+
+    input.value = filteredValue; // Update nilai input yang telah difilter
+}
+</script>
         <div>
             <button type="submit">Daftar</button>
         </div>
     </form>
 
-    <div id="snackbar"></div>
 
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script>
-    function validatePassword() {
-        var passwordInput = document.getElementById("password");
-        var confirmPasswordInput = document.getElementById("konfirmasi_password");
-        var password = passwordInput.value;
-        var confirmPassword = confirmPasswordInput.value;
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector("form");
 
-        if (password !== confirmPassword) {
-            showSnackbar("Password tidak sesuai");
-            confirmPasswordInput.focus();
-            return false;
+    form.addEventListener("submit", function(event) {
+        let isValid = true;
+
+        // Cek setiap input field
+        const inputFields = form.querySelectorAll("input");
+        inputFields.forEach(function(input) {
+            if (input.classList.contains("is-invalid")) {
+                isValid = false;
+                event.preventDefault(); // Hentikan pengiriman data
+                const errorElement = input.nextElementSibling;
+                if (errorElement && errorElement.classList.contains("invalid-feedback")) {
+                    errorElement.style.display = "block"; // Tampilkan pesan error
+                }
+            }
+        });
+
+        if (!isValid) {
+            // Tampilkan pesan kesalahan di atas form (opsional)
+            const errorMessage = document.getElementById("global-error-message");
+            errorMessage.textContent = "Terdapat kesalahan pada data yang dimasukkan.";
+            errorMessage.style.display = "block";
         }
-
-        return true;
-    }
-
-    function validateForm() {
-        return validateIDUser() && validatePassword();
-    }
-
-    function validateIDUser() {
-        var idUserInput = document.getElementById('id_user');
-        var idUserValue = idUserInput.value.trim();
-        var numericRegex = /^[0-9]+$/;
-
-        if (idUserValue === '') {
-            idUserInput.setCustomValidity('ID User (NIM) harus diisi.');
-        } else if (!numericRegex.test(idUserValue)) {
-            idUserInput.setCustomValidity('ID User (NIM) hanya dapat diisi dengan angka.');
-        } else if (idUserValue.length > 11) {
-            idUserInput.setCustomValidity('ID User (NIM) maksimal 11 digit.');
-        } else {
-            idUserInput.setCustomValidity('');
-        }
-    }
-    // Check if there is any form data to populate
-    <?php if (isset($_SESSION['form_data'])) : ?>
-        var formData = <?php echo json_encode($_SESSION['form_data']); ?>;
-        document.getElementById("id_user").value = formData.id_user;
-        document.getElementById("nama_lengkap").value = formData.nama_lengkap;
-        document.getElementById("email").value = formData.email;
-        document.getElementById("no_hp").value = formData.no_hp;
-        <?php unset($_SESSION['form_data']); ?>
-    <?php endif; ?>
-    </script>
-
-    <?php if (isset($_SESSION['registration_success'])) : ?>
-        <script>
-            $(document).ready(function() {
-                var message = "<?php echo $_SESSION['registration_success']; ?>";
-                showSnackbar(message);
-            });
-        </script>
-    <?php endif; ?>
+    });
+});
+</script>
     <script>
     const passwordInput1 = document.getElementById("password");
     const passwordToggle1 = document.getElementById("passwordToggle1");

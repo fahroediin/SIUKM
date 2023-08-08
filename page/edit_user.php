@@ -218,6 +218,8 @@ if (isset($_POST['update'])) {
 <h2><i>Pengguna</i></h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
+            <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
+            <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
             <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
@@ -352,9 +354,9 @@ if (isset($_POST['update'])) {
 </div>
 
 <div class="form-group">
-    <label for="foto_ktm">Foto KTM:</label>
+    <label for="foto_ktm">Foto Identitas:</label>
     <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm">
-    <img id="fotoKtmPreview" src="<?php echo "../assets/images/ktm/" . $row['foto_ktm']; ?>" alt="Foto KTM Preview" width="100">
+    <img id="fotoKtmPreview" src="<?php echo "../assets/images/ktm/" . $row['foto_ktm']; ?>" alt="Foto Identitas Preview" width="100">
 </div>
             <div class="form-group">
                 <label for="level">Level:</label>

@@ -48,10 +48,49 @@ if (isset($_POST['submit'])) {
     $tgl_prestasi = $_POST['tgl_prestasi'];
     $id_ukm = $_POST['id_ukm'];
     $nama_ukm = $_POST['nama_ukm'];
+    $sertifikat = $_POST['sertifikat'];
 
    // Generate ID Prestasi
     $id_prestasi = generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi);
-
+    if (isset($_FILES['sertifikat'])) {
+        $targetDir = '../assets/images/sertifikat/';
+        $targetFile = $targetDir . basename($_FILES['sertifikat']['name']);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+    
+        // Check if image file is a actual image or fake image
+        $check = getimagesize($_FILES['sertifikat']['tmp_name']);
+        if ($check !== false) {
+            $uploadOk = 1;
+        } else {
+            echo "File is not an image.";
+            $uploadOk = 0;
+        }
+    
+        // Check file size
+        if ($_FILES['sertifikat']['size'] > 500000) {
+            echo "Sorry, your file is too large.";
+            $uploadOk = 0;
+        }
+    
+        // Allow certain file formats
+        if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
+            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = 0;
+        }
+    
+        if ($uploadOk == 0) {
+            echo "Sorry, your file was not uploaded.";
+        } else {
+            if (move_uploaded_file($_FILES['sertifikat']['tmp_name'], $targetFile)) {
+                $sertifikatFilename = htmlspecialchars(basename($_FILES['sertifikat']['name']));
+                echo "The file $sertifikatFilename has been uploaded.";
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
+    $sertifikatFilename = isset($sertifikatFilename) ? $sertifikatFilename : ''; // Initialize with empty string if not set
 
     // Memeriksa apakah ID Prestasi sudah ada di database
     $check_query = "SELECT COUNT(*) AS count FROM tab_prestasi WHERE id_prestasi = '$id_prestasi'";
@@ -62,8 +101,8 @@ if (isset($_POST['submit'])) {
         // ID Prestasi sudah ada, tampilkan pesan alert
         echo '<script>alert("ID Prestasi tidak boleh sama");</script>';
     } else {
-        // Menyimpan data ke database
-        $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm')";
+       // Menyimpan data ke database
+        $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm, sertifikat) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm', '$sertifikatFilename')";
         $result = $conn->query($sql);
 
         if ($result) {
@@ -245,6 +284,14 @@ $conn->close();
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
+    .certificate-preview {
+    margin-top: 10px;
+}
+
+.preview-image {
+    max-width: 100%;
+    height: auto;
+}
 </style>
 <script>
     // Define the updateNamaUKM function
@@ -317,6 +364,7 @@ $conn->close();
                 <th>Tanggal Prestasi</th>
                 <th>ID UKM</th>
                 <th>Nama UKM</th>
+                <th>Sertifikat</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -338,6 +386,9 @@ $conn->close();
             <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
             <td><?php echo $prestasi['id_ukm']; ?></td>
             <td><?php echo $prestasi['nama_ukm']; ?></td>
+            <td>
+            <img src="../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>" alt="Sertifikat" class="preview-image" onclick="openCertificateModal('../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>')">
+            </td>
             <td class="action-buttons">
                 <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->
                 <form method="get" action="edit_prestasi.php">
@@ -364,7 +415,7 @@ endforeach; ?>
     <div class="content">
     <div class="card">
     <h2 style="text-align: center;">Tambah Prestasi</h2>
-        <form method="post" action="proses_prestasi.php">
+    <form method="post" action="proses_prestasi.php" enctype="multipart/form-data">
               <!-- Menambahkan input field hidden untuk id_prestasi -->
               <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
             <div class="form-group">
@@ -396,6 +447,15 @@ endforeach; ?>
                 <label for="nama_ukm">Nama UKM:</label>
                 <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $prestasi['nama_ukm']; ?>" readonly>
             </div>
+            <div class="form-group">
+                <label for="sertifikat">Sertifikat:</label>
+                <input type="file" class="form-control-file" id="sertifikat" name="sertifikat" accept=".jpg, .jpeg, .png, .gif">
+                <?php if (isset($_FILES['sertifikat'])): ?>
+                    <div class="certificate-preview">
+                        <img src="../assets/images/sertifikat/<?php echo htmlspecialchars(basename($_FILES['sertifikat']['name'])); ?>" alt="Certificate Preview" class="preview-image">
+                    </div>
+                <?php endif; ?>
+            </div>
             <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
             <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
     <i class="fas fa-plus"></i> Tambah Prestasi
@@ -403,6 +463,9 @@ endforeach; ?>
     </div>
         </form>
     </div>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     // Function to confirm the delete action
     function confirmDelete() {
@@ -414,5 +477,35 @@ endforeach; ?>
         window.location.href = "?logout=true";
     }
 </script>
+<script>
+  // Function to open the modal with the clicked certificate image
+  function openCertificateModal(imageSrc) {
+    const modal = document.getElementById("certificateModal");
+    const certificateImage = document.getElementById("certificateImage");
+    
+    // Set the source of the modal image to the clicked image's source
+    certificateImage.src = imageSrc;
+    
+    // Open the modal
+    $(modal).modal('show');
+  }
+</script>
+
+<!-- Modal for Certificate Preview -->
+<div class="modal fade" id="certificateModal" tabindex="-1" role="dialog" aria-labelledby="certificateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="certificateModalLabel">Certificate Preview</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="" alt="Certificate" id="certificateImage" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
