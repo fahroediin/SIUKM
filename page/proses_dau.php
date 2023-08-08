@@ -113,6 +113,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <style>
         /* Tambahkan gaya CSS berikut untuk mengatur layout sidebar dan konten */
@@ -167,6 +169,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
+    .header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
     </style>
 
 
@@ -211,7 +223,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </script>
 <body>
 <div class="content">
+<div class="header">
     <h2>Data Anggota UKM</h2>
+    <button type="button" class="btn btn-primary" id="tambahAnggotaButton" data-toggle="modal" data-target="#tambahAnggotaModal">
+    <i class="fas fa-user-plus"></i> Tambah Anggota
+</button>
+</div>
+    </div>
+<div class="content">
     <div class="form-group">
     <table class="table table-bordered table-striped">
         <thead>
@@ -258,11 +277,90 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     ?>
 </tbody>
-
     </table>
         </div>
     
-            <div class="card">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        function confirmDelete() {
+                return confirm("Apakah yakin ingin menghapus data anggota ini?");
+            }
+</script>
+<!-- Script for handling file uploads -->
+<script>
+    // Function to handle pasfoto file upload
+    function openPasfotoUploader() {
+        document.getElementById("pasfoto").click();
+    }
+
+    document.getElementById("pasfoto").addEventListener("change", function() {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            document.getElementsByName("hidden_pasfoto")[0].value = reader.result;
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Function to handle foto_ktm file upload
+    function openFotoKTMUploader() {
+        document.getElementById("foto_ktm").click();
+    }
+
+    document.getElementById("foto_ktm").addEventListener("change", function() {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            document.getElementsByName("hidden_foto_ktm")[0].value = reader.result;
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $("#id_ukm_dropdown").change(function() {
+        // Ambil nilai ID UKM yang dipilih oleh pengguna
+        var id_ukm = $(this).val();
+
+        // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
+        $.ajax({
+            url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
+            method: "POST",
+            data: { id_ukm: id_ukm },
+            success: function(response) {
+                // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
+                $("#nama_ukm").val(response);
+            },
+            error: function(xhr, status, error) {
+                // Tangani error jika ada
+                console.error(error);
+            }
+        });
+    });
+});
+// Fungsi untuk logout
+function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+</script>
+<!-- Modal for adding a new anggota -->
+<div class="modal fade" id="tambahAnggotaModal" tabindex="-1" role="dialog" aria-labelledby="tambahAnggotaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
             <h2 style="text-align: center;">Tambah Data Anggota UKM</h2>
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="form-row">
@@ -381,31 +479,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="sjk_bergabung">SJK Bergabung:</label>
                 <input type="date" class="form-control" id="sjk_bergabung"  name="sjk_bergabung" required>
             </div>
-                        <div class="col-md-6">
-                <label for="id_ukm">ID UKM:</label>
-                <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
-                    <option value="">Pilih ID UKM</option>
-                    <?php
-                    // Fetch data from the tab_ukm table and populate the dropdown options
-                    $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm"; // Add 'nama_ukm' to the SELECT query
-                    $ukmResult = mysqli_query($conn, $ukmQuery);
+            <div class="col-md-6">
+    <label for="id_ukm">Nama UKM:</label>
+    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+        <option value="">Pilih Nama UKM</option>
+        <?php
+        // Fetch data from the tab_ukm table and populate the dropdown options
+        $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm"; // Add 'nama_ukm' to the SELECT query
+        $ukmResult = mysqli_query($conn, $ukmQuery);
 
-                    while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
-                        echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
-                    }
-                    ?>
-                </select>
+        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['nama_ukm'] . '</option>';
+        }
+        ?>
+    </select>
+</div>
             </div>
-            </div>
-
         <div class="form-row">
             <div class="col-md-6">
-                <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" required readonly>
+                <input type="text" class="form-control" name="nama_ukm" id="nama_ukm" style="display: none;" required readonly>
             </div>
             <input type="text" class="form-control" name="pasfoto" id="pasfoto" style="display: none;">
             <input type="text" name="foto_ktm" id="foto_ktm" style="display: none;">
-
 <!-- Move the "Tambah Anggota" button to the right side -->
 <div class="col-md-6 d-flex align-items-end justify-content-end">
     <button type="submit" class="btn btn-primary">
@@ -414,77 +509,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
     <input type="text" class="form-control" placeholder="Akan terisi secara otomatis" name="id_anggota" readonly style="display: none;">
         </form>
+            </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-        function confirmDelete() {
-                return confirm("Apakah yakin ingin menghapus data anggota ini?");
-            }
-</script>
-<!-- Script for handling file uploads -->
-<script>
-    // Function to handle pasfoto file upload
-    function openPasfotoUploader() {
-        document.getElementById("pasfoto").click();
-    }
+    </div>
+</div>
 
-    document.getElementById("pasfoto").addEventListener("change", function() {
-        var file = this.files[0];
-        var reader = new FileReader();
-        reader.onloadend = function() {
-            document.getElementsByName("hidden_pasfoto")[0].value = reader.result;
-        };
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Function to handle foto_ktm file upload
-    function openFotoKTMUploader() {
-        document.getElementById("foto_ktm").click();
-    }
-
-    document.getElementById("foto_ktm").addEventListener("change", function() {
-        var file = this.files[0];
-        var reader = new FileReader();
-        reader.onloadend = function() {
-            document.getElementsByName("hidden_foto_ktm")[0].value = reader.result;
-        };
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-    });
-</script>
-
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $("#id_ukm_dropdown").change(function() {
-        // Ambil nilai ID UKM yang dipilih oleh pengguna
-        var id_ukm = $(this).val();
-
-        // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
-        $.ajax({
-            url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
-            method: "POST",
-            data: { id_ukm: id_ukm },
-            success: function(response) {
-                // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
-                $("#nama_ukm").val(response);
-            },
-            error: function(xhr, status, error) {
-                // Tangani error jika ada
-                console.error(error);
-            }
-        });
-    });
-});
-// Fungsi untuk logout
-function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
-</script>
 </body>
 </html>
