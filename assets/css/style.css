@@ -324,7 +324,9 @@ footer a:hover {
   transition: width 0.3s;
   z-index: 1000;
 }
-
+.invalid-feedback {
+  color: red;
+}
 /* Gaya teks pada sidebar */
 .sidebar h2 {
   color: #fff;

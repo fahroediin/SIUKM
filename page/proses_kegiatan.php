@@ -1,78 +1,52 @@
 <?php
-// Memasukkan file db_connect.php
 require_once "db_connect.php";
-
-// Memulai session
 session_start();
 
-// Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
-    // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
 
-// Memeriksa level pengguna
 if ($_SESSION['level'] == "2" || $_SESSION['level'] == "3") {
-    // Jika level adalah "2" atau "3", redirect ke halaman beranda.php
     header("Location: beranda.php");
     exit();
 }
 
-// Menandai halaman yang aktif
 $active_page = 'kegiatan';
 
-// Function to generate id_kegiatan based on tgl and random number
 function generateIdKegiatan($tgl)
 {
-    // Convert the date to a DateTime object
     $date = new DateTime($tgl);
-    
-    // Extract the year, month, and day from the DateTime object
     $year = $date->format('Y');
     $month = $date->format('m');
     $day = $date->format('d');
-
-    // Generate a unique random number
     $randomNumber = sprintf("%04d", mt_rand(1, 9999));
-
-    // Concatenate the year, month, day, and random number without hyphens
     return $year . $month . $day . $randomNumber;
 }
 
-
-// Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate and sanitize form inputs
+    // Validate and sanitize form inputs (add proper validation/sanitization)
+    
     $id_ukm = mysqli_real_escape_string($conn, $_POST["id_ukm"]);
     $nama_ukm = mysqli_real_escape_string($conn, $_POST["nama_ukm"]);
     $nama_kegiatan = mysqli_real_escape_string($conn, $_POST["nama_kegiatan"]);
     $tgl = mysqli_real_escape_string($conn, $_POST["tgl"]);
-            
-    // Generate a unique id_kegiatan based on tgl and random number
+
     $id_kegiatan = generateIdKegiatan($tgl);
 
-        // Prepare the SQL query to insert data into tab_galeri table
     $sql = "INSERT INTO tab_kegiatan (id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, tgl) VALUES (?, ?, ?, ?, ?)";
-
-    // Prepare the statement
     $stmt = $conn->prepare($sql);
-
-    // Bind the parameters
     $stmt->bind_param("sssss", $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $tgl);
 
-        // Execute the query
-        if ($stmt->execute()) {
-            // Redirect to the same page with a success parameter
-            header("Location: proses_kegiatan.php?success=1");
-            exit();
-        } else {
-            // Handle the error condition, for example:
-            echo "Sorry, there was an error uploading your file.";
-            exit();
-        }
+    if ($stmt->execute()) {
+        header("Location: proses_kegiatan.php?success=1");
+        exit();
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+        exit();
     }
-// Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
+}
+
 $query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result_ukm = mysqli_query($conn, $query_ukm);
 
@@ -156,7 +130,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         text-align: center; /* Center the contents horizontally */
     }
     </style>
-
+</head>
 <div class="sidebar">
     <a href="beranda.php">
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
@@ -197,51 +171,20 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     wrapButtonsWithBorder();
 </script>
 <body>
-<div class="content">
-    <h2>Data Kegiatan</h2>
-    <table class="table">
-        <thead>
-            <tr>
-            <th>ID Kegiatan</th>
-            <th>ID UKM</th>
-            <th>Nama UKM</th>
-            <th>Nama Kegiatan</th>
-            <th>Tanggal</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php
-    // Define Indonesian month names
-    $indonesianMonths = array(
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-        'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    );
-
-    while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
-        // Output table rows
-        echo "<tr>";
-        echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
-        echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
-        echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
-        echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
-        echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
-        echo "<td>
-                <a href='edit_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Edit</a>
-                <a href='delete_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Hapus</a>
-            </td>";
-        echo "</tr>";
-    }
-    ?>
-</tbody>
-</table>
-<div class="container">
-            <div class="row justify-content-center">
-                <!-- Wrap the form with a card component -->
-                <div class="card">
-                    <div class="card-body">
+    <!-- Modal -->
+ <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tambahModalLabel">Tambah Kegiatan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
+                <div class="card-body">
                         <h2 style="text-align: center;">Tambah Kegiatan</h2>
-                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                             enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="id_ukm">ID UKM:</label>
@@ -278,11 +221,57 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                             </button>
                                 </div>
                         </form>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Tambah Kegiatan</button>
                 </div>
             </div>
         </div>
     </div>
+<div class="content">
+    <h2>Data Kegiatan</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
+    Tambah Kegiatan
+</button>
+    <table class="table">
+        <thead>
+            <tr>
+            <th>ID Kegiatan</th>
+            <th>ID UKM</th>
+            <th>Nama UKM</th>
+            <th>Nama Kegiatan</th>
+            <th>Tanggal</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+    // Define Indonesian month names
+    $indonesianMonths = array(
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    );
+
+    while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
+        // Output table rows
+        echo "<tr>";
+        echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
+        echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
+        echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
+        echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
+        echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
+        echo "<td>
+                <a href='edit_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Edit</a>
+                <a href='delete_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Hapus</a>
+            </td>";
+        echo "</tr>";
+    }
+    ?>
+</tbody>
+</table>
+
+ 
 
 <!-- Add your JavaScript code here to populate the nama_ukm field -->
 <script>
@@ -324,5 +313,13 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         window.location.href = "?logout=true";
     }
 </script>
+<script>
+    // Fungsi untuk mengaktifkan modal ketika tombol "Tambah Kegiatan" di dalam modal diklik
+    document.getElementById("submitForm").addEventListener("click", function() {
+        // Simulasikan klik pada tombol submit di form sebenarnya
+        document.querySelector(".modal-body form").submit();
+    });
+</script>
+
 </body>
 </html>

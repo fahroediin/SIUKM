@@ -52,11 +52,15 @@ if (isset($_POST['submit'])) {
 
    // Generate ID Prestasi
     $id_prestasi = generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi);
-    if (isset($_FILES['sertifikat'])) {
-        $targetDir = '../assets/images/sertifikat/';
-        $targetFile = $targetDir . basename($_FILES['sertifikat']['name']);
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+// Check if the certificate file is uploaded
+if (isset($_FILES['sertifikat'])) {
+    $targetDir = '../assets/images/sertifikat/';
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($_FILES['sertifikat']['name'], PATHINFO_EXTENSION));
+    
+    // Generate the certificate file name
+    $certificateFilename = "sertifikat" . $id_ukm . "_" . $nama_prestasi . "." . $imageFileType;
+    $targetFile = $targetDir . $certificateFilename;
     
         // Check if image file is a actual image or fake image
         $check = getimagesize($_FILES['sertifikat']['tmp_name']);
@@ -83,7 +87,7 @@ if (isset($_POST['submit'])) {
             echo "Sorry, your file was not uploaded.";
         } else {
             if (move_uploaded_file($_FILES['sertifikat']['tmp_name'], $targetFile)) {
-                $sertifikatFilename = htmlspecialchars(basename($_FILES['sertifikat']['name']));
+                $sertifikatFilename = $certificateFilename;
                 echo "The file $sertifikatFilename has been uploaded.";
             } else {
                 echo "Sorry, there was an error uploading your file.";
@@ -102,7 +106,7 @@ if (isset($_POST['submit'])) {
         echo '<script>alert("ID Prestasi tidak boleh sama");</script>';
     } else {
        // Menyimpan data ke database
-        $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm, sertifikat) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm', '$sertifikatFilename')";
+       $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm, sertifikat) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm', '$sertifikatFilename')";
         $result = $conn->query($sql);
 
         if ($result) {
@@ -223,6 +227,16 @@ $conn->close();
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
 <style>
+    .header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
     .card {
         width: 100%; /* Set the width to 100% to make the card responsive */
         max-width: 400px; /* Add max-width to limit the card's width */
@@ -350,10 +364,18 @@ $conn->close();
     wrapButtonsWithBorder();
 </script>
         <body>
-  <!-- Data Prestasi -->
   
-<div class="content">
-    <h2>Data Prestasi</h2>
+    <!-- Data User -->
+    <<div class="content">
+        <div class="header">
+            <h2>Data Prestasi</h2>
+            <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#tambahPrestasiModal">
+                <i class="fas fa-plus"></i> Tambah Prestasi
+            </button>
+        </div>
+    </div>
+
+    <<div class="content">
     <table class="table">
         <thead>
             <tr>
@@ -362,7 +384,6 @@ $conn->close();
                 <th>Nama Prestasi</th>
                 <th>Penyelenggara</th>
                 <th>Tanggal Prestasi</th>
-                <th>ID UKM</th>
                 <th>Nama UKM</th>
                 <th>Sertifikat</th>
                 <th>Aksi</th>
@@ -384,7 +405,6 @@ $conn->close();
             <td><?php echo $prestasi['nama_prestasi']; ?></td>
             <td><?php echo $prestasi['penyelenggara']; ?></td>
             <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
-            <td><?php echo $prestasi['id_ukm']; ?></td>
             <td><?php echo $prestasi['nama_ukm']; ?></td>
             <td>
             <img src="../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>" alt="Sertifikat" class="preview-image" onclick="openCertificateModal('../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>')">
@@ -411,50 +431,73 @@ endforeach; ?>
 </tbody>
     </table>
 </div>
-    <!-- Form Tambah Prestasi -->
-    <div class="content">
-    <div class="card">
-    <h2 style="text-align: center;">Tambah Prestasi</h2>
+          <!-- Modal for Tambah Prestasi -->
+          <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" role="dialog" aria-labelledby="tambahPrestasiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <h2 style="text-align: center;">Tambah Prestasi</h2>
     <form method="post" action="proses_prestasi.php" enctype="multipart/form-data">
               <!-- Menambahkan input field hidden untuk id_prestasi -->
               <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
+              <div class="form-group">
+                <label for="nama_prestasi">*Nama Prestasi:</label>
+                <input type="text" class="form-control" id="nama_prestasi" placeholder="Masukan nama prestasi maksimal 30 karakter" maxlength="30" name="nama_prestasi" required>
+                <div class="invalid-feedback">
+                    Nama prestasi tidak boleh lebih dari 30 karakter.
+                </div>
+            </div>
+
             <div class="form-group">
-                <label for="nama_prestasi">Nama Prestasi:</label>
-                <input type="text" class="form-control" id="nama_prestasi" name="nama_prestasi" required>
+                <label for="penyelenggara">*Penyelenggara:</label>
+                <input type="text" class="form-control" id="penyelenggara" placeholder="Masukan nama penyelenggara maksimal 30 karakter" maxlength="30" name="penyelenggara" required>
+                <div class="invalid-feedback">
+                    Nama prestasi tidak boleh lebih dari 30 karakter.
             </div>
             <div class="form-group">
-                <label for="penyelenggara">Penyelenggara:</label>
-                <input type="text" class="form-control" id="penyelenggara" name="penyelenggara" required>
-            </div>
-            <div class="form-group">
-                <label for="tgl_prestasi">Tanggal Prestasi:</label>
+                <label for="tgl_prestasi">*Tanggal Prestasi:</label>
                 <input type="date" class="form-control" id="tgl_prestasi" name="tgl_prestasi" value="<?php echo $prestasi['tgl_prestasi']; ?>" required>
             </div>
             <div class="form-group">
-                <label for="id_ukm">ID UKM:</label>
-                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
-                    <option value="" selected disabled>Pilih ID UKM</option>
-                    <?php
-                    // Membuat opsi combobox dari hasil query
-                    foreach ($namaUKM as $id_ukm => $nama_ukm) {
-                        $selected = ($prestasi['id_ukm'] == $id_ukm) ? 'selected' : '';
-                        echo "<option value='$id_ukm' $selected>$id_ukm</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $prestasi['nama_ukm']; ?>" readonly>
-            </div>
+    <label for="id_ukm">*Nama UKM:</label>
+    <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
+        <option value="" selected disabled>Pilih UKM</option>
+        <?php
+        // Membuat opsi combobox dari hasil query
+        foreach ($namaUKM as $id_ukm => $nama_ukm) {
+            $selected = ($prestasi['id_ukm'] == $id_ukm) ? 'selected' : '';
+            echo "<option value='$id_ukm' $selected>$nama_ukm</option>";
+        }
+        ?>
+    </select>
+    <!-- Hidden input field to store the nama_ukm value -->
+    <input type="hidden" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $prestasi['nama_ukm']; ?>" readonly>
+</div>
+<script>
+    function updateNamaUKM(selectElement) {
+    var selectedIdUkm = selectElement.value;
+    var namaUkmField = document.getElementById("nama_ukm");
+    var namaUkmHiddenField = document.getElementById("nama_ukm_hidden");
+
+    // Set the value of the "nama_ukm" field based on the selected "id_ukm"
+    if (selectedIdUkm in <?php echo json_encode($namaUKM); ?>) {
+        namaUkmField.value = <?php echo json_encode($namaUKM); ?>[selectedIdUkm];
+        namaUkmHiddenField.value = <?php echo json_encode($namaUKM); ?>[selectedIdUkm]; // Set the hidden field value
+    } else {
+        namaUkmField.value = '';
+        namaUkmHiddenField.value = '';
+    }
+}
+</script>
             <div class="form-group">
                 <label for="sertifikat">Sertifikat:</label>
                 <input type="file" class="form-control-file" id="sertifikat" name="sertifikat" accept=".jpg, .jpeg, .png, .gif">
-                <?php if (isset($_FILES['sertifikat'])): ?>
-                    <div class="certificate-preview">
-                        <img src="../assets/images/sertifikat/<?php echo htmlspecialchars(basename($_FILES['sertifikat']['name'])); ?>" alt="Certificate Preview" class="preview-image">
-                    </div>
-                <?php endif; ?>
+                <img id="sertifikatPreview" src="" alt="Sertifikat Preview" width="100">
             </div>
             <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
             <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
@@ -462,7 +505,10 @@ endforeach; ?>
 </button>
     </div>
         </form>
+            </div>
+        </div>
     </div>
+</div>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -478,34 +524,54 @@ endforeach; ?>
     }
 </script>
 <script>
-  // Function to open the modal with the clicked certificate image
-  function openCertificateModal(imageSrc) {
-    const modal = document.getElementById("certificateModal");
-    const certificateImage = document.getElementById("certificateImage");
-    
-    // Set the source of the modal image to the clicked image's source
-    certificateImage.src = imageSrc;
-    
-    // Open the modal
-    $(modal).modal('show');
-  }
-</script>
+    // Function to update certificate preview
+    function updateCertificatePreview(input) {
+        const preview = document.getElementById("sertifikatPreview");
+        const file = input.files[0];
+        const reader = new FileReader();
 
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Add event listener for the sertifikat input
+    const sertifikatInput = document.getElementById('sertifikat');
+    sertifikatInput.addEventListener('change', function () {
+        updateCertificatePreview(this);
+    });
+
+    // Function to open the certificate preview modal
+    function openCertificateModal(imageSrc) {
+        const modal = document.getElementById("certificateModal");
+        const certificateImage = document.getElementById("certificateImage");
+
+        // Set the source of the modal image to the clicked image's source
+        certificateImage.src = imageSrc;
+
+        // Open the modal
+        $(modal).modal('show');
+    }
+</script>
 <!-- Modal for Certificate Preview -->
 <div class="modal fade" id="certificateModal" tabindex="-1" role="dialog" aria-labelledby="certificateModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="certificateModalLabel">Certificate Preview</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <img src="" alt="Certificate" id="certificateImage" class="img-fluid">
-      </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="certificateModalLabel">Certificate Preview</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Certificate" id="certificateImage" class="img-fluid">
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 </body>
 </html>
