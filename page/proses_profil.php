@@ -13,7 +13,7 @@ if (!isset($_SESSION['id_user'])) {
 }
 
 // Menandai halaman yang aktif
-$active_page = 'proses_beranda';
+$active_page = 'proses_profil';
 
 // Memeriksa level pengguna
 if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
@@ -55,6 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $deskripsi = mysqli_real_escape_string($conn, $_POST["deskripsi"]);
     $visi = mysqli_real_escape_string($conn, $_POST["visi"]);
     $misi = mysqli_real_escape_string($conn, $_POST["misi"]);
+    $nama_web = mysqli_real_escape_string($conn, $_POST["nama_web"]);
+    $nama_instansi = mysqli_real_escape_string($conn, $_POST["nama_instansi"]);
 
     // Define the target directory for image uploads
     $targetDir = "../assets/images/logo/";
@@ -64,22 +66,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Prepare the SQL query to insert/update data into tab_profil table
     if ($_POST["action"] === "edit") {
         // Edit existing data in tab_profil
-        $sql = "UPDATE tab_profil SET deskripsi = ?, visi = ?, misi = ?, logo_siukm = ?";
+        $sql = "UPDATE tab_profil SET deskripsi = ?, visi = ?, misi = ?, logo_siukm = ?, nama_web = ?, nama_instansi = ?";
     } else {
         // Insert new data into tab_profil
-        $sql = "INSERT INTO tab_profil (deskripsi, visi, misi, logo_siukm) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO tab_profil (deskripsi, visi, misi, logo_siukm, nama_web, nama_instansi) VALUES (?, ?, ?, ?, ?, ?)";
     }
 
     // Prepare the statement
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters
-    $stmt->bind_param("ssss", $deskripsi, $visi, $misi, $logo_siukm);
+    $stmt->bind_param("ssssss", $deskripsi, $visi, $misi, $logo_siukm, $nama_web, $nama_instansi);
 
     // Execute the query
     if ($stmt->execute()) {
         // Redirect to the same page with a success parameter
-        header("Location: proses_beranda.php?success=1");
+        header("Location: proses_profil.php?success=1");
         exit();
     } else {
         // Handle the error condition, for example:
@@ -99,7 +101,7 @@ $row_profil = mysqli_fetch_assoc($result_profil);
 <html>
 
 <head>
-<title>Manajemen Beranda - SIUKM</title>
+<title>Manajemen Profil - SIUKM</title>
 <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -180,10 +182,11 @@ $row_profil = mysqli_fetch_assoc($result_profil);
  <!-- Sidebar -->
  <div class="sidebar">
     <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-    <h2><i>Beranda</i></h2>
+    <h2><i>Profil</i></h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
             <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
+            <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
             <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
@@ -221,8 +224,27 @@ $row_profil = mysqli_fetch_assoc($result_profil);
         <!-- Wrap the form with a card component -->
         <div class="card">
             <h2 style="text-align: center;">Data Profil</h2>
-            <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
-                <input type="hidden" name="action" value="<?php echo isset($row_profil) ? 'edit' : 'add'; ?>">
+                    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
+                    <input type="hidden" name="action" value="<?php echo isset($row_profil) ? 'edit' : 'add'; ?>">
+                        <div class="form-group">
+                        <label for="logo_siukm">Logo SIUKM:</label>
+                    <input type="file" id="logo_siukm" name="logo_siukm" accept="image/*" class="form-control-file">
+                    <div class="image-preview" id="logo_siukm-preview">
+                    <?php if(isset($row_profil['logo_siukm']) && !empty($row_profil['logo_siukm'])): ?>
+                        <img src="../assets/images/logo/<?php echo $row_profil['logo_siukm']; ?>" class="preview-image" alt="Logo SIUKM">
+                    <?php else: ?>
+                        <img src="../assets/images/logo/siukm-logo-default.png" class="preview-image" alt="Default Logo">
+                    <?php endif; ?>
+                </div>
+
+                    <div class="form-group">
+                    <label for="nama_web">Nama Web:</label>
+                    <input type="text" id="nama_web" name="nama_web" class="form-control" value="<?php echo isset($row_profil) ? $row_profil['nama_web'] : ''; ?>">
+                </div>
+                <div class="form-group">
+                    <label for="nama_instansi">Nama Instansi:</label>
+                    <input type="text" id="nama_instansi" name="nama_instansi" class="form-control" value="<?php echo isset($row_profil) ? $row_profil['nama_instansi'] : ''; ?>">
+                </div>
                 <div class="form-group">
                     <label for="deskripsi">Deskripsi:</label>
                     <textarea id="deskripsi" name="deskripsi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['deskripsi'] : ''; ?></textarea>
@@ -235,14 +257,7 @@ $row_profil = mysqli_fetch_assoc($result_profil);
                     <label for="misi">Misi:</label>
                     <textarea id="misi" name="misi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['misi'] : ''; ?></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="logo_siukm">Logo SIUKM:</label>
-                    <input type="file" id="logo_siukm" name="logo_siukm" accept="image/*" class="form-control-file">
-                    <div class="image-preview" id="logo_siukm-preview">
-                        <?php if(isset($row_profil['logo_siukm'])): ?>
-                            <img src="../assets/images/logo/<?php echo $row_profil['logo_siukm']; ?>" class="preview-image" alt="Logo SIUKM">
-                        <?php endif; ?>
-                    </div>
+     
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </form>

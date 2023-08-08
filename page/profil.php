@@ -145,11 +145,11 @@ mysqli_close($conn);
 			<div class="container">
 				<h1>Profil</h1>
 				<div class="jumbotron">
-    <img src="../assets/images/logo/<?php echo $row_profil['logo_siukm']; ?>" alt="Logo SIUKM" class="logo-siukm">
-    <h2>Sistem Informasi Unit Kegiatan Mahasiswa</h2>
-    <p>STMIK Komputama Majenang</p>
-</div>
-
+				<img src="../assets/images/logo/<?php echo $row_profil['logo_siukm']; ?>" alt="Logo SIUKM" class="logo-siukm rounded-circle">
+			<br>
+				<h2><?php echo $row_profil['nama_web']; ?></h2>
+				<p><?php echo $row_profil['nama_instansi']; ?></p>
+			</div>
 
 				<div class="jumbotron">
     <h3>Deskripsi Singkat</h3>
@@ -159,21 +159,14 @@ mysqli_close($conn);
     <p><?php echo $row_profil['visi']; ?></p>
 
     <h3>Misi</h3>
-    <ul class="left-align">
-        <?php
-        $misi_list = explode("\n", $row_profil['misi']);
-        foreach ($misi_list as $misi) {
-            echo "<li>$misi</li>";
-        }
-        ?>
-    </ul>
+	<p><?php echo $row_profil['misi']; ?></p>
 </div>
 			
 		
 <!-- Update this part of the code in your HTML body -->
 <div class="jumbotron ukm-grid">
     <h3>Daftar Unit Kegiatan Mahasiswa</h3>
-	<p>STMIK Komputama Majenang</p>
+	<p><?php echo $row_profil['nama_instansi']; ?></p>
     <div class="card-deck">
         <?php foreach ($ukm_data as $ukm) : ?>
             <div class="card">
