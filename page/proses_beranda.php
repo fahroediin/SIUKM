@@ -39,6 +39,12 @@ function uploadImage($fileInputName, $targetDir, $carouselNumber) {
         $uniqueFilename = "carousel" . $carouselNumber . "." . $imageFileExtension;
         $targetFilePath = $targetDir . $uniqueFilename;
 
+        // Delete the existing file (if any)
+        $existingFilePath = $targetDir . $uniqueFilename;
+        if (file_exists($existingFilePath)) {
+            unlink($existingFilePath);
+        }
+
         // Move the uploaded file to the target directory
         if (move_uploaded_file($_FILES[$fileInputName]["tmp_name"], $targetFilePath)) {
             return $uniqueFilename;
@@ -49,6 +55,7 @@ function uploadImage($fileInputName, $targetDir, $carouselNumber) {
     return null; // File not uploaded
 }
 
+
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate and sanitize form inputs
@@ -57,10 +64,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Define the target directory for image uploads
     $targetDir = "../assets/images/carousel/";
 
-    $foto1 = uploadImage("foto1", $targetDir, 1); // Assuming carousel number is 1
-    $foto2 = uploadImage("foto2", $targetDir, 2); // Assuming carousel number is 2
-    $foto3 = uploadImage("foto3", $targetDir, 3); // Assuming carousel number is 3
-    
+    // Upload and replace images
+    $foto1 = uploadImage("foto1", $targetDir, 1);
+    $foto2 = uploadImage("foto2", $targetDir, 2);
+    $foto3 = uploadImage("foto3", $targetDir, 3);
 
     // Prepare the SQL query to insert/update data into tab_beranda table
     if ($_POST["action"] === "edit") {
@@ -231,18 +238,33 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
         <div class="form-group">
             <label for="foto1">Slide 1:</label>
             <input type="file" id="foto1" name="foto1" accept="image/*" class="form-control-file">
-            <div class="image-preview" id="foto1-preview"></div>
+            <div class="image-preview" id="foto1-preview">
+            <?php if(isset($row_beranda['foto1']) && !empty($row_beranda['foto1'])): ?>
+                <img src="../assets/images/carousel/<?php echo $row_beranda['foto1']; ?>" class="preview-image" alt="Foto 1">
+                <p style="font-size: 14px;">Foto saat ini</p>
+                <?php endif; ?>
         </div>
+    </div>
         <div class="form-group">
             <label for="foto2">Slide 2:</label>
             <input type="file" id="foto2" name="foto2" accept="image/*" class="form-control-file">
-            <div class="image-preview" id="foto2-preview"></div>
+            <div class="image-preview" id="foto2-preview">
+            <?php if(isset($row_beranda['foto2']) && !empty($row_beranda['foto2'])): ?>
+                <img src="../assets/images/carousel/<?php echo $row_beranda['foto2']; ?>" class="preview-image" alt="Foto 2">
+                <p style="font-size: 14px;">Foto saat ini</p>
+                <?php endif; ?>
         </div>
+    </div>
         <div class="form-group">
             <label for="foto3">Slide 3:</label>
             <input type="file" id="foto3" name="foto3" accept="image/*" class="form-control-file">
-            <div class="image-preview" id="foto3-preview"></div>
+            <div class="image-preview" id="foto3-preview">
+            <?php if(isset($row_beranda['foto3']) && !empty($row_beranda['foto3'])): ?>
+                <img src="../assets/images/carousel/<?php echo $row_beranda['foto3']; ?>" class="preview-image" alt="Foto 3">
+                <p style="font-size: 14px;">Foto saat ini</p>
+                <?php endif; ?>
         </div>
+    </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>

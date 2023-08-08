@@ -261,7 +261,9 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
     /* Atur gaya untuk elemen H2 pada header */
     margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
 }
-
+.is-invalid {
+    border-color: red;
+}
 </style>
 
 
@@ -426,9 +428,6 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
     }
 </script>
 
-
-
-    
     <script>
     const passwordInput1 = document.getElementById("password");
     const passwordToggle1 = document.getElementById("passwordToggle1");
@@ -460,38 +459,6 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
     });
     </script>
 
-
-    <script>
-    // Function to allow only numeric input in the phone number field and limit to 13 digits
-    document.getElementById("no_hp").addEventListener("input", function (e) {
-        var value = e.target.value;
-        var numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
-        var maxLength = 13; // Maximum length for the phone number
-
-        // Limit the input to the maximum length
-        if (numericValue.length > maxLength) {
-            numericValue = numericValue.slice(0, maxLength);
-        }
-
-        e.target.value = numericValue;
-    });
-</script>
-
-
-
-<script>
-    function validateForm() {
-        var password = document.getElementById("password").value;
-        var konfirmasiPassword = document.getElementById("konfirmasi_password").value;
-
-        if (password !== konfirmasiPassword) {
-            alert("Password tidak cocok!");
-            return false;
-        }
-
-        return true;
-    }
-</script>
 
 <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -550,30 +517,123 @@ function logout() {
       </div>
       <div class="modal-body">
         <!-- Place your form here -->
-        <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
         <h2 style="text-align: center;">Tambah Pengguna</h2>
         <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="id_user">ID User:</label>
+                <label for="id_user">*ID User:</label>
                 <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
+                <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
             </div>
-            <div class="form-group">
-            <label for="password">Password:</label>
-            <div class="password-input">
-                <input type="password" class="form-control" id="password" maxlength="30" name="password" required>
-                <i class="fas fa-eye" id="passwordToggle1"></i>
-            </div>
-            </div>
-            <div class="form-group">
-                <label for="konfirmasi_password">Konfirmasi Password:</label>
-                <div class="password-input">
-                <input type="password" class="form-control" id="konfirmasi_password" maxlength="30" name="konfirmasi_password" required>
-                <i class="fas fa-eye" id="passwordToggle2"></i>
-            </div>
-            <div class="form-group">
-                <label for="nama_lengkap">Nama Lengkap:</label>
-                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
-            </div>
+            <script>
+                            document.getElementById("id_user").addEventListener("input", function(event) {
+                let input = event.target.value;
+                input = input.slice(0, 10); // Membatasi panjang maksimal menjadi 10 karakter
+                event.target.value = input;
+
+                let errorElement = document.getElementById("id-user-error");
+                if (input.length < 5 || input.length > 10 || !isValidIdUser(input)) {
+                    errorElement.textContent = "ID User harus menggunakan huruf/angka minimal 5 dan maksimal 10 karakter!";
+                    event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+                } else {
+                    errorElement.textContent = "";
+                    event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+                }
+            });
+
+            </script>
+  <div class="form-group">
+    <label for="password">*Password:</label>
+    <div class="password-input">
+        <input type="password" class="form-control" placeholder="Wajib diisi" id="password" maxlength="30" name="password" required>
+        <i class="fas fa-eye" id="passwordToggle1"></i>
+    </div>
+</div>
+<div class="form-group">
+    <label for="konfirmasi_password">*Konfirmasi Password:</label>
+    <div class="password-input">
+        <input type="password" class="form-control" placeholder="Pastikan konfirmasi password sesuai" id="konfirmasi_password" maxlength="30" name="konfirmasi_password" required>
+        <i class="fas fa-eye" id="passwordToggle2"></i>
+    </div>
+    <div class="invalid-feedback" id="password-match-error" style="color: red;"></div>
+</div>
+<script>
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("konfirmasi_password");
+    const passwordMatchError = document.getElementById("password-match-error");
+
+    passwordInput.addEventListener("input", validatePassword);
+    confirmPasswordInput.addEventListener("input", validatePassword);
+
+    function validatePassword() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // Check if passwords match and have a minimum length of 6 characters
+        if (password === confirmPassword && password.length >= 6) {
+            passwordMatchError.textContent = "";
+            passwordInput.classList.remove("is-invalid");
+            confirmPasswordInput.classList.remove("is-invalid");
+        } else {
+            passwordMatchError.textContent = "Password harus sesuai dan memiliki minimal 6 karakter!";
+            passwordInput.classList.add("is-invalid");
+            confirmPasswordInput.classList.add("is-invalid");
+        }
+    }
+
+    // Toggle password visibility
+    document.getElementById("passwordToggle1").addEventListener("click", function() {
+        togglePasswordVisibility("password");
+    });
+
+    document.getElementById("passwordToggle2").addEventListener("click", function() {
+        togglePasswordVisibility("konfirmasi_password");
+    });
+
+    function togglePasswordVisibility(inputId) {
+        const passwordInput = document.getElementById(inputId);
+        const icon = passwordInput.nextElementSibling;
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>
+<div class="form-group">
+    <label for="nama_lengkap">*Nama Lengkap:</label>
+    <input type="text" class="form-control" placeholder="Wajib diisi" id="nama_lengkap" name="nama_lengkap" required>
+    <div class="invalid-feedback" id="nama-lengkap-error" style="color: red;"></div>
+</div>
+
+<script>
+    document.getElementById("nama_lengkap").addEventListener("input", function(event) {
+        let input = event.target.value;
+        
+        // Remove non-letter characters using a regular expression
+        input = input.replace(/[^a-zA-Z]/g, '');
+
+        // Limit the length to a maximum of 70 characters
+        input = input.slice(0, 70);
+
+        event.target.value = input;
+
+        let errorElement = document.getElementById("nama-lengkap-error");
+        if (input.length < 1) {
+            errorElement.textContent = "Nama Lengkap harus memiliki minimal 1 huruf!";
+            event.target.classList.add("is-invalid");
+        } else {
+            errorElement.textContent = "";
+            event.target.classList.remove("is-invalid");
+        }
+    });
+</script>
+
+
             <div class="form-group">
                 <label for="prodi">Program Studi:</label>
                 <select id="prodi" name="prodi" class="form-control">
@@ -595,16 +655,21 @@ function logout() {
                 </select>
             </div>
             <div class="form-group">
-    <label for="email">Email:</label>
-    <input type="text" class="form-control" id="email" name="email">
-</div>
+        <label for="email">*Email:</label>
+        <input type="text" class="form-control" placeholder="Wajib diisi dengan format email yang sesuai" id="email" name="email">
+        <div class="invalid-feedback" id="email-error" style="color: red;"></div>
+    </div>
 
-<script>
+    <script>
     document.getElementById("email").addEventListener("blur", function(event) {
         let input = event.target.value;
+        let errorElement = document.getElementById("email-error");
         if (!isValidEmail(input)) {
-            alert("Format email tidak valid!");
-            event.target.value = ""; // Mengosongkan input jika tidak valid
+            errorElement.textContent = "Format email tidak valid!";
+            event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+        } else {
+            errorElement.textContent = "";
+            event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
         }
     });
 
@@ -612,20 +677,31 @@ function logout() {
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         return emailPattern.test(email);
     }
-</script>
-
-            <div class="form-group">
+    </script>
+<div class="form-group">
     <label for="no_hp">No. HP:</label>
-    <input type="text" class="form-control" id="no_hp" name="no_hp" maxlength="13" required>
+    <input type="text" class="form-control" id="no_hp" placeholder="Wajib diisi" name="no_hp" maxlength="13" required>
+    <div class="invalid-feedback" id="no-hp-error" style="color: red;"></div>
 </div>
 
+
 <script>
-    document.getElementById("no_hp").addEventListener("input", function(event) {
-        let input = event.target.value;
-        input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
-        input = input.slice(0, 13); // Membatasi panjang maksimal menjadi 13 karakter
-        event.target.value = input;
-    });
+   document.getElementById("no_hp").addEventListener("input", function(event) {
+    let input = event.target.value;
+    input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
+    input = input.slice(0, 13); // Membatasi panjang maksimal menjadi 13 karakter
+    event.target.value = input;
+
+    let errorElement = document.getElementById("no-hp-error");
+    if (input.length < 10) {
+        errorElement.textContent = "No. HP harus memiliki minimal 10 karakter!";
+        event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+    } else {
+        errorElement.textContent = "";
+        event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+    }
+});
+
 </script>
 
             <div class="form-group">

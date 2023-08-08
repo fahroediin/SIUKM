@@ -120,6 +120,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     transform: translateY(-50%);
     cursor: pointer;
     }
+    .is-invalid {
+    border-color: red;
+}
     </style>
 </head>
 <body>
@@ -128,19 +131,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <div>
         <label for="id_user">ID User (NIM):</label>
-        <input type="text" id="id_user" name="id_user" required placeholder="Masukkan ID User (NIM)" oninput="validasiIdUser(event, 10)">
+        <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
+            <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
         </div>
-    <!-- Add this part to display the error message -->
-    <?php if ($error) : ?>
-        <p class="error-message"><?php echo $error; ?></p>
-    <?php endif; ?>
-</div>
         <script>
-        function validasiIdUser(event, maxLength) {
-            const input = event.target;
-            const filteredValue = input.value.replace(/[^0-9]/g, '').slice(0, maxLength);
-            input.value = filteredValue;
+    document.getElementById("id_user").addEventListener("input", function(event) {
+        let input = event.target.value;
+        input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
+        input = input.slice(0, 10); // Membatasi panjang maksimal menjadi 10 karakter
+        event.target.value = input;
+
+        let errorElement = document.getElementById("id-user-error");
+        if (input.length < 9 || input.length > 10) {
+            errorElement.textContent = "ID User harus berupa angka dengan panjang minimal 9 dan maksimal 10 digit!";
+            event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
+        } else {
+            errorElement.textContent = "";
+            event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
         }
+    });
         </script>
 
 <div class="form-group">
