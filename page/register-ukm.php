@@ -123,7 +123,7 @@ $result_ukm = mysqli_query($conn, $query_ukm);
 <!DOCTYPE html>
 <html>
 <head>
-	<title>SISTEM INFORMASI UKM STMIK KOMPUTAMA MAJENANG</title>
+  <title>Pendaftaran UKM - SIUKM STMIK KOMPUTAMA MAJENANG</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
