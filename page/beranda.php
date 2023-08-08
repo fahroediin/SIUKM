@@ -36,7 +36,7 @@ $level = $_SESSION["level"];
         }
     </style>
 </head>
-<body>
+
 	<nav class="navbar navbar-expand-md navbar-dark fixed-top">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
@@ -91,13 +91,11 @@ $level = $_SESSION["level"];
 					}
 				}
 			?>
-
-
  		</li>
 		</ul>
 		</div>
 	</nav>
-	
+	<body>
 	<div class="jumbotron">
 		<div class="container my-4">
 		<h1 class="text-center">SELAMAT DATANG DI (SIUKM)<br> STMIK KOMPUTAMA MAJENANG</h1>

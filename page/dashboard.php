@@ -142,10 +142,6 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .user-info {
-             /* Add spacing between sidebar and user-info */
-        }
-
                 .profil-picture {
             width: 150px;
             height: 150px;

@@ -263,6 +263,11 @@ while ($row = mysqli_fetch_assoc($result)) {
     readMoreLinks.forEach((link) => {
         link.addEventListener('click', handleReadMoreClick);
     });
+       // Fungsi untuk logout
+       function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
 </script>
 </body>
 </html>

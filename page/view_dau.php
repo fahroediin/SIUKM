@@ -187,6 +187,12 @@ $result = mysqli_query($conn, $query);
 
     </table>
         </div>
-
+        <script>
+           // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+    </script>
 </body>
 </html>

@@ -196,6 +196,12 @@ $active_page = 'view_calon_anggota';
             </div>
         </div>
 
-
+        <script>
+           // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+    </script>
 </body>
 </html>

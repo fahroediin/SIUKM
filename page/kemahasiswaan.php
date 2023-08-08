@@ -76,7 +76,36 @@ $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
 
 // Mengeksekusi query
 $result = mysqli_query($conn, $query);
+// Prepare the SQL query to get the number of snapshots for tab_ukm
+$sqlUkmSnapshotCount = "SELECT COUNT(*) AS ukm_snapshot_count FROM tab_ukm";
 
+// Execute the query to get the ukm snapshot count
+$resultUkmSnapshotCount = mysqli_query($conn, $sqlUkmSnapshotCount);
+
+if ($resultUkmSnapshotCount) {
+    // Fetch the ukm snapshot count
+    $ukmSnapshotCount = mysqli_fetch_assoc($resultUkmSnapshotCount)['ukm_snapshot_count'];
+} else {
+    // If the query fails, handle the error accordingly
+    $ukmSnapshotCount = 0;
+    echo "Error: " . mysqli_error($conn);
+}
+
+
+// Prepare the SQL query to get the number of snapshots for the current user
+$pacabSnapshotCount = "SELECT COUNT(*) AS pacab_snapshot_count FROM tab_pacab";
+
+// Execute the query to get the snapshot count
+$resultPacabSnapshotCount = mysqli_query($conn, $pacabSnapshotCount);
+
+if ($resultPacabSnapshotCount) {
+    // Fetch the snapshot count for the user's id_pacab
+    $pacabSnapshotCount = mysqli_fetch_assoc($resultPacabSnapshotCount)['pacab_snapshot_count'];
+} else {
+    // If the query fails, handle the error accordingly
+    $pacabSnapshotCount = 0;
+    echo "Error: " . mysqli_error($conn);
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -265,9 +294,34 @@ $result = mysqli_query($conn, $query);
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-4"> 
+                    <div class="card shadow">
+                        <h4 class="mb-3">Jumlah Pendaftar Baru</h4>
+                        <p>Menunggu diterima oleh pengurus</p>
+                        <p class="font-weight-bold" style="font-size: 50px;"><?php echo $pacabSnapshotCount; ?></p>
+                    </div>
+
+                <div class="col-md-12">
+                <div class="card shadow">
+                    <h4 class="mb-4">Total UKM</h4>
+                    <p class="font-weight-bold" style="font-size: 50px;"><?php echo $ukmSnapshotCount; ?></p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+           // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+    </script>
 </body>
 </html>

@@ -83,7 +83,7 @@ function generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_presta
     // Menghapus karakter non-alfanumerik dari id_ukm
     $clean_id_ukm = preg_replace("/[^a-zA-Z0-9]/", "", $id_ukm);
 
-    // Mengambil 4 huruf pertama dari id_ukm
+   
     $id_prestasi = substr($clean_id_ukm, 0, 3);
 
     // Menghapus karakter non-alfanumerik dari nama prestasi

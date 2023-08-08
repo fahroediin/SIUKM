@@ -39,6 +39,7 @@ if (isset($_GET['logout'])) {
 // Menandai halaman yang aktif
 $active_page = 'ukm';
 
+// Function to generate logo filename based on id_ukm and extension
 function generateLogoFilename($id_ukm, $extension)
 {
     // Concatenate the id_ukm with the "-logo" suffix and the extension
@@ -83,20 +84,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         // If no logo file is uploaded, use the existing logo filename
-        $logo_ukm_filename = $logo_ukm;
+        $logo_ukm_filename = $_POST["existing_logo"];
     }
 
-     // Menyimpan data ke database
-     $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', instagram='$instagram', facebook='$facebook', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
-     $result = $conn->query($sql);
+    // Menyimpan data ke database
+    $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', instagram='$instagram', facebook='$facebook', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
+    $result = mysqli_query($conn, $sql);
 
     if ($result) {
         // Redirect ke halaman daftar struktur setelah penyimpanan berhasil
-        header("Location: proses_ukm.php");
+        header("Location: proses_ukm.php?success=1");
         exit();
     } else {
         // Jika terjadi kesalahan saat menyimpan struktur
-        echo "Error: " . $conn->error;
+        echo "Error: " . mysqli_error($conn);
         exit();
     }
 }
@@ -111,15 +112,15 @@ $options = "";
 // Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
 $namaUKM = array();
 while ($row = mysqli_fetch_assoc($result)) {
-  $id_ukm = $row['id_ukm'];
-  $nama_ukm = $row['nama_ukm'];
-  $logo_ukm = $row['logo_ukm'];
-  $instagram = $row['instagram'];
-  $facebook = $row['facebook'];
-  $sejarah = $row['sejarah'];
-  $visi = $row['visi'];
-  $misi = $row['misi'];
-  $namaUKM[$id_ukm] = $nama_ukm;
+    $id_ukm = $row['id_ukm'];
+    $nama_ukm = $row['nama_ukm'];
+    $logo_ukm = $row['logo_ukm'];
+    $instagram = $row['instagram'];
+    $facebook = $row['facebook'];
+    $sejarah = $row['sejarah'];
+    $visi = $row['visi'];
+    $misi = $row['misi'];
+    $namaUKM[$id_ukm] = $nama_ukm;
 }
 ?>
 
@@ -276,7 +277,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
             <div class="form-group">
                 <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" readonly required>
+                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
             </div>
             <div class="form-group">
                 <label for="sejarah">Sejarah:</label>

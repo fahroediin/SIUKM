@@ -169,5 +169,12 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     ?>
 </tbody>
 </table>
+<script>
+           // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+    </script>
 </body>
 </html>

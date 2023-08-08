@@ -352,5 +352,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }, 3000);
     });
 </script>
+<script>
+           // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+    </script>
 </body>
 </html>

@@ -187,6 +187,12 @@ $conn->close();
     <?php endforeach; ?>
 </tbody>
     </table>
-
+<script>
+       // Fungsi untuk logout
+       function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+</script>
 </body>
 </html>

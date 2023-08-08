@@ -251,6 +251,24 @@ if ($resultGaleriSnapshotCount) {
   font-weight: normal;
   color: #777;
 }
+.profil-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 4px solid #fff; /* Tambahkan border putih di sekitar foto */
+        }
+
+        .profile-details {
+            flex: 1; /* Allow the details section to take up remaining space */
+           
+        }
+
+                .label {
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -259,7 +277,7 @@ if ($resultGaleriSnapshotCount) {
     <a href="beranda.php">
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
-<h2><i>Dashboard</i></h2>
+<h2><i>Kemahasiswaan</i></h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
             <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
@@ -295,7 +313,7 @@ if ($resultGaleriSnapshotCount) {
 
         
         <div class="content">
-            <h1>Dashboard</h1>
+            <h1>Kemahasiswaan</h1>
             <hr class="divider">
             <div class="wrapper">
             <div class="col-md-12col-sm-12">
@@ -378,31 +396,29 @@ if ($resultGaleriSnapshotCount) {
         </div>
     </div>
 </div>
-
-<div class="wrapper">
-            <div class="col-md-12col-sm-12">
-                <div class="row row-in">
-            <div class="container" style="margin-top: 20px; float: left;">
-            <div class="card user-card shadow user-info">
-                <div class="row">
-                    <!-- Left column for profile picture -->
-                    <div class="col-md-4">
-                        <div class="profile-container">
-                            <img src="<?php echo $pasfoto; ?>" alt="Foto Profil" class="profil-picture">
+<br>
+            <div class="col-md-6">
+                    <div class="card user-card">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="profile-container">
+                                    <img src="<?php echo $pasfoto; ?>" alt="Foto Profil" class="profil-picture">
+                                </div>
+                            </div>
+                            <!-- Right column for user information -->
+                            <div class="col-md-8">
+                                <div class="profile-details">
+                                    <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
+                                    <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
+                                    <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
+                                </div>
+                                <!-- Tombol Ganti Password -->
+                                <a href="ganti_password_admin.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>
+                                <!-- Tombol Update Data Diri -->
+                                <a href="update_admin.php" class="btn btn-primary mt-2"><i class="fas fa-user-edit"></i> Update Data Diri</a>
+                            </div>
                         </div>
                     </div>
-                    <!-- Right column for user information -->
-                    <div class="col-md-8">
-                        <div class="profile-details">
-                            <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
-                            <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
-                            <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-            
                 </div>
             </div>
 </div>

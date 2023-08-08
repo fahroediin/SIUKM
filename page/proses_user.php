@@ -243,6 +243,25 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
+    .content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
+
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
+
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+
 </style>
 
 
@@ -286,11 +305,19 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
 
         <body>
 <!-- Data User -->
-<div class="content">
-    <h2>Data User</h2>
+<<div class="content">
+    <div class="header">
+        <h2>Data Pengguna</h2>
+        <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#userModal">
+            <i class="fas fa-plus"></i> Tambah Pengguna
+        </button>
+    </div>
+</div>
+<<div class="content">
     <table class="table">
-    <thead>
+        <thead>
             <tr>
+                <th>No.</th>
                 <th>ID User</th>
                 <th>Nama Lengkap</th>
                 <th>Prodi</th>
@@ -305,52 +332,59 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
         </thead>
 
         <tbody>
-    <?php
-    // Fetch users from the database
-    $sql = "SELECT * FROM tab_user";
-    $result = $conn->query($sql);
+            <?php
+            // Fetch users from the database
+            $sql = "SELECT * FROM tab_user";
+            $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        // Output data of each row
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . $row["id_user"] . "</td>";
-            echo "<td>" . $row["nama_lengkap"] . "</td>";
-            echo "<td>" . $row["prodi"] . "</td>";
-            echo "<td>" . $row["semester"] . "</td>";
-            echo "<td>" . $row["email"] . "</td>";
-            echo "<td>" . $row["no_hp"] . "</td>";
-            echo "<td>" . $row["level"] . "</td>";
+            if ($result->num_rows > 0) {
+                $serialNumber = 1; // Initialize the serial number
+                // Output data of each row
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . $serialNumber . "</td>"; // Display the serial number
+                    echo "<td>" . $row["id_user"] . "</td>";
+                    echo "<td>" . $row["nama_lengkap"] . "</td>";
+                    echo "<td>" . $row["prodi"] . "</td>";
+                    echo "<td>" . $row["semester"] . "</td>";
+                    echo "<td>" . $row["email"] . "</td>";
+                    echo "<td>" . $row["no_hp"] . "</td>";
+                    echo "<td>" . $row["level"] . "</td>";
                     // Pasfoto
-            $pasfoto_filename = $row["pasfoto"];
-            $pasfoto_path = "../assets/images/pasfoto/" . $pasfoto_filename;
-            echo "<td><img src='$pasfoto_path' alt='Pasfoto' width='100'></td>";
+                    $pasfoto_filename = $row["pasfoto"];
+                    $pasfoto_path = "../assets/images/pasfoto/" . $pasfoto_filename;
+                    echo "<td><img src='$pasfoto_path' alt='Pasfoto' width='100'></td>";
 
-            // Foto KTM
-            $foto_ktm_filename = $row["foto_ktm"];
-            $foto_ktm_path = "../assets/images/ktm/" . $foto_ktm_filename;
-            echo "<td><img src='$foto_ktm_path' alt='Foto KTM' width='100'></td>";
-            // Menambahkan kondisi jika ID user adalah "admin"
-       // Action buttons for each row
-       echo "<td>";
-       if ($row["id_user"] == "admin") {
-           // For the admin user, show only the Edit button
-           echo "<a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>";
-       } else {
-           // For other users, show both Edit and Delete buttons
-           echo "<div class='action-buttons'>
-                   <a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>
-                   <a class='btn delete-button' href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a>
-                 </div>";
-       }
-       echo "</td>";
+                    // Foto KTM
+                    $foto_ktm_filename = $row["foto_ktm"];
+                    $foto_ktm_path = "../assets/images/ktm/" . $foto_ktm_filename;
+                    echo "<td><img src='$foto_ktm_path' alt='Foto KTM' width='100'></td>";
+
+                    // Menambahkan kondisi jika ID user adalah "admin"
+                    // Action buttons for each row
+                    echo "<td>";
+                    if ($row["id_user"] == "admin") {
+                        // For the admin user, show only the Edit button
+                        echo "<a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>";
+                    } else {
+                        // For other users, show both Edit and Delete buttons
+                        echo "<div class='action-buttons'>
+                                <a class='btn btn-edit' href='edit_user.php?id=" . $row["id_user"] . "'>Edit</a>
+                                <a class='btn delete-button' href='proses_delete_user.php?id=" . $row["id_user"] . "' onclick='return confirmDelete()'>Hapus</a>
+                              </div>";
+                    }
+                    echo "</td>";
+
+                    // Increment the serial number for the next row
+                    $serialNumber++;
+                }
             }
-        }
 
-    ?>
-</tbody>
+            ?>
+        </tbody>
     </table>
 </div>
+
 
 <!-- Add a script to handle level dropdown updates -->
 <script>
@@ -391,82 +425,7 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
 </script>
 
 
-<div class="content">
-    <div class="card">
-        <h2 style="text-align: center;">Tambah Pengguna</h2>
-        <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="id_user">ID User:</label>
-                <input type="text" class="form-control" id="id_user" maxlength="15" name="id_user" required>
-            </div>
-            <div class="form-group">
-            <label for="password">Password:</label>
-            <div class="password-input">
-                <input type="password" class="form-control" id="password" maxlength="30" name="password" required>
-                <i class="fas fa-eye" id="passwordToggle1"></i>
-            </div>
-            </div>
-            <div class="form-group">
-                <label for="konfirmasi_password">Konfirmasi Password:</label>
-                <div class="password-input">
-                <input type="password" class="form-control" id="konfirmasi_password" maxlength="30" name="konfirmasi_password" required>
-                <i class="fas fa-eye" id="passwordToggle2"></i>
-            </div>
-            <div class="form-group">
-                <label for="nama_lengkap">Nama Lengkap:</label>
-                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
-            </div>
-            <div class="form-group">
-                <label for="prodi">Program Studi:</label>
-                <select id="prodi" name="prodi" class="form-control">
-                    <option value="" selected>Pilih Program Studi</option>
-                    <option value="Teknik Informatika">Teknik Informatika</option>
-                    <option value="Sistem Informasi">Sistem Informasi</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="semester">Semester:</label>
-                <select id="semester" name="semester" class="form-control">
-                    <option value="" selected>Pilih Semester</option>
-                    <?php
-                    for ($i = 1; $i <= 14; $i++) {
-                        echo '<option value="' . $i . '">' . $i . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email">
-            </div>
-            <div class="form-group">
-            <label for="no_hp">No. HP:</label>
-            <input type="text" class="form-control" id="no_hp" name="no_hp">
-            </div>
-            <div class="form-group">
-                <label for="pasfoto">Pasfoto:</label>
-                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="foto_ktm">Foto KTM:</label>
-                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*">
-            </div>
-            <div class="form-group" required>
-                <label for="level">Level:</label>
-                <select id="level" name="level" class="form-control">
-                    <option value="3">User</option>
-                    <option value="2">Kemahasiswaan</option>
-                    <option value="1">Admin</option>
-                </select>
-            </div>
-            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
-            <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
-    <i class="fas fa-plus"></i> Tambah Pengguna
-</button>
-    </div>
-        </form>
-    </div>
+
     
     <script>
     const passwordInput1 = document.getElementById("password");
@@ -577,5 +536,97 @@ function logout() {
         window.location.href = "?logout=true";
     }
 </script>
+<!-- Add a modal structure at the end of the body tag -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Place your form here -->
+        <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
+        <h2 style="text-align: center;">Tambah Pengguna</h2>
+        <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="id_user">ID User:</label>
+                <input type="text" class="form-control" id="id_user" maxlength="15" name="id_user" required>
+            </div>
+            <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="password-input">
+                <input type="password" class="form-control" id="password" maxlength="30" name="password" required>
+                <i class="fas fa-eye" id="passwordToggle1"></i>
+            </div>
+            </div>
+            <div class="form-group">
+                <label for="konfirmasi_password">Konfirmasi Password:</label>
+                <div class="password-input">
+                <input type="password" class="form-control" id="konfirmasi_password" maxlength="30" name="konfirmasi_password" required>
+                <i class="fas fa-eye" id="passwordToggle2"></i>
+            </div>
+            <div class="form-group">
+                <label for="nama_lengkap">Nama Lengkap:</label>
+                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
+            </div>
+            <div class="form-group">
+                <label for="prodi">Program Studi:</label>
+                <select id="prodi" name="prodi" class="form-control">
+                    <option value="" selected>Pilih Program Studi</option>
+                    <option value="Teknik Informatika">Teknik Informatika</option>
+                    <option value="Sistem Informasi">Sistem Informasi</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <select id="semester" name="semester" class="form-control">
+                    <option value="" selected>Pilih Semester</option>
+                    <?php
+                    for ($i = 1; $i <= 14; $i++) {
+                        echo '<option value="' . $i . '">' . $i . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="form-group">
+            <label for="no_hp">No. HP:</label>
+            <input type="text" class="form-control" id="no_hp" name="no_hp">
+            </div>
+            <div class="form-group">
+                <label for="pasfoto">Pasfoto:</label>
+                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="foto_ktm">Foto KTM:</label>
+                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*">
+            </div>
+            <div class="form-group" required>
+                <label for="level">Level:</label>
+                <select id="level" name="level" class="form-control">
+                    <option value="3">User</option>
+                    <option value="2">Kemahasiswaan</option>
+                    <option value="1">Admin</option>
+                </select>
+            </div>
+            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+            <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
+    <i class="fas fa-plus"></i> Tambah Pengguna
+</button>
+    </div>
+        </form>
+    </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
