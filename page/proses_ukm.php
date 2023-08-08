@@ -50,7 +50,7 @@ function generateLogoFilename($id_ukm, $extension)
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil nilai-nilai dari form
-    $idUkmType = $_POST["id_ukm_type"];
+    $id_ukm_type = $_POST["id_ukm_type"];
     $nama_ukm = $_POST["nama_ukm"];
     $sejarah = $_POST["sejarah"];
     $instagram = $_POST["instagram"];
@@ -58,8 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $visi = $_POST["visi"];
     $misi = $_POST["misi"];
 
-     // Choose the appropriate value based on the selected type
-     if ($idUkmType === "dropdown") {
+
+    if ($id_ukm_type === "dropdown") {
         $id_ukm = $_POST["id_ukm"];
     } else {
         $id_ukm = $_POST["id_ukm_new"];
@@ -95,15 +95,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // SQL query to update data in tab_ukm table
-    $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', instagram='$instagram', facebook='$facebook', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
-    $result = mysqli_query($conn, $sql);
+    $sql = "UPDATE tab_ukm SET nama_ukm=?, sejarah=?, logo_ukm=?, instagram=?, facebook=?, visi=?, misi=? WHERE id_ukm=?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "sssssssi", $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $id_ukm);
+    $result = mysqli_stmt_execute($stmt);
 
     if ($result) {
-        // Redirect to success page or show success message
         header("Location: proses_ukm.php?success=1");
         exit();
     } else {
-        // Handle error condition
         echo "Error: " . mysqli_error($conn);
         exit();
     }

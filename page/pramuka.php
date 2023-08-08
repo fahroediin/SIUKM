@@ -150,6 +150,9 @@ $facebook = $row['facebook'];
 
 $instagram = "https://www.instagram.com/" . $instagram;
 $facebook = "https://www.facebook.com/" . $facebook;
+// Query untuk mengambil data dari tab_ukm
+$sql = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -385,13 +388,13 @@ p {
 </nav>
 
 	<div class="container">
-        <h1>Pramuka</h1>
+  <h1><?php echo $nama_ukm; ?></h1>
         <div class="ukm-info">
         <div class="ukm-logo">
             <img src="<?php echo $logo_src; ?>" alt="Logo UKM Pramuka" class="ukm-logo">
           </div>
             <div>
-                <h2><?php echo $nama_ukm; ?></h2>
+                <h2>Informasi</h2>
                 <p style="text-align: justify;"><?php echo $sejarah; ?></p>
             </div>
         </div>

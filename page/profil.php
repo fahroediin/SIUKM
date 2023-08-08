@@ -29,6 +29,10 @@ if (mysqli_num_rows($result) > 0) {
 }
 
 // Close the database connection
+
+$query_profil = "SELECT * FROM tab_profil";
+$result_profil = mysqli_query($conn, $query_profil);
+$row_profil = mysqli_fetch_assoc($result_profil);
 mysqli_close($conn);
 ?>
 <!DOCTYPE html>
@@ -141,25 +145,29 @@ mysqli_close($conn);
 			<div class="container">
 				<h1>Profil</h1>
 				<div class="jumbotron">
-					<img src="..\assets\images\siukm-logo.png" alt="Logo SIUKM" class="logo-siukm">
-					<h2>Sistem Informasi Unit Kegiatan Mahasiswa</h2>
-					<p>STMIK Komputama Majenang</p>
-				</div>
+    <img src="../assets/images/logo/<?php echo $row_profil['logo_siukm']; ?>" alt="Logo SIUKM" class="logo-siukm">
+    <h2>Sistem Informasi Unit Kegiatan Mahasiswa</h2>
+    <p>STMIK Komputama Majenang</p>
+</div>
+
 
 				<div class="jumbotron">
-				<h3>Deskripsi Singkat</h3>
-				<p>SIUKM STMIK Komputama Majenang merupakan wadah yang didedikasikan untuk penyebaran informasi kepada Unit Kegiatan Mahasiswa (UKM) di lingkungan kampus. Kami berkomitmen untuk menyediakan platform yang memungkinkan UKM untuk mengkomunikasikan kegiatan, berbagi pengetahuan, dan memperluas jaringan melalui sistem informasi yang efektif dan efisien.</p>
-			
-				<h3>Visi</h3>
-				<p>Menjadi wadah utama yang memperkuat kolaborasi antar-UKM dan menyediakan platform yang memungkinkan penyebaran informasi yang luas, terbuka, dan mudah diakses.</p>
-				<h3>Misi</h3>
-				<ul class="left-align">
-				<li>Mengembangkan sistem informasi yang inovatif dan user-friendly untuk kebutuhan UKM.</li>
-				<li>Mendorong pertukaran pengetahuan dan pengalaman antar-UKM melalui platform SIUKM.</li>
-				<li>Menyediakan akses yang mudah dan cepat terhadap informasi seputar kegiatan UKM.</li>
-				<li>Memperluas jaringan kolaborasi dengan institusi dan organisasi terkait.</li>
-			</ul>
-			</div>
+    <h3>Deskripsi Singkat</h3>
+    <p><?php echo $row_profil['deskripsi']; ?></p>
+
+    <h3>Visi</h3>
+    <p><?php echo $row_profil['visi']; ?></p>
+
+    <h3>Misi</h3>
+    <ul class="left-align">
+        <?php
+        $misi_list = explode("\n", $row_profil['misi']);
+        foreach ($misi_list as $misi) {
+            echo "<li>$misi</li>";
+        }
+        ?>
+    </ul>
+</div>
 			
 		
 <!-- Update this part of the code in your HTML body -->

@@ -29,6 +29,9 @@ if ($handle = opendir($carousel_dir)) {
     }
     closedir($handle);
 }
+// Query untuk mengambil data dari tab_ukm
+$sql = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -80,14 +83,26 @@ if ($handle = opendir($carousel_dir)) {
 						Pilih UKM
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
-						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
-					</div>
+					<?php
+					if ($result->num_rows > 0) {
+						while ($row = $result->fetch_assoc()) {
+							$id_ukm = $row["id_ukm"];
+							$nama_ukm = $row["nama_ukm"];
+							$link = strtolower($id_ukm) . ".php";
+					?>
+							<a class="dropdown-item" href="<?php echo $link; ?>">
+								<?php echo $nama_ukm; ?>
+							</a>
+					<?php
+						}
+					} else {
+						echo "Tidak ada data UKM yang ditemukan.";
+					}
+
+					// Menutup koneksi database
+					$conn->close();
+					?>
+				</div>
 				</li>
 			</ul>
 			<ul class="navbar-nav ml-auto ">

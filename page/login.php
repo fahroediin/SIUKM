@@ -258,18 +258,30 @@ if (mysqli_num_rows($result) > 0) {
 					<a class="nav-link" href="galeri.php">Galeri</a>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
 						Pilih UKM
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="racana.php">Pramuka</a>
-						<a class="dropdown-item" href="wanacetta.php">Wanaceta</a>
-						<a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-						<a class="dropdown-item" href="ecc.php">ECC</a>
-						<a class="dropdown-item" href="riset.php">Riset</a>
-						<a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="hsr.php">HSR</a>
-					</div>
+					<?php
+					if ($result->num_rows > 0) {
+						while ($row = $result->fetch_assoc()) {
+							$id_ukm = $row["id_ukm"];
+							$nama_ukm = $row["nama_ukm"];
+							$link = strtolower($id_ukm) . ".php";
+					?>
+							<a class="dropdown-item" href="<?php echo $link; ?>">
+								<?php echo $nama_ukm; ?>
+							</a>
+					<?php
+						}
+					} else {
+						echo "Tidak ada data UKM yang ditemukan.";
+					}
+
+					// Menutup koneksi database
+					$conn->close();
+					?>
+				</div>
 				</li>
 			</ul>
 		</div>

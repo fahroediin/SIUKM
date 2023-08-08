@@ -149,6 +149,9 @@ if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
 } else {
   $logo_src = $defaultLogo;
 }
+// Query untuk mengambil data dari tab_ukm
+$sql = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -343,19 +346,30 @@ p {
         <a class="nav-link" href="galeri.php">Galeri</a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-          Pilih UKM
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
-						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
-					</div>
-      </li>
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+						Pilih UKM
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<?php
+					if ($result->num_rows > 0) {
+						while ($row = $result->fetch_assoc()) {
+							$id_ukm = $row["id_ukm"];
+							$nama_ukm = $row["nama_ukm"];
+							$link = strtolower($id_ukm) . ".php";
+					?>
+							<a class="dropdown-item" href="<?php echo $link; ?>">
+								<?php echo $nama_ukm; ?>
+							</a>
+					<?php
+						}
+					} else {
+						echo "Tidak ada data UKM yang ditemukan.";
+					}
+
+					// Menutup koneksi database
+					$conn->close();
+					?>
+				</div>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
@@ -385,13 +399,13 @@ p {
 </nav>
 
 	<div class="container">
-        <h1>Bahasa Inggris</h1>
+  <h1><?php echo $nama_ukm; ?></h1>
         <div class="ukm-info">
         <div class="ukm-logo">
             <img src="<?php echo $logo_src; ?>" alt="Logo UKM Pramuka" class="ukm-logo">
           </div>
             <div>
-                <h2><?php echo $nama_ukm; ?></h2>
+                <h2>Informasi</h2>
                 <p style="text-align: justify;"><?php echo $sejarah; ?></p>
             </div>
         </div>

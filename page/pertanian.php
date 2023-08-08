@@ -387,13 +387,13 @@ p {
 </nav>
 
 	<div class="container">
-        <h1>Perkebunan</h1>
+  <h1><?php echo $nama_ukm; ?></h1>
         <div class="ukm-info">
         <div class="ukm-logo">
             <img src="<?php echo $logo_src; ?>" alt="Logo UKM Pramuka" class="ukm-logo">
           </div>
             <div>
-                <h2><?php echo $nama_ukm; ?></h2>
+                <h2>Informasi</h2>
                 <p style="text-align: justify;"><?php echo $sejarah; ?></p>
             </div>
         </div>
