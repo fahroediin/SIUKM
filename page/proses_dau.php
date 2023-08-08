@@ -177,6 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <h2><i>Anggota UKM</i></h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
+            <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
             <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
@@ -223,7 +224,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <th>Program Studi</th>
                 <th>Semester</th>
                 <th>Pasfoto</th>
-                <th>Foto KTM</th>
+                <th>Foto Identitas</th>
                 <th>Nama UKM</th>
                 <th>Bergabung</th>
                 <th>Aksi</th>

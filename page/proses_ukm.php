@@ -50,13 +50,20 @@ function generateLogoFilename($id_ukm, $extension)
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil nilai-nilai dari form
-    $id_ukm = $_POST["id_ukm"];
+    $idUkmType = $_POST["id_ukm_type"];
     $nama_ukm = $_POST["nama_ukm"];
     $sejarah = $_POST["sejarah"];
     $instagram = $_POST["instagram"];
     $facebook = $_POST["facebook"];
     $visi = $_POST["visi"];
     $misi = $_POST["misi"];
+
+     // Choose the appropriate value based on the selected type
+     if ($idUkmType === "dropdown") {
+        $id_ukm = $_POST["id_ukm"];
+    } else {
+        $id_ukm = $_POST["id_ukm_new"];
+    }
 
     // Check if a logo file is uploaded
     if ($_FILES["logo_ukm"]["name"] != "") {
@@ -87,16 +94,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $logo_ukm_filename = $_POST["existing_logo"];
     }
 
-    // Menyimpan data ke database
+    // SQL query to update data in tab_ukm table
     $sql = "UPDATE tab_ukm SET nama_ukm='$nama_ukm', sejarah='$sejarah', logo_ukm='$logo_ukm_filename', instagram='$instagram', facebook='$facebook', visi='$visi', misi='$misi' WHERE id_ukm='$id_ukm'";
     $result = mysqli_query($conn, $sql);
 
     if ($result) {
-        // Redirect ke halaman daftar struktur setelah penyimpanan berhasil
+        // Redirect to success page or show success message
         header("Location: proses_ukm.php?success=1");
         exit();
     } else {
-        // Jika terjadi kesalahan saat menyimpan struktur
+        // Handle error condition
         echo "Error: " . mysqli_error($conn);
         exit();
     }
@@ -225,9 +232,9 @@ while ($row = mysqli_fetch_assoc($result)) {
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Data UKM</i></h2>
-            <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
+    <p style="text-align: center;">--Manajemen--</p>
+    <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
@@ -264,17 +271,31 @@ while ($row = mysqli_fetch_assoc($result)) {
     <h2 style="text-align: center;">Data UKM</h2>
     <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="id_ukm">ID UKM:</label>
-                <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateFormData(this)">
-                    <option value="" selected disabled>Pilih ID UKM</option>
-                    <?php
-                    // Membuat opsi combobox dari hasil query
-                    foreach ($namaUKM as $id_ukm => $nama_ukm) {
-                        echo "<option value='$id_ukm'>$id_ukm</option>";
-                    }
-                    ?>
-                </select>
-            </div>
+            <label for="id_ukm_type">Pilih Tipe ID UKM:</label>
+            <select class="form-control" id="id_ukm_type" name="id_ukm_type" onchange="toggleIdUkmField()">
+                <option value="dropdown">Dropdown</option>
+                <option value="textfield">Text Field</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="id_ukm_dropdown">
+            <label for="id_ukm_dropdown">ID UKM:</label>
+            <select class="form-control" id="id_ukm" name="id_ukm" onchange="updateFormData(this)">
+                <option value="" selected disabled>Pilih ID UKM</option>
+                <?php
+                // Membuat opsi combobox dari hasil query
+                foreach ($namaUKM as $id_ukm => $nama_ukm) {
+                    echo "<option value='$id_ukm'>$id_ukm</option>";
+                }
+                ?>
+            </select>
+        </div>
+
+        <div class="form-group" id="id_ukm_textfield" style="display: none;">
+            <label for="id_ukm_textfield">ID UKM Baru:</label>
+            <input type="text" class="form-control" id="id_ukm_new" name="id_ukm_new">
+        </div>
+
             <div class="form-group">
                 <label for="nama_ukm">Nama UKM:</label>
                 <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
@@ -356,6 +377,34 @@ while ($row = mysqli_fetch_assoc($result)) {
             snackbar.className = snackbar.className.replace('show', '');
         }, 3000);
     }
+</script>
+
+<script>
+    function resetAllTextFields() {
+    document.getElementById("nama_ukm").value = "";
+    document.getElementById("sejarah").value = "";
+    document.getElementById("instagram").value = "";
+    document.getElementById("facebook").value = "";
+    document.getElementById("visi").value = "";
+    document.getElementById("misi").value = "";
+    document.getElementById("id_ukm_new").value = "";
+}
+
+function toggleIdUkmField() {
+    var idUkmType = document.getElementById("id_ukm_type").value;
+    var idUkmDropdown = document.getElementById("id_ukm_dropdown");
+    var idUkmTextfield = document.getElementById("id_ukm_textfield");
+
+    if (idUkmType === "dropdown") {
+        idUkmDropdown.style.display = "block";
+        idUkmTextfield.style.display = "none";
+    } else {
+        idUkmDropdown.style.display = "none";
+        idUkmTextfield.style.display = "block";
+        resetAllTextFields(); // Call the function to reset all text fields
+    }
+}
+
 </script>
 
 

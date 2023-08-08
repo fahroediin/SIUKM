@@ -346,16 +346,16 @@ if (isset($_POST['update'])) {
             <input type="text" class="form-control" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required pattern="[0-9]+" title="Please enter numeric characters only">
               </div>
               <div class="form-group">
-                <label for="pasfoto">Foto:</label>
-                <input type="file" class="form-control-file" id="pasfoto" name="pasfoto">
-                <img id="pasfoto-preview" src="" alt="Pasfoto Preview" style="max-width: 200px; margin-top: 10px;">
-            </div>
+    <label for="pasfoto">Foto:</label>
+    <input type="file" class="form-control-file" id="pasfoto" name="pasfoto">
+    <img id="pasfotoPreview" src="<?php echo "../assets/images/pasfoto/" . $row['pasfoto']; ?>" alt="Pasfoto Preview" width="100">
+</div>
 
-            <div class="form-group">
-                <label for="foto_ktm">Foto KTM:</label>
-                <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm">
-                <img id="foto_ktm-preview" src="" alt="Foto KTM Preview" style="max-width: 200px; margin-top: 10px;">
-            </div>
+<div class="form-group">
+    <label for="foto_ktm">Foto KTM:</label>
+    <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm">
+    <img id="fotoKtmPreview" src="<?php echo "../assets/images/ktm/" . $row['foto_ktm']; ?>" alt="Foto KTM Preview" width="100">
+</div>
             <div class="form-group">
                 <label for="level">Level:</label>
                 <select id="level" name="level" class="form-control">
@@ -549,6 +549,33 @@ function logout() {
         // Redirect ke halaman logout
         window.location.href = "?logout=true";
     }
+</script>
+<script>
+    // Function to update photo preview
+    function updatePreview(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Add event listeners for file inputs
+    const pasfotoInput = document.getElementById('pasfoto');
+    pasfotoInput.addEventListener('change', function () {
+        updatePreview(this, 'pasfotoPreview');
+    });
+
+    const fotoKtmInput = document.getElementById('foto_ktm');
+    fotoKtmInput.addEventListener('change', function () {
+        updatePreview(this, 'fotoKtmPreview');
+    });
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

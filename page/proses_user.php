@@ -272,6 +272,7 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
 <h2><i>Pengguna</i></h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
+            <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
             <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
@@ -553,7 +554,7 @@ function logout() {
         <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="id_user">ID User:</label>
-                <input type="text" class="form-control" id="id_user" maxlength="15" name="id_user" required>
+                <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
             </div>
             <div class="form-group">
             <label for="password">Password:</label>
@@ -593,20 +594,48 @@ function logout() {
                 </select>
             </div>
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email">
-            </div>
+    <label for="email">Email:</label>
+    <input type="text" class="form-control" id="email" name="email">
+</div>
+
+<script>
+    document.getElementById("email").addEventListener("blur", function(event) {
+        let input = event.target.value;
+        if (!isValidEmail(input)) {
+            alert("Format email tidak valid!");
+            event.target.value = ""; // Mengosongkan input jika tidak valid
+        }
+    });
+
+    function isValidEmail(email) {
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        return emailPattern.test(email);
+    }
+</script>
+
             <div class="form-group">
-            <label for="no_hp">No. HP:</label>
-            <input type="text" class="form-control" id="no_hp" name="no_hp">
-            </div>
+    <label for="no_hp">No. HP:</label>
+    <input type="text" class="form-control" id="no_hp" name="no_hp" maxlength="13" required>
+</div>
+
+<script>
+    document.getElementById("no_hp").addEventListener("input", function(event) {
+        let input = event.target.value;
+        input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
+        input = input.slice(0, 13); // Membatasi panjang maksimal menjadi 13 karakter
+        event.target.value = input;
+    });
+</script>
+
             <div class="form-group">
                 <label for="pasfoto">Pasfoto:</label>
                 <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*">
+                <img id="pasfotoPreview" src="" alt="Pasfoto Preview" width="100">
             </div>
             <div class="form-group">
                 <label for="foto_ktm">Foto KTM:</label>
                 <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*">
+                <img id="fotoKtmPreview" src="" alt="Foto KTM Preview" width="100">
             </div>
             <div class="form-group" required>
                 <label for="level">Level:</label>
@@ -628,6 +657,33 @@ function logout() {
     </div>
   </div>
 </div>
+<script>
+    // Function to update photo preview
+    function updatePreview(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Add event listeners for file inputs
+    const pasfotoInput = document.getElementById('pasfoto');
+    pasfotoInput.addEventListener('change', function () {
+        updatePreview(this, 'pasfotoPreview');
+    });
+
+    const fotoKtmInput = document.getElementById('foto_ktm');
+    fotoKtmInput.addEventListener('change', function () {
+        updatePreview(this, 'fotoKtmPreview');
+    });
+</script>
 
 </body>
 </html>
