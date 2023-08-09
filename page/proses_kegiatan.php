@@ -190,8 +190,8 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                 <div class="card-body">
                         <h2 style="text-align: center;">Tambah Kegiatan</h2>
                         <div class="form-group">
-                            <label for="id_ukm">Nama UKM:</label>
-                    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                            <label for="id_ukm">*Nama UKM:</label>
+                            <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required onchange="updateNamaUKM(this)">
                         <option value="">Pilih Nama UKM</option>
                         <?php
                         // Fetch data from the tab_ukm table and populate the dropdown options
@@ -204,7 +204,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                         ?>
                     </select>
                 </div>
-                    <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
+                <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
 
                            
                                 <input type="hidden" id="id_kegiatan" name="id_kegiatan" class="form-control" readonly>
@@ -288,39 +288,16 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
  
 
 <!-- Add your JavaScript code here to populate the nama_ukm field -->
-<script>
-    const idUkmSelect = document.getElementById("id_ukm");
+    <script>
+    const idUkmSelect = document.getElementById("id_ukm_dropdown");
     const namaUkmField = document.getElementById("nama_ukm");
 
     idUkmSelect.addEventListener("change", function() {
         const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
-        const idUkm = selectedOption.value;
-        if (idUkm) {
-            // Mengirim permintaan AJAX ke server
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    // Mengambil respons dari server dalam bentuk JSON
-                    var data = JSON.parse(this.responseText);
-                    if (data.error) {
-                        // Handle error response from the server
-                        console.error(data.error);
-                        namaUkmField.value = ""; // Clear the field in case of an error
-                    } else {
-                        // Update nama_ukm field with the retrieved data
-                        namaUkmField.value = data.nama_ukm;
-                    }
-                }
-            };
-
-            // Send the AJAX request to the server
-            xhttp.open("GET", "get_data_ukm.php?id_ukm=" + idUkm, true);
-            xhttp.send();
-        } else {
-            // If no id_ukm is selected, reset the nama_ukm field
-            namaUkmField.value = "";
-        }
+        const namaUkm = selectedOption.text; // Get the text of the selected option
+        namaUkmField.value = namaUkm; // Set the value of the hidden input field
     });
+
      // Function to confirm the delete action
      function confirmDelete() {
         return confirm("Apakah Anda yakin akan menghapus data kegiatan?");
