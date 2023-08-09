@@ -317,7 +317,16 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
         </button>
     </div>
 </div>
-<<div class="content">
+<div class="content">
+<form class="form-inline mb-3" method="GET" action="">
+    <input type="text" class="form-control mr-sm-2" placeholder="Search by ID User" name="search_id_user">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+    <a href="proses_user.php" class="btn btn-outline-secondary ml-2">
+  <i class="fas fa-sync-alt"></i>
+</a>
+</form>
+</div>
+<div class="content">
     <table class="table">
         <thead>
             <tr>
@@ -337,11 +346,11 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
 
         <tbody>
             <?php
-            // Fetch users from the database
-            $sql = "SELECT * FROM tab_user";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
+         // Fetch users from the database
+         $searchCondition = isset($_GET['search_id_user']) ? "WHERE id_user LIKE '%" . $_GET['search_id_user'] . "%'" : "";
+         $sql = "SELECT * FROM tab_user $searchCondition";
+         $result = $conn->query($sql);
+         if ($result->num_rows > 0) {
                 $serialNumber = 1; // Initialize the serial number
                 // Output data of each row
                 while ($row = $result->fetch_assoc()) {
@@ -382,13 +391,14 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
                     // Increment the serial number for the next row
                     $serialNumber++;
                 }
+            } else {
+                echo "<tr><td colspan='11' class='text-center'>No results found</td></tr>";
             }
-
             ?>
         </tbody>
     </table>
 </div>
-
+</div>
 
 <!-- Add a script to handle level dropdown updates -->
 <script>

@@ -365,7 +365,7 @@ function logout() {
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="form-row">
                     <div class="col-md-6">
-                    <label for="id_user">ID User:</label>
+                    <label for="id_user">*ID User:</label>
                     <select class="form-control" name="id_user" id="id_user_dropdown" required>
                     <option value="">------------Pilih ID User------------</option>
                     <?php
@@ -447,17 +447,17 @@ function logout() {
 </script>
 
          <div class="col-md-6">
-            <label for="nama_lengkap">Nama Lengkap:</label>
+            <label for="nama_lengkap">*Nama Lengkap:</label>
             <input type="text" class="form-control" name="nama_lengkap" required readonly>
         </div>
         </div>
         <div class="form-row">
         <div class="col-md-6">
-                <label for="no_hp">No. HP:</label>
+                <label for="no_hp">*No. HP:</label>
                 <input type="text" class="form-control" name="no_hp" required readonly>
             </div>
             <div class="col-md-6">
-                    <label for="email">Email:</label>
+                    <label for="email">*Email:</label>
                     <input type="email" class="form-control" name="email" required readonly>
                 </div>
         </div>
@@ -476,11 +476,11 @@ function logout() {
 
                 <div class="form-row">
             <div class="col-md-6">
-                <label for="sjk_bergabung">SJK Bergabung:</label>
+                <label for="sjk_bergabung">*Bergabung:</label>
                 <input type="date" class="form-control" id="sjk_bergabung"  name="sjk_bergabung" required>
             </div>
             <div class="col-md-6">
-    <label for="id_ukm">Nama UKM:</label>
+    <label for="id_ukm">*Nama UKM:</label>
     <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
         <option value="">Pilih Nama UKM</option>
         <?php
