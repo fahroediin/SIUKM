@@ -32,8 +32,6 @@ if (!isset($_SESSION['id_user'])) {
     // Mengatur path untuk pasfoto dan foto KTM
     $pasfoto_path = "../assets/images/pasfoto/" . $row['pasfoto'];
     $foto_ktm_path = "../assets/images/ktm/" . $row['foto_ktm'];
-
-    $_SESSION['id_calabar'] = $id_calabar;
     ?>
 <!DOCTYPE html>
 <html>

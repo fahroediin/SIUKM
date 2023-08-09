@@ -31,7 +31,12 @@ if (isset($_GET['logout'])) {
 
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
 $userId = $_SESSION['id_user'];
-$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+$query = "SELECT * FROM tab_user WHERE id_user = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $userId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
 
 $query = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $stmt = mysqli_prepare($conn, $query);
@@ -54,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Mengambil data dari form
   $id_user = $_POST['id_user'];
   $nama_lengkap = $_POST['nama_lengkap'];
-  $nim = $_POST['nim'];
   $semester = $_POST['semester'];
   $prodi = $_POST['prodi'];
   $id_ukm = $_POST['id_ukm'];
@@ -94,8 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         move_uploaded_file($_FILES["foto_ktm"]["tmp_name"], $ktm_dir . $nama_foto_ktm)) {
 
         // Menyimpan data pendaftaran ke tabel tab_pacab
-        $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, nim, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
-                  VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$nim', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$nama_pasfoto', '$nama_foto_ktm', '$alasan')";
+        $query = "INSERT INTO tab_pacab (id_calabar, id_user, nama_lengkap, semester, prodi, id_ukm, nama_ukm, email, no_hp, pasfoto, foto_ktm, alasan) 
+                  VALUES ('$id_calabar','$id_user', '$nama_lengkap', '$semester', '$prodi', '$id_ukm', '$nama_ukm', '$email', '$no_hp', '$nama_pasfoto', '$nama_foto_ktm', '$alasan')";
 
         // Menjalankan query
         if (mysqli_query($conn, $query)) {
@@ -126,6 +130,7 @@ $result_ukm = mysqli_query($conn, $query_ukm);
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="../assets/js/script.js"></script>
   <script>
     // Function to show snackbar
@@ -141,6 +146,7 @@ $result_ukm = mysqli_query($conn, $query_ukm);
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 <style>
 
@@ -151,7 +157,15 @@ label {
   display: block;
   margin-bottom: 5px;
 }
+.button-container {
+    display: flex;
+    justify-content: center; /* Rata tengah secara horizontal */
+    align-items: center; /* Rata tengah secara vertikal */
+  }
 
+  .button-container button {
+    margin: 0 10px; /* Spasi antara tombol */
+  }
 /* Style untuk input text */
 input[type=text],  textarea {
   padding: 10px;
@@ -353,9 +367,10 @@ button[type=reset]:hover {
 <script>
     // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm
     function updateNamaUKM(select) {
-      var id_ukm = select.value;
-      var nama_ukmField = document.getElementById("nama_ukm");
-
+  var id_ukm = select.value;
+  var nama_ukmField = document.getElementById("nama_ukm");
+  // Get the selected option element
+  var selectedOption = select.options[select.selectedIndex];
       // Mengirim permintaan AJAX ke server
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
@@ -364,7 +379,7 @@ button[type=reset]:hover {
           var nama_ukm = this.responseText;
 
           // Mengatur nilai field nama_ukm dengan respons dari server
-          nama_ukmField.value = nama_ukm;
+          nama_ukmField.value = selectedOption.text;
         }
       };
       xhttp.open("GET", "get_nama_ukm.php?id_ukm=" + id_ukm, true);
@@ -372,7 +387,6 @@ button[type=reset]:hover {
     }
   </script>
 </head>
-<body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
     <span class="navbar-toggler-icon"></span>
@@ -431,8 +445,8 @@ button[type=reset]:hover {
         </ul>
       </div>
     </nav>
-
-    <div class="container" style="margin-top: 75px;">
+    <body>
+    <div class="container" style="margin-top: 75px; margin-bottom: 75px;">
         <h2 style="text-align: center;">Form Pendaftaran Anggota</h2>
         <h3 style="text-align: center;">Unit Kegiatan Mahasiswa</h3>
         <form method="POST" action="" enctype="multipart/form-data">
@@ -498,7 +512,7 @@ button[type=reset]:hover {
         </div>
         <div class="form-group">
                             <label for="id_ukm">*Nama UKM:</label>
-                    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                            <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required onchange="updateNamaUKM(this)">
                         <option value="">Pilih Nama UKM</option>
                         <?php
                         // Fetch data from the tab_ukm table and populate the dropdown options
@@ -514,26 +528,31 @@ button[type=reset]:hover {
                 <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
         <div class="form-group">
             <label for="pasfoto">*Pasfoto</label>
-            <input type="file" id="pasfoto" name="pasfoto" accept="image/*">
+            <input type="file" id="pasfoto" name="pasfoto" accept="image/*" onchange="showPreview(this, 'pasfotoPreview')">
+            <img id="pasfotoPreview" src="#" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px; display: none;">
         </div>
         <div class="form-group">
             <label for="foto_ktm">*Foto Kartu KTM</label>
-            <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*">
+            <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*" onchange="showPreview(this, 'fotoKtmPreview')">
+            <img id="fotoKtmPreview" src="#" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px; display: none;">
         </div>
         <div class="form-group">
-        <label for="alasan">Alasan Bergabung:</label>
-    <textarea id="alasan" name="alasan" placeholder="Masukkan alasan Anda bergabung" required></textarea>
-<div class="checkbox-container">
-  <input type="checkbox" id="persetujuan" name="persetujuan" required>
-  <span class="modal-caption" id="modalButton">Syarat dan Persetujuan</span>
-
-</div>
-<div class="button-container">
-  <button type="submit">DAFTAR</button>
-  <button type="reset">CLEAR</button>
-</div>
+      <label for="alasan">*Alasan Bergabung</label>
+      <textarea id="alasan" name="alasan" placeholder="Masukkan alasan Anda bergabung minimal 50 karakter dan maksimal 250 karakter" required minlength="50" maxlength="250"></textarea>
+      <div class="invalid-feedback">
+        Alasan harus memiliki panjang antara 50 dan 250 karakter.
+      </div>
     </div>
-</div>
+        <div class="checkbox-container">
+          <input type="checkbox" id="persetujuan" name="persetujuan" required>
+          <span class="modal-caption" id="modalButton">Syarat dan Persetujuan</span>
+        </div>
+        <div class="button-container">
+        <button type="submit">DAFTAR</button>
+        <button type="reset">CLEAR</button>
+      </div>
+          </div>
+      </div>
 </div>
 <div id="myModal" class="modal">
   <div class="modal-content">
@@ -543,11 +562,11 @@ button[type=reset]:hover {
       1. Kualifikasi Anggota:<br>
           a. Mahasiswa aktif di STMIK Komputama Majenang.<br>
           b. Tidak ada batasan jurusan atau program studi tertentu.<br>
-          c. Tidak ada batasan tingkat semester tertentu.<br>
+          c. Maksimal mahasiswa semester 14.<br>
       2. Pendaftaran:<br>
-          a. Calon anggota wajib mengisi formulir pendaftaran yang disediakan oleh UKM.<br>
+          a. Calon anggota wajib mengisi formulir pendaftaran yang disediakan oleh SIUKM.<br>
           b. Pendaftaran wajib mengerjakan soal TPA yang diberikan oleh UKM.<br>
-          c. Calon anggota wajib melampirkan fotokopi kartu mahasiswa sebagai bukti keaktifan.<br>
+          c. Calon anggota wajib melampirkan foto kartu tanda mahasiswa sebagai bukti keaktifan.<br>
 
       3. Kepatuhan Hukum:<br>
           a. Seluruh anggota UKM wajib mematuhi undang-undang yang berlaku di negara Indonesia.<br>
@@ -622,17 +641,22 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
   <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
 </svg> Facebook</a></footer>
 <script>
-    function fillNIM() {
-      var id_userField = document.getElementById("id_user");
-      var nimField = document.getElementById("nim");
-
-      // Mengisi textfield nim dengan nilai id_user
-      nimField.value = id_userField.value;
+function showPreview(input, previewId) {
+    var preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.style.display = "block";
+            preview.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.style.display = "none";
     }
+}
+</script>
 
-    // Menambahkan event listener untuk textfield id_user
-    document.getElementById("id_user").addEventListener("input", fillNIM);
-  </script>
+
 <script>
   // Mendapatkan elemen modal, tombol, dan span penutup modal
   var modal = document.getElementById("myModal");
@@ -655,38 +679,7 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
       modal.style.display = "none";
     }
   }
-  const idUkmSelect = document.getElementById("id_ukm");
-    const namaUkmField = document.getElementById("nama_ukm");
 
-    idUkmSelect.addEventListener("change", function() {
-        const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
-        const idUkm = selectedOption.value;
-        if (idUkm) {
-            // Mengirim permintaan AJAX ke server
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    // Mengambil respons dari server dalam bentuk JSON
-                    var data = JSON.parse(this.responseText);
-                    if (data.error) {
-                        // Handle error response from the server
-                        console.error(data.error);
-                        namaUkmField.value = ""; // Clear the field in case of an error
-                    } else {
-                        // Update nama_ukm field with the retrieved data
-                        namaUkmField.value = data.nama_ukm;
-                    }
-                }
-            };
-
-            // Send the AJAX request to the server
-            xhttp.open("GET", "get_data_ukm.php?id_ukm=" + idUkm, true);
-            xhttp.send();
-        } else {
-            // If no id_ukm is selected, reset the nama_ukm field
-            namaUkmField.value = "";
-        }
-    });
     // Fungsi untuk logout
     function logout() {
         // Redirect ke halaman logout
