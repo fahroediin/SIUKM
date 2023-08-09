@@ -92,9 +92,12 @@ function generateIdKegiatan($tgl)
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate and sanitize form inputs
+    $id_kegiatan = mysqli_real_escape_string($conn, $_POST["id_kegiatan"]);
     $id_ukm = mysqli_real_escape_string($conn, $_POST["id_ukm"]);
     $nama_ukm = mysqli_real_escape_string($conn, $_POST["nama_ukm"]);
     $nama_kegiatan = mysqli_real_escape_string($conn, $_POST["nama_kegiatan"]);
+    $jenis = mysqli_real_escape_string($conn, $_POST["jenis"]);
+    $deskripsi = mysqli_real_escape_string($conn, $_POST["deskripsi"]);
     $tgl = mysqli_real_escape_string($conn, $_POST["tgl"]);
     // Define the maximum file size in bytes (5MB)
     $maxFileSize = 5 * 1024 * 1024;
@@ -143,13 +146,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $id_kegiatan = generateIdKegiatan($tgl);
 
         // Prepare the SQL query to insert data into tab_galeri table
-    $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, jenis, deskripsi, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Prepare the statement
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters
-    $stmt->bind_param("sssssss", $id_foto, $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $uniqueFilename, $tgl);
+    $stmt->bind_param("sssssssss", $id_kegiatan, $id_foto, $id_ukm, $nama_ukm, $nama_kegiatan, $jenis, $deskripsi, $uniqueFilename, $tgl);
 
         // Execute the query
         if ($stmt->execute()) {
@@ -174,7 +177,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 // Fetch data from the tab_galeri table with search filter
 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
-$query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, foto_kegiatan, tgl FROM tab_galeri";
+$query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, jenis, deskripsi, foto_kegiatan, tgl FROM tab_galeri";
 
 if (!empty($searchTerm)) {
     $query_galeri .= " WHERE id_foto LIKE '%$searchTerm%' OR id_kegiatan LIKE '%$searchTerm%' OR nama_ukm LIKE '%$searchTerm%'";
@@ -362,6 +365,8 @@ $result_galeri = mysqli_query($conn, $query_galeri);
             <th>ID Kegiatan</th>
             <th>Nama UKM</th>
             <th>Nama Kegiatan</th>
+            <th>Jenis Kegiatan</th>
+            <th>Deskripsi</th>
             <th>Foto Kegiatan</th>
             <th>Tanggal</th>
             <th>Aksi</th>
@@ -381,6 +386,8 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                 echo "<td>" . $row_galeri['id_kegiatan'] . "</td>";
                 echo "<td>" . $row_galeri['nama_ukm'] . "</td>";
                 echo "<td>" . $row_galeri['nama_kegiatan'] . "</td>";
+                echo "<td>" . $row_galeri['jenis'] . "</td>";
+                echo "<td>" . $row_galeri['deskripsi'] . "</td>";
                 echo "<td><img src='../assets/images/kegiatan/" . $row_galeri['foto_kegiatan'] . "' width='100'></td>";
                 echo "<td>" . date('d', strtotime($row_galeri['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_galeri['tgl']))) - 1] . " " . date('Y', strtotime($row_galeri['tgl'])) . "</td>";
                 echo "<td>
@@ -393,29 +400,6 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         </tbody>
 </table>
 
-    <script>
-        $(document).ready(function() {
-            $("#id_ukm_dropdown").change(function() {
-                // Ambil nilai ID UKM yang dipilih oleh pengguna
-                var id_ukm = $(this).val();
-
-                // Kirim permintaan AJAX ke server untuk mendapatkan nama UKM berdasarkan ID UKM
-                $.ajax({
-                    url: "get_nama_ukm.php", // Ganti dengan alamat file PHP yang akan memproses permintaan ini
-                    method: "POST",
-                    data: { id_ukm: id_ukm },
-                    success: function(response) {
-                        // Isi nilai nama UKM ke dalam input text dengan id "nama_ukm"
-                        $("#nama_ukm").val(response);
-                    },
-                    error: function(xhr, status, error) {
-                        // Tangani error jika ada
-                        console.error(error);
-                    }
-                });
-            });
-        });
-</script>
 <script>
     function confirmDelete(namaKegiatan) {
         // Show the confirmation alert and ask for user confirmation
@@ -444,25 +428,34 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                         <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                             enctype="multipart/form-data">
                             <div class="form-group">
-                            <label for="id_ukm">Nama UKM:</label>
-                    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
-                        <option value="">Pilih Nama UKM</option>
-                        <?php
-                        // Fetch data from the tab_ukm table and populate the dropdown options
-                        $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-                        $ukmResult = mysqli_query($conn, $ukmQuery);
-
-                        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
-                            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['nama_ukm'] . '</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                    <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
-
+                            <label for="nama_ukm">Pilih Kegiatan:</label>
+                            <select class="form-control" name="id_kegiatan" id="id_kegiatan_dropdown" required>
+                            <option value="">Pilih Kegiatan</option>
+                            <?php
+                            // Fetch data from the tab_kegiatan table and populate the dropdown options
+                            while ($kegiatanRow = mysqli_fetch_assoc($result_kegiatan)) {
+                                echo '<option value="' . $kegiatanRow['id_kegiatan'] . '" data-id_ukm="' . $kegiatanRow['id_ukm'] . '" data-nama_ukm="' . $kegiatanRow['nama_ukm'] . '" data-tgl="' . $kegiatanRow['tgl'] . '">' . $kegiatanRow['id_kegiatan'] . ' - ' . $kegiatanRow['nama_kegiatan'] . '</option>';
+                            }
+                            ?>
+                        </select>
+                        </div>
+                            <input type="hidden" id="id_ukm" name="id_ukm" class="form-control" required>
+                        
+                        <div class="form-group">
+                            <label for="nama_ukm">Nama Ukm:</label>
+                            <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" required>
+                        </div>
                         <div class="form-group">
                             <label for="nama_kegiatan">Nama Kegiatan:</label>
                             <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jenis">Jenis Kegiatan:</label>
+                            <input type="text" id="jenis" name="jenis" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="deskripsi">Deskripsi:</label>
+                            <input type="text" id="deskripsi" name="deskripsi" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="foto_kegiatan">Foto Kegiatan:</label>
@@ -471,7 +464,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                         </div>
                         <div class="form-group">
                             <label for="tgl">Tanggal:</label>
-                            <input type="date" id="tgl" name="tgl" class="form-control" required>
+                            <input type="text" id="tgl" name="tgl" class="form-control" required>
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
@@ -485,15 +478,78 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         </div>
     </div>
 </div>
+
 <script>
-    // Add an event listener to the dropdown
-    document.getElementById('id_ukm_dropdown').addEventListener('change', function() {
-        // Get the selected value from the dropdown
-        var selectedValue = this.value;
-        
-        // Set the selected value in the text field
-        document.getElementById('id_ukm').value = selectedValue;
+$(document).ready(function() {
+    $("#id_kegiatan_dropdown").change(function() {
+        var selectedOption = $(this).find("option:selected");
+
+        // Update the "id_ukm" field
+        $("#id_ukm").val(selectedOption.data("id_ukm"));
+
+        // Update the "nama_ukm" field
+        $("#nama_ukm").val(selectedOption.data("nama_ukm"));
+
+        // Update the "nama_kegiatan" field
+        $("#nama_kegiatan").val(selectedOption.text());
+
+        // Get the date value from the selected option's data-tgl attribute
+        var rawDate = selectedOption.data("tgl");
+
+        // Parse the rawDate and create a new Date object
+        var dateObject = new Date(rawDate);
+
+        // Format the date as Tanggal-Bulan-Tahun
+        var formattedDate = formatDate(dateObject);
+
+        // Update the "tgl" field with the formatted date
+        $("#tgl").val(formattedDate);
     });
+
+    // Function to format date as Tanggal-Bulan-Tahun
+    function formatDate(date) {
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+
+        // Array of Indonesian month names
+        var indonesianMonths = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
+        // Format the date as Tanggal-Bulan-Tahun
+        var formattedDate = day + " " + indonesianMonths[monthIndex] + " " + year;
+
+        return formattedDate;
+    }
+});
 </script>
+<script>
+    $("#id_kegiatan_dropdown").change(function() {
+    var id_kegiatan = $(this).val();
+
+    $.ajax({
+        url: "get_kegiatan_details.php", // Replace with the actual URL to your PHP script
+        method: "POST",
+        data: { id_kegiatan: id_kegiatan },
+        success: function(response) {
+            var data = JSON.parse(response);
+            // Update the fields using the retrieved data
+            $("#id_ukm").val(data.id_ukm);
+            $("#nama_ukm").val(data.nama_ukm);
+            $("#nama_kegiatan").val(data.nama_kegiatan);
+            $("#jenis").val(data.jenis);
+            $("#deskripsi").val(data.deskripsi);
+            $("#tgl").val(data.tgl);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+});
+
+</script>
+
 </body>
 </html>
