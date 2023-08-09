@@ -98,6 +98,48 @@ function getDataForImage($conn, $image_file) {
         border-radius: 10px; /* Add border radius for a more rounded appearance */
         box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
     }
+    .card {
+    border: 1px solid #e1e1e1;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-img-top {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.card-jenis {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    font-style: italic;
+    background-color: #f1f1f1;
+    padding: 3px 8px;
+    border-radius: 5px;
+}
+
+
     </style>
 	 <script>
         // Add jQuery click event handler to handle the zoom effect
@@ -188,21 +230,21 @@ function getDataForImage($conn, $image_file) {
             $nama_kegiatan = $data["nama_kegiatan"];
             $tgl = $data["tgl"];
             $nama_ukm = $data["nama_ukm"];
+            $jenis = $data["jenis"];
 			?>
-		<div class="gallery-item">
+<div class="gallery-item">
     <!-- Add data attributes for the modal -->
     <div class="card">
         <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" class="card-img-top"
             data-toggle="modal" data-target="#imageModal" data-image-id="<?php echo $image_id; ?>" />
         <div class="card-body">
-            <h5 class="card-title"><?php echo $nama_kegiatan; ?></h5>
-            <p class="card-text"><strong></strong> <?php echo date('d F Y', strtotime($tgl)); ?></p>
-            <p class="card-text"><strong></strong> <?php echo $nama_ukm; ?></p>
-            <p class="card-text"><strong></strong> <?php echo $jenis; ?></p>
-                </div>
-            </div>
+            <h3 class="card-title"><?php echo $nama_kegiatan; ?></h3>
+            <p class="card-text"><?php echo date('d F Y', strtotime($tgl)); ?></p>
+            <p class="card-text"><?php echo $nama_ukm; ?></p>
         </div>
-
+        <p class="card-jenis"><?php echo $jenis; ?></p> <!-- Display jenis value here -->
+    </div>
+</div>
 			<?php
         }
         ?>

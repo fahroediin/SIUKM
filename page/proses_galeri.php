@@ -428,7 +428,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                         <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                             enctype="multipart/form-data">
                             <div class="form-group">
-                            <label for="nama_ukm">Pilih Kegiatan:</label>
+                            <label for="nama_ukm">Pilih Kegiatan</label>
                             <select class="form-control" name="id_kegiatan" id="id_kegiatan_dropdown" required>
                             <option value="">Pilih Kegiatan</option>
                             <?php
@@ -442,29 +442,29 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                             <input type="hidden" id="id_ukm" name="id_ukm" class="form-control" required>
                         
                         <div class="form-group">
-                            <label for="nama_ukm">Nama Ukm:</label>
-                            <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" required>
+                            <label for="nama_ukm">Nama Ukm</label>
+                            <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" readonly  required>
                         </div>
                         <div class="form-group">
-                            <label for="nama_kegiatan">Nama Kegiatan:</label>
-                            <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control" required>
+                            <label for="nama_kegiatan">Nama Kegiatan</label>
+                            <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control" readonly  required>
                         </div>
                         <div class="form-group">
-                            <label for="jenis">Jenis Kegiatan:</label>
-                            <input type="text" id="jenis" name="jenis" class="form-control" required>
+                            <label for="jenis">Jenis Kegiatan</label>
+                            <input type="text" id="jenis" name="jenis" class="form-control" readonly required>
                         </div>
                         <div class="form-group">
-                            <label for="deskripsi">Deskripsi:</label>
-                            <input type="text" id="deskripsi" name="deskripsi" class="form-control" required>
+                            <label for="deskripsi">Deskripsi</label>
+                            <input type="text" id="deskripsi" name="deskripsi" class="form-control" readonly required>
                         </div>
                         <div class="form-group">
-                            <label for="foto_kegiatan">Foto Kegiatan:</label>
-                            <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required
-                                class="form-control-file">
+                            <label for="foto_kegiatan">Foto Kegiatan</label>
+                            <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required class="form-control-file">
+                            <img id="image-preview" src="#" alt="Foto Kegiatan" style="display: none; max-width: 100%; height: auto;">
                         </div>
                         <div class="form-group">
-                            <label for="tgl">Tanggal:</label>
-                            <input type="text" id="tgl" name="tgl" class="form-control" required>
+                            <label for="tgl">Tanggal</label>
+                            <input type="text" id="tgl" name="tgl" class="form-control" readonly required>
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
@@ -478,6 +478,18 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $("#foto_kegiatan").change(function() {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#image-preview').attr('src', e.target.result);
+            $('#image-preview').css('display', 'block');
+        }
+        reader.readAsDataURL(this.files[0]);
+    });
+});
+</script>
 
 <script>
 $(document).ready(function() {
