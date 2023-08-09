@@ -187,10 +187,6 @@ if (!isset($_SESSION['id_user'])) {
             <td> <?php echo $no_hp; ?></td>
         </tr>
         <tr>
-            <td>ID UKM</td>
-            <td> <?php echo $id_ukm; ?></td>
-        </tr>
-        <tr>
             <td>Nama UKM</td>
             <td> <?php echo $nama_ukm; ?></td>
         </tr>

@@ -45,13 +45,15 @@ if (isset($_POST['submit'])) {
     // Mengambil data dari form
     $nama_prestasi = $_POST['nama_prestasi'];
     $penyelenggara = $_POST['penyelenggara'];
+    $tingkat = $_POST['tingkat'];
     $tgl_prestasi = $_POST['tgl_prestasi'];
     $id_ukm = $_POST['id_ukm'];
     $nama_ukm = $_POST['nama_ukm'];
     $sertifikat = $_POST['sertifikat'];
 
    // Generate ID Prestasi
-    $id_prestasi = generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi);
+$id_prestasi = generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi);
+
 // Check if the certificate file is uploaded
 if (isset($_FILES['sertifikat'])) {
     $targetDir = '../assets/images/sertifikat/';
@@ -106,7 +108,7 @@ if (isset($_FILES['sertifikat'])) {
         echo '<script>alert("ID Prestasi tidak boleh sama");</script>';
     } else {
        // Menyimpan data ke database
-       $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tgl_prestasi, id_ukm, nama_ukm, sertifikat) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tgl_prestasi', '$id_ukm', '$nama_ukm', '$sertifikatFilename')";
+       $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tingkat, tgl_prestasi, id_ukm, nama_ukm, sertifikat) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tingkat', '$tgl_prestasi', '$id_ukm', '$nama_ukm', '$sertifikatFilename')";
         $result = $conn->query($sql);
 
         if ($result) {
@@ -115,7 +117,6 @@ if (isset($_FILES['sertifikat'])) {
             exit();
         } else {
             // Jika terjadi kesalahan saat menyimpan prestasi
-            echo "Error: " . $conn->error;
             exit();
         }
     }
@@ -123,38 +124,18 @@ if (isset($_FILES['sertifikat'])) {
 
 function generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi)
 {
-    // Menghapus karakter non-alfanumerik dari id_ukm
-    $clean_id_ukm = preg_replace("/[^a-zA-Z0-9]/", "", $id_ukm);
+    // Generate 6-digit random number
+    $random_digits = mt_rand(100000, 999999);
 
-   
-    $id_prestasi = substr($clean_id_ukm, 0, 3);
+    // Format the date as Ymd (YearMonthDay)
+    $formatted_date = date('Ymd', strtotime($tgl_prestasi));
 
-    // Menghapus karakter non-alfanumerik dari nama prestasi
-    $clean_nama_prestasi = preg_replace("/[^a-zA-Z0-9]/", "", $nama_prestasi);
-
-    // Mengambil 4 huruf pertama dari nama prestasi
-    $id_prestasi .= substr($clean_nama_prestasi, 0, 4);
-
-    // Menghapus karakter non-alfanumerik dari penyelenggara
-    $clean_penyelenggara = preg_replace("/[^a-zA-Z0-9]/", "", $penyelenggara);
-
-    // Mengambil 4 huruf pertama dari penyelenggara
-    $id_prestasi .= substr($clean_penyelenggara, 0, 4);
-
-    // Mengubah format tanggal prestasi menjadi Y
-    $tahun_prestasi = date('Y', strtotime($tgl_prestasi));
-
-    // Mengambil tahun dari tanggal prestasi
-    $id_prestasi .= $tahun_prestasi;
-
-    // Generate 4 digit angka acak
-    $random_digits = mt_rand(1000, 9999);
-
-    // Append the 4 random digits to the ID Prestasi
-    $id_prestasi .= $random_digits;
+    // Combine the formatted date with the random digits
+    $id_prestasi = $formatted_date . $random_digits;
 
     return $id_prestasi;
 }
+
 
 
 
@@ -178,7 +159,6 @@ if (isset($_POST['action'])) {
             exit();
         } else {
             // Jika terjadi kesalahan saat menghapus prestasi
-            echo "Error: " . $conn->error;
             exit();
         }
     }
@@ -199,8 +179,14 @@ while ($row = mysqli_fetch_assoc($result)) {
     $namaUKM[$id_ukm] = $nama_ukm;
 }
 
-// Mengambil data dari tabel tab_prestasi
 $sql = "SELECT * FROM tab_prestasi";
+
+// Cek apakah ada parameter pencarian
+if (isset($_GET['search'])) {
+    $search = $_GET['search'];
+    $sql .= " WHERE id_prestasi LIKE '%$search%' OR nama_prestasi LIKE '%$search%' OR id_ukm LIKE '%$search%' OR penyelenggara LIKE '%$search%'";
+}
+
 $result = $conn->query($sql);
 
 // Memeriksa apakah terdapat data prestasi
@@ -223,20 +209,28 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
 </head>
 <style>
-    .header h2 {
-    /* Atur gaya untuk elemen H2 pada header */
-    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
-}
+            .password-input {
+    position: relative;
+    }
 
-.header {
-    /* Atur tata letak (layout) untuk header */
-    display: flex;
-    align-items: center;
-}
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
+
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
     .card {
         width: 100%; /* Set the width to 100% to make the card responsive */
         max-width: 400px; /* Add max-width to limit the card's width */
@@ -298,6 +292,27 @@ $conn->close();
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
+    .content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
+
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
+
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+.is-invalid {
+    border-color: red;
+}
     .certificate-preview {
     margin-top: 10px;
 }
@@ -373,9 +388,16 @@ $conn->close();
                 <i class="fas fa-plus"></i> Tambah Prestasi
             </button>
         </div>
+        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+        <input class="form-control mr-sm-2" type="text" placeholder="Cari..." name="search" aria-label="Search">
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+    <a href="proses_prestasi.php" class="btn btn-outline-secondary ml-2">
+  <i class="fas fa-sync-alt"></i>
+</a>
     </div>
+</form>
 
-    <<div class="content">
+<div class="content">
     <table class="table">
         <thead>
             <tr>
@@ -383,6 +405,7 @@ $conn->close();
                 <th>ID Prestasi</th>
                 <th>Nama Prestasi</th>
                 <th>Penyelenggara</th>
+                <th>Tingkat</th>
                 <th>Tanggal Prestasi</th>
                 <th>Nama UKM</th>
                 <th>Sertifikat</th>
@@ -404,6 +427,7 @@ $conn->close();
             <td><?php echo $prestasi['id_prestasi']; ?></td>
             <td><?php echo $prestasi['nama_prestasi']; ?></td>
             <td><?php echo $prestasi['penyelenggara']; ?></td>
+            <td><?php echo $prestasi['tingkat']; ?></td>
             <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
             <td><?php echo $prestasi['nama_ukm']; ?></td>
             <td>
@@ -460,6 +484,13 @@ endforeach; ?>
                     Nama prestasi tidak boleh lebih dari 30 karakter.
             </div>
             <div class="form-group">
+                <label for="tingkat">*Tingkat:</label>
+                <select class="form-control" id="tingkat" name="tingkat" required>
+                    <option value="Nasional">Nasional</option>
+                    <option value="Internasional">Internasional</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="tgl_prestasi">*Tanggal Prestasi:</label>
                 <input type="date" class="form-control" id="tgl_prestasi" name="tgl_prestasi" value="<?php echo $prestasi['tgl_prestasi']; ?>" required>
             </div>
@@ -509,9 +540,7 @@ endforeach; ?>
         </div>
     </div>
 </div>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <script>
     // Function to confirm the delete action
     function confirmDelete() {

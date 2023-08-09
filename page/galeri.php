@@ -163,8 +163,8 @@ function getDataForImage($conn, $image_file) {
 	</nav>
 	<div class="container">
         <h1>Galeri</h1>
+        <div class="container">
         <div class="gallery">
-		<div class="gallery">
         <?php
         // Loop through the image files and display them
         foreach ($image_files as $index => $image_file) {
@@ -198,6 +198,7 @@ function getDataForImage($conn, $image_file) {
         }
         ?>
     </div>
+    
 	</div>
 	</div>
 	<!-- Modal to display enlarged image -->

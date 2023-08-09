@@ -186,6 +186,9 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
@@ -295,12 +298,14 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         <body>
 <div class="content">
     <h2>Data Galeri</h2>
+    <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#addModal">
+            <i class="fas fa-plus"></i> Tambah Foto
+        </button>
     <table class="table">
         <thead>
             <tr>
             <th>ID Foto</th>
             <th>ID Kegiatan</th>
-            <th>ID UKM</th>
             <th>Nama UKM</th>
             <th>Nama Kegiatan</th>
             <th>Foto Kegiatan</th>
@@ -320,7 +325,6 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                 echo "<tr>";
                 echo "<td>" . $row_galeri['id_foto'] . "</td>";
                 echo "<td>" . $row_galeri['id_kegiatan'] . "</td>";
-                echo "<td>" . $row_galeri['id_ukm'] . "</td>";
                 echo "<td>" . $row_galeri['nama_ukm'] . "</td>";
                 echo "<td>" . $row_galeri['nama_kegiatan'] . "</td>";
                 echo "<td><img src='../assets/images/kegiatan/" . $row_galeri['foto_kegiatan'] . "' width='100'></td>";
@@ -338,59 +342,12 @@ $result_galeri = mysqli_query($conn, $query_galeri);
             <div class="row justify-content-center">
                 <!-- Wrap the form with a card component -->
                 <div class="card">
-                <h2 style="text-align: center;">Tambah Foto</h2>
-                    <div class="card-body">
-                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
-                            enctype="multipart/form-data">
-                            <div class="form-group">
-                            <label for="id_ukm">ID UKM:</label>
-                <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
-                    <option value="">Pilih ID UKM</option>
-                    <?php
-                    // Fetch data from the tab_ukm table and populate the dropdown options
-                    $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm"; // Add 'nama_ukm' to the SELECT query
-                    $ukmResult = mysqli_query($conn, $ukmQuery);
-
-                    while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
-                        echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['id_ukm'] . '</option>';
-                    }
-                    ?>
-                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="nama_ukm">Nama UKM:</label>
-                                <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
-                            </div>
-                           
-                                <input type="hidden" id="id_kegiatan" name="id_kegiatan" class="form-control" readonly>
-                          
-                            <div class="form-group">
-                                <label for="nama_kegiatan">Nama Kegiatan:</label>
-                                <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label for="foto_kegiatan">Foto Kegiatan:</label>
-                                <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required
-                                class="form-control-file">
-                            </div>
-                            <div class="form-group">
-                                <label for="tgl">Tanggal:</label>
-                                <input type="date" id="tgl" name="tgl" class="form-control" required>
-                            </div>
-                            </div>
-                                        <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
-                                        <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
-                                <i class="fas fa-plus"></i> Tambah Foto
-                            </button>
-                                </div>
-                        </form>
-                    </div>
+               
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $("#id_ukm_dropdown").change(function() {
@@ -425,6 +382,73 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         // Redirect ke halaman logout
         window.location.href = "?logout=true";
     }
+</script>
+<!-- Modal structure -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <!-- Move your form here -->
+                    <h2 style="text-align: center;">Tambah Foto</h2>
+                    <div class="card-body">
+                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
+                            enctype="multipart/form-data">
+                            <div class="form-group">
+                            <label for="id_ukm">Nama UKM:</label>
+                    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                        <option value="">Pilih Nama UKM</option>
+                        <?php
+                        // Fetch data from the tab_ukm table and populate the dropdown options
+                        $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+                        $ukmResult = mysqli_query($conn, $ukmQuery);
+
+                        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+                            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['nama_ukm'] . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                    <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
+
+                        <div class="form-group">
+                            <label for="nama_kegiatan">Nama Kegiatan:</label>
+                            <input type="text" id="nama_kegiatan" name="nama_kegiatan" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="foto_kegiatan">Foto Kegiatan:</label>
+                            <input type="file" id="foto_kegiatan" name="foto_kegiatan" accept="image/*" required
+                                class="form-control-file">
+                        </div>
+                        <div class="form-group">
+                            <label for="tgl">Tanggal:</label>
+                            <input type="date" id="tgl" name="tgl" class="form-control" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-sm btn-medium" name="submit">
+                                <i class="fas fa-plus"></i> Tambah Foto
+                            </button>
+                        </div>
+                    </form>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Add an event listener to the dropdown
+    document.getElementById('id_ukm_dropdown').addEventListener('change', function() {
+        // Get the selected value from the dropdown
+        var selectedValue = this.value;
+        
+        // Set the selected value in the text field
+        document.getElementById('id_ukm').value = selectedValue;
+    });
 </script>
 </body>
 </html>

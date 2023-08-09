@@ -30,13 +30,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_ukm = mysqli_real_escape_string($conn, $_POST["id_ukm"]);
     $nama_ukm = mysqli_real_escape_string($conn, $_POST["nama_ukm"]);
     $nama_kegiatan = mysqli_real_escape_string($conn, $_POST["nama_kegiatan"]);
+    $deskripsi = mysqli_real_escape_string($conn, $_POST["deskripsi"]);
+    $jenis = mysqli_real_escape_string($conn, $_POST["jenis"]);
     $tgl = mysqli_real_escape_string($conn, $_POST["tgl"]);
 
     $id_kegiatan = generateIdKegiatan($tgl);
 
-    $sql = "INSERT INTO tab_kegiatan (id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, tgl) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tab_kegiatan (id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, deskripsi, jenis, tgl) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $tgl);
+    $stmt->bind_param("sssssss", $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $deskripsi, $jenis, $tgl);
 
     if ($stmt->execute()) {
         header("Location: proses_kegiatan.php?success=1");
@@ -50,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result_ukm = mysqli_query($conn, $query_ukm);
 
-$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
+$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, deskripsi, jenis, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 ?>
 
@@ -59,10 +61,13 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 
 <head>
 <title>Kegiatan - SIUKM</title>
-    <meta charset="utf-8">
+<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
@@ -135,7 +140,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <a href="beranda.php">
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
-<h2><i>Jadwal Kegiatan</i></h2>
+<h2><i>Kegiatan</i></h2>
             <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
             <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
@@ -176,7 +181,6 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tambahModalLabel">Tambah Kegiatan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -185,31 +189,41 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
                 <div class="card-body">
                         <h2 style="text-align: center;">Tambah Kegiatan</h2>
-                            enctype="multipart/form-data">
-                            <div class="form-group">
-                                <label for="id_ukm">ID UKM:</label>
-                                <select id="id_ukm" name="id_ukm" class="form-control" required>
-                                    <option value="" selected disabled>Pilih ID UKM</option>
-                                    <?php
-                                        // Membuat opsi combobox dari hasil query
-                                        while ($row_ukm = mysqli_fetch_assoc($result_ukm)) {
-                                            echo "<option value='" . $row_ukm['id_ukm'] . "'>" . $row_ukm['id_ukm'] . "</option>";
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="nama_ukm">Nama UKM:</label>
-                                <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
-                            </div>
+                        <div class="form-group">
+                            <label for="id_ukm">Nama UKM:</label>
+                    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                        <option value="">Pilih Nama UKM</option>
+                        <?php
+                        // Fetch data from the tab_ukm table and populate the dropdown options
+                        $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+                        $ukmResult = mysqli_query($conn, $ukmQuery);
+
+                        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+                            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['nama_ukm'] . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                    <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
+
                            
                                 <input type="hidden" id="id_kegiatan" name="id_kegiatan" class="form-control" readonly>
                           
-                                <div class="form-group">
-                                <label for="nama_kegiatan">Nama Kegiatan:</label>
+                            <div class="form-group">
+                                <label for="nama_kegiatan">*Nama Kegiatan:</label>
                                 <input type="text" id="nama_kegiatan" placeholder="Nama Kegiatan Maksimal 15 karakter" name="nama_kegiatan" class="form-control" required maxlength="15" minlength="3">
                             </div>
-
+                            <div class="form-group">
+                                <label for="deskripsi">*Deskripsi:</label>
+                                <input type="text" id="deskripsi" placeholder="Jelaskan Lebih Lanjut Kegiatan Tersebut" name="deskripsi" class="form-control" required maxlength="50" minlength="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="jenis">*Jenis Kegiatan:</label>
+                                <select class="form-control" id="jenis" name="jenis" required>
+                                    <option value="Rutin">Rutin</option>
+                                    <option value="Tidak Rutin">Tidak Rutin</option>
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label for="tgl">Tanggal:</label>
                                 <input type="date" id="tgl" name="tgl" class="form-control" required>
@@ -221,10 +235,6 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                             </button>
                                 </div>
                         </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Tambah Kegiatan</button>
                 </div>
             </div>
         </div>
@@ -241,6 +251,8 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
             <th>ID UKM</th>
             <th>Nama UKM</th>
             <th>Nama Kegiatan</th>
+            <th>Deskripsi</th>
+            <th>Jenis Kegiatan</th>
             <th>Tanggal</th>
             <th>Aksi</th>
         </tr>
@@ -260,10 +272,12 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
         echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
         echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
+        echo "<td>" . $row_kegiatan['deskripsi'] . "</td>";
+        echo "<td>" . $row_kegiatan['jenis'] . "</td>";
         echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
         echo "<td>
                 <a href='edit_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Edit</a>
-                <a href='delete_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Hapus</a>
+                <a href='delete_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "' onclick='return confirmDelete(\"" . $row_kegiatan['nama_kegiatan'] . "\");'>Hapus</a>
             </td>";
         echo "</tr>";
     }
@@ -307,6 +321,10 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
             namaUkmField.value = "";
         }
     });
+     // Function to confirm the delete action
+     function confirmDelete() {
+        return confirm("Apakah Anda yakin akan menghapus data kegiatan?");
+    }
     // Fungsi untuk logout
     function logout() {
         // Redirect ke halaman logout

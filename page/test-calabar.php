@@ -53,6 +53,11 @@ $totalDijawab = sizeof($_SESSION['jawaban']);
 $prev_no = $no_soal <= 1 ? 1 : $no_soal -1;
 $next_no = $no_soal >= $totalQuestions ? $totalQuestions : $no_soal +1;
 
+// Inisiasi jawaban;
+if(!isset($_SESSION['jawaban'][$no_soal])){
+    $_SESSION['jawaban'][$no_soal] = '';
+}
+
 // Ambil soal dari array berdasarkan nomor soal
 $no_soal_key = $no_soal -1;
 $soal = $questions[$no_soal_key];
@@ -158,7 +163,6 @@ if (isset($_GET['submit'])) {
     header("Location: selesai_test.php");
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -350,13 +354,14 @@ if (isset($_GET['submit'])) {
                 <div class="options">
                     <?php
                         foreach(['a','b','c','d','e'] as $choice){
+                           $choiced = $_SESSION['jawaban'][$no_soal] == $choice ? true : false; 
                     ?>
                     <label>
                         <input 
                             type="radio" 
                             name="answer" 
                             value="<?= $choice; ?>"
-                            <?= $_SESSION['jawaban'][$no_soal] == $choice ? 'checked' : ''; ?>"
+                            checked="<?= $choiced; ?>"
                         /> 
                         <?= $soal['options'][$choice]; ?>
                     </label>
@@ -399,13 +404,15 @@ if (isset($_GET['submit'])) {
                 <div class="options">
                 <?php
                         foreach(['a','b','c','d','e'] as $choice){
+				$choiced = $_SESSION['jawaban'][$no_soal] == $choice ? true : false; 
                     ?>
                     <label>
                         <input 
                             type="radio" 
                             name="answer" 
                             value="<?= $choice; ?>"
-                            <?= $_SESSION['jawaban'][$no_soal] == $choice ? 'checked' : ''; ?>/> 
+                            checked="<?= $choiced; ?>"
+                        /> 
                         <?= $soal['options'][$choice]; ?>
                     </label>
                     <?php } ?>
@@ -439,7 +446,7 @@ if (isset($_GET['submit'])) {
 
         showSnackbar('Terima kasih telah mengerjakan tes potensi akademik')
         setTimeout(function () {
-            window.location.href = 'selesai_test.php?submit=1';
+            window.location.href = 'test-calabar.php?submit=1';
         }, 3500);
     }
     

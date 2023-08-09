@@ -16,7 +16,7 @@ $level = $_SESSION["level"];
 $error = '';
 
 // Mengambil data prestasi dari tabel tab_prestasi
-$query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tgl_prestasi, u.id_ukm, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
+$query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tingkat, p.tgl_prestasi, u.id_ukm, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
 $result = mysqli_query($conn, $query);
 ?>
 
@@ -77,6 +77,14 @@ $result = mysqli_query($conn, $query);
     .filter-form {
         margin-bottom: 20px;
     }
+    /* Center the modal dialog vertically and horizontally */
+  .custom-modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ensure the modal covers the entire viewport height */
+    padding: 0;
+  }
 </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -166,7 +174,7 @@ $result = mysqli_query($conn, $query);
         $filter_ukm = $_GET['ukm'];
 
         // Add the filters to the SQL query
-        $query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tgl_prestasi, p.sertifikat, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
+        $query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tingkat, p.tgl_prestasi, p.sertifikat, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
 
         if (!empty($filter_year)) {
             $query .= " WHERE YEAR(p.tgl_prestasi) = '$filter_year'";
@@ -197,6 +205,7 @@ $result = mysqli_query($conn, $query);
             <th>No.</th>
             <th>Nama Prestasi</th>
             <th>Penyelenggara</th>
+            <th>Tingkat</th>
             <th>Tanggal Prestasi</th>
             <th>UKM</th>
             <th>Sertifikat</th>
@@ -214,9 +223,10 @@ $result = mysqli_query($conn, $query);
                     echo "<td>" . $no . "</td>";
                     echo "<td>" . $row['nama_prestasi'] . "</td>";
                     echo "<td>" . $row['penyelenggara'] . "</td>";
+                    echo "<td>" . $row['tingkat'] . "</td>";
                     echo "<td>" . date("d", strtotime($row['tgl_prestasi'])) . " " . $indonesianMonths[date("n", strtotime($row['tgl_prestasi'])) - 1] . " " . date("Y", strtotime($row['tgl_prestasi'])) . "</td>";
                     echo "<td>" . $row['nama_ukm'] . "</td>";
-                    echo "<td '>" . $row['sertifikat'] . "</td>";
+                    echo "<td>" . $row['sertifikat'] . "</td>";
                     echo "</tr>";
                     $no++;
                 }
@@ -227,9 +237,9 @@ $result = mysqli_query($conn, $query);
     </table>
 </div>
     </div>
-    <!-- Modal for displaying certificate image -->
+ <!-- Modal for displaying certificate image -->
 <div class="modal fade" id="certificateModal" tabindex="-1" role="dialog" aria-labelledby="certificateModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="certificateModalLabel">Sertifikat Prestasi</h5>
@@ -238,7 +248,7 @@ $result = mysqli_query($conn, $query);
         </button>
       </div>
       <div class="modal-body">
-        <img id="certificateImage" src="" alt="Certificate">
+        <img id="certificateImage" src="" alt="Certificate" style="max-width: 720px;">
       </div>
     </div>
   </div>
@@ -250,6 +260,14 @@ $(document).ready(function() {
   $("table").on("click", "tr", function() {
     var certificateUrl = $(this).find("td:last-child").text();
     $("#certificateImage").attr("src", "../assets/images/sertifikat/" + certificateUrl);
+    $("#certificateModal").modal("show");
+  });
+
+   // Handle click event on the certificate link
+   $("table").on("click", ".certificate-link", function(event) {
+    event.preventDefault();
+    var certificateUrl = $(this).closest("tr").data("certificate-url");
+    $("#certificateImage").attr("src", certificateUrl);
     $("#certificateModal").modal("show");
   });
 

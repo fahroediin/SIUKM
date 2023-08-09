@@ -57,7 +57,6 @@ if (isset($_GET['delete'])) {
             exit();
         } else {
             // Jika terjadi kesalahan saat menghapus user
-            echo "Error: " . $conn->error;
             exit();
         }
     } else {
@@ -147,7 +146,6 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
         exit();
     } else {
         // Jika terjadi kesalahan saat menyimpan user
-        echo "Error: " . $conn->error;
         exit();
     }
 }
@@ -311,21 +309,19 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
 <!-- Data User -->
 <<div class="content">
     <div class="header">
-        <h2>Data Pengguna</h2>
+        <h2>User Manager</h2>
         <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#userModal">
             <i class="fas fa-plus"></i> Tambah Pengguna
         </button>
     </div>
-</div>
-<div class="content">
-<form class="form-inline mb-3" method="GET" action="">
+    <form class="form-inline mb-3" method="GET" action="">
     <input type="text" class="form-control mr-sm-2" placeholder="Search by ID User" name="search_id_user">
     <button type="submit" class="btn btn-outline-primary">Search</button>
     <a href="proses_user.php" class="btn btn-outline-secondary ml-2">
   <i class="fas fa-sync-alt"></i>
 </a>
-</form>
 </div>
+</form>
 <div class="content">
     <table class="table">
         <thead>

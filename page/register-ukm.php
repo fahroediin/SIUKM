@@ -101,10 +101,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_query($conn, $query)) {
             // Pendaftaran berhasil, simpan id_calabar ke dalam session
             $_SESSION['id_calabar'] = $id_calabar;
-            echo '<script>alert("Pendaftaran Dokumen Berhasil, selanjutnya kerjakan 50 soal tes potensi akademik berikut dengan sebaik-baiknya dalam waktu 30 menit, dan kami berharap kejujuran anda dalam mengerjakan soal tersebut, terima kasih")</script>';
-            // Show the alert message
-            echo '<script>showSnackbar();</script>';
-            // Redirect ke halaman test-calabar.php
+           
+            
             header("Location: sukses_register_ukm.php");
             exit();
         } else {
@@ -435,7 +433,8 @@ button[type=reset]:hover {
     </nav>
 
     <div class="container" style="margin-top: 75px;">
-        <h2>Form Pendaftaran Anggota UKM Baru</h2>
+        <h2 style="text-align: center;">Form Pendaftaran Anggota</h2>
+        <h3 style="text-align: center;">Unit Kegiatan Mahasiswa</h3>
         <form method="POST" action="" enctype="multipart/form-data">
             <div>
                 <label for="id_user">ID User</label>
@@ -451,12 +450,12 @@ button[type=reset]:hover {
             $row = mysqli_fetch_assoc($result);
             ?>
             <div>
-                <label for="nama_lengkap">Nama Lengkap:</label>
+                <label for="nama_lengkap">*Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" value="<?php echo $row['nama_lengkap']; ?>" required readonly>
             </div>
             <div>
             <div>
-    <label for="semester">Semester:</label>
+    <label for="semester">*Semester</label>
     <select id="semester" name="semester" required>
         <option value="" <?php echo ($row['semester'] === null) ? 'selected' : ''; ?>>--Pilih Semester--</option>
         <?php
@@ -471,7 +470,7 @@ button[type=reset]:hover {
 </div>
 
 <div>
-    <label for="prodi">Program Studi:</label>
+    <label for="prodi">*Program Studi</label>
     <select id="prodi" name="prodi" required>
         <option value="" <?php echo ($row['prodi'] === null) ? 'selected' : ''; ?>>--Pilih Prodi--</option>
         <?php
@@ -490,35 +489,35 @@ button[type=reset]:hover {
 
 
             <div class="form-group">
-            <label for="email">Email:</label>
+            <label for="email">*Email:</label>
             <input type="text" id="email" name="email" value="<?php echo $row['email']; ?>" required>
         </div>
         <div class="form-group">
-            <label for="no_hp">Nomor HP:</label>
+            <label for="no_hp">*Nomor HP:</label>
             <input type="text" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required>
         </div>
         <div class="form-group">
-                                <label for="id_ukm">ID UKM:</label>
-                                <select id="id_ukm" name="id_ukm" class="form-control" required>
-                                    <option value="" selected disabled>Pilih ID UKM</option>
-                                    <?php
-                                        // Membuat opsi combobox dari hasil query
-                                        while ($row_ukm = mysqli_fetch_assoc($result_ukm)) {
-                                            echo "<option value='" . $row_ukm['id_ukm'] . "'>" . $row_ukm['id_ukm'] . "</option>";
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="nama_ukm">Nama UKM:</label>
-                                <input type="text" id="nama_ukm" name="nama_ukm" class="form-control" readonly>
-                            </div>
+                            <label for="id_ukm">*Nama UKM:</label>
+                    <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required>
+                        <option value="">Pilih Nama UKM</option>
+                        <?php
+                        // Fetch data from the tab_ukm table and populate the dropdown options
+                        $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+                        $ukmResult = mysqli_query($conn, $ukmQuery);
+
+                        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+                            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['nama_ukm'] . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
         <div class="form-group">
-            <label for="pasfoto">Upload pas foto:</label>
+            <label for="pasfoto">*Pasfoto</label>
             <input type="file" id="pasfoto" name="pasfoto" accept="image/*">
         </div>
         <div class="form-group">
-            <label for="foto_ktm">Upload foto KTM:</label>
+            <label for="foto_ktm">*Foto Kartu KTM</label>
             <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*">
         </div>
         <div class="form-group">
@@ -694,4 +693,15 @@ Melalui tes potensi akademik, calon anggota diharapkan dapat menunjukkan kemampu
         window.location.href = "?logout=true";
     }
 </script>
+<script>
+const idUkmSelect = document.getElementById("id_ukm_dropdown");
+const namaUkmField = document.getElementById("nama_ukm");
+
+idUkmSelect.addEventListener("change", function() {
+    const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
+    const namaUkm = selectedOption.text; // Get the text of the selected option
+    namaUkmField.value = namaUkm; // Set the value of the hidden input field
+});
+</script>
+
 </html>

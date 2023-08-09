@@ -169,15 +169,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
-    .header h2 {
-    /* Atur gaya untuk elemen H2 pada header */
-    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
-}
-
-.header {
+    .header {
     /* Atur tata letak (layout) untuk header */
     display: flex;
     align-items: center;
+}
+
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
 }
     </style>
 
@@ -223,13 +223,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </script>
 <body>
 <div class="content">
-<div class="header">
-    <h2>Data Anggota UKM</h2>
-    <button type="button" class="btn btn-primary" id="tambahAnggotaButton" data-toggle="modal" data-target="#tambahAnggotaModal">
-    <i class="fas fa-user-plus"></i> Tambah Anggota
-</button>
-</div>
+        <div class="header">
+            <h2>Data Anggota UKM</h2>
+            <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#tambahAnggotaModal">
+                <i class="fas fa-plus"></i> Tambah Anggota
+            </button>
+            </div>
+        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+        <input class="form-control mr-sm-2" type="text" placeholder="Cari..." name="search" aria-label="Search">
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+    <a href="proses_dau.php" class="btn btn-outline-secondary ml-2">
+  <i class="fas fa-sync-alt"></i>
+</a>
     </div>
+</form>
+
 <div class="content">
     <div class="form-group">
     <table class="table table-bordered table-striped">

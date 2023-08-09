@@ -181,7 +181,9 @@ $row_profil = mysqli_fetch_assoc($result_profil);
 
  <!-- Sidebar -->
  <div class="sidebar">
-    <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+    <a href="beranda.php">
+  <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+</a>
     <h2><i>Profil</i></h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
