@@ -381,7 +381,7 @@ $conn->close();
         <body>
   
     <!-- Data User -->
-    <<div class="content">
+    <div class="content">
         <div class="header">
             <h2>Data Prestasi</h2>
             <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#tambahPrestasiModal">
@@ -431,7 +431,7 @@ $conn->close();
             <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
             <td><?php echo $prestasi['nama_ukm']; ?></td>
             <td>
-            <img src="../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>" alt="Sertifikat" class="preview-image" onclick="openCertificateModal('../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>')">
+            <img src="../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>" alt="Sertifikat" class="preview-image" onclick="#sertifikatPreview('../assets/images/sertifikat/<?php echo htmlspecialchars($prestasi['sertifikat']); ?>')">
             </td>
             <td class="action-buttons">
                 <!-- Menggunakan form dengan method GET untuk mengarahkan ke halaman edit_prestasi.php -->

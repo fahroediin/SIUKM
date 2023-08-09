@@ -40,9 +40,18 @@ if (isset($_GET['logout'])) {
 // Menandai halaman yang aktif
 $active_page = 'data_anggota_ukm';
 
-// Memperoleh data anggota UKM dari tabel tab_dau
+// Construct the initial query to get data from the database
 $query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
+
+// Check if a search term is provided
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $searchTerm = mysqli_real_escape_string($conn, $_GET['search']);
+    $query .= " WHERE id_anggota LIKE '%$searchTerm%' OR id_user LIKE '%$searchTerm%' OR nama_lengkap LIKE '%$searchTerm%'";
+}
+
+// Execute the query
 $result = mysqli_query($conn, $query);
+
 
 
 // Memeriksa apakah form telah disubmit
@@ -117,46 +126,70 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <style>
-        /* Tambahkan gaya CSS berikut untuk mengatur layout sidebar dan konten */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
+            .password-input {
+    position: relative;
+    }
 
-        .sidebar {
-            flex: 0 0 20%; /* Lebar sidebar 20% dari container */
-        }
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
 
-        .content {
-            flex: 0 0 80%; /* Lebar konten 80% dari container */
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
+    .card {
+        width: 100%; /* Set the width to 100% to make the card responsive */
+        max-width: 400px; /* Add max-width to limit the card's width */
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-        }
-
-        /* Gaya CSS tambahan untuk mengatur tampilan tabel dan form */
-        .table {
-            width: 100%;
-        }
-        th {
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     th {
         white-space: nowrap;
-        }
-        .delete-button {
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .delete-button {
         background-color: red;
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
+    }
+        /* Tambahkan gaya CSS berikut untuk mengatur tata letak tombol */
+        .action-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .form-row .form-control {
-            flex: 1;
-            margin-right: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .sidebar img {
+    .action-buttons button {
+        flex: 1;
+        margin-right: 5px;
+    }
+    .sidebar img {
         display: block;
         margin: 0 auto;
         margin-bottom: 20px;
@@ -169,7 +202,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
-    .header {
+    .content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
+
+.header {
     /* Atur tata letak (layout) untuk header */
     display: flex;
     align-items: center;
@@ -178,6 +219,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 .header h2 {
     /* Atur gaya untuk elemen H2 pada header */
     margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+.is-invalid {
+    border-color: red;
+}
+    .certificate-preview {
+    margin-top: 10px;
+}
+
+.preview-image {
+    max-width: 100%;
+    height: auto;
 }
     </style>
 
@@ -229,18 +281,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <i class="fas fa-plus"></i> Tambah Anggota
             </button>
             </div>
-        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
-        <input class="form-control mr-sm-2" type="text" placeholder="Cari..." name="search" aria-label="Search">
-        <button type="submit" class="btn btn-outline-primary">Search</button>
+            <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+    <input class="form-control mr-sm-2" type="text" placeholder="Cari..." name="search" aria-label="Search">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
     <a href="proses_dau.php" class="btn btn-outline-secondary ml-2">
-  <i class="fas fa-sync-alt"></i>
-</a>
+        <i class="fas fa-sync-alt"></i>
+    </a>
     </div>
 </form>
 
 <div class="content">
-    <div class="form-group">
-    <table class="table table-bordered table-striped">
+<table class="table">
         <thead>
             <tr>
                 <th>No</th>

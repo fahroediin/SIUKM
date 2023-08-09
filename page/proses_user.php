@@ -307,7 +307,7 @@ VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', 
 
         <body>
 <!-- Data User -->
-<<div class="content">
+<div class="content">
     <div class="header">
         <h2>User Manager</h2>
         <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#userModal">

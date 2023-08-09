@@ -226,7 +226,7 @@ $result = mysqli_query($conn, $query);
                     echo "<td>" . $row['tingkat'] . "</td>";
                     echo "<td>" . date("d", strtotime($row['tgl_prestasi'])) . " " . $indonesianMonths[date("n", strtotime($row['tgl_prestasi'])) - 1] . " " . date("Y", strtotime($row['tgl_prestasi'])) . "</td>";
                     echo "<td>" . $row['nama_ukm'] . "</td>";
-                    echo "<td>" . $row['sertifikat'] . "</td>";
+                    echo "<td><a class='certificate-link' href='#'><i class='fas fa-file-alt'></i> Lihat Sertifikat</a></td>";
                     echo "</tr>";
                     $no++;
                 }
@@ -263,14 +263,13 @@ $(document).ready(function() {
     $("#certificateModal").modal("show");
   });
 
-   // Handle click event on the certificate link
-   $("table").on("click", ".certificate-link", function(event) {
+    // Handle click event on the certificate link
+  $("table").on("click", ".certificate-link", function(event) {
     event.preventDefault();
     var certificateUrl = $(this).closest("tr").data("certificate-url");
     $("#certificateImage").attr("src", certificateUrl);
     $("#certificateModal").modal("show");
   });
-
   // Handle modal close event
   $("#certificateModal").on("hidden.bs.modal", function() {
     $("#certificateImage").attr("src", "");

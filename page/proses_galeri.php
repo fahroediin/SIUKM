@@ -171,8 +171,15 @@ $result_ukm = mysqli_query($conn, $query_ukm);
 $query_kegiatan = "SELECT id_kegiatan, nama_kegiatan FROM tab_kegiatan";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 
-// Fetch data from the tab_galeri table
+// Fetch data from the tab_galeri table with search filter
+$searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+
 $query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, foto_kegiatan, tgl FROM tab_galeri";
+
+if (!empty($searchTerm)) {
+    $query_galeri .= " WHERE id_foto LIKE '%$searchTerm%' OR id_kegiatan LIKE '%$searchTerm%' OR nama_ukm LIKE '%$searchTerm%'";
+}
+
 $result_galeri = mysqli_query($conn, $query_galeri);
 
 ?>
@@ -192,10 +199,70 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
-           .sidebar {
-        text-align: center; /* Center the contents horizontally */
+            .password-input {
+    position: relative;
     }
-        .sidebar img {
+
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
+
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
+    .card {
+        width: 100%; /* Set the width to 100% to make the card responsive */
+        max-width: 400px; /* Add max-width to limit the card's width */
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     th {
+        white-space: nowrap;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .delete-button {
+        background-color: red;
+    }
+        /* Tambahkan gaya CSS berikut untuk mengatur tata letak tombol */
+        .action-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .action-buttons button {
+        flex: 1;
+        margin-right: 5px;
+    }
+    .sidebar img {
         display: block;
         margin: 0 auto;
         margin-bottom: 20px;
@@ -205,57 +272,31 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         border-radius: 50%;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    .sidebar {
+        text-align: center; /* Center the contents horizontally */
+    }
+    .content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
 
-       .card {
-           border: 1px solid #ccc;
-           border-radius: 8px;
-           padding: 20px;
-           max-width: 600px;
-           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-       }
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
 
-       .card-body {
-           display: flex;
-           flex-direction: column;
-           gap: 10px;
-       }
-
-       .card-body div {
-           display: flex;
-           flex-direction: column;
-       }
-
-       label {
-           font-weight: bold;
-           margin-bottom: 5px;
-       }
-
-       select,
-       input[type="text"],
-       input[type="date"],
-       button {
-           padding: 8px;
-           border: 1px solid #ccc;
-           border-radius: 5px;
-           font-size: 16px;
-       }
-
-       select {
-           width: 100%;
-       }
-
-       button {
-           background-color: #007bff;
-           color: #fff;
-           cursor: pointer;
-           transition: background-color 0.3s ease;
-       }
-
-       button:hover {
-           background-color: #0056b3;
-       }
-       
-   </style>
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+.is-invalid {
+    border-color: red;
+}
+</style>
 
  <!-- Sidebar -->
  <div class="sidebar">
@@ -296,11 +337,24 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     wrapButtonsWithBorder();
 </script>
         <body>
-<div class="content">
+        <div class="content">
+        <div class="header">
     <h2>Data Galeri</h2>
     <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#addModal">
-            <i class="fas fa-plus"></i> Tambah Foto
-        </button>
+        <i class="fas fa-plus"></i> Tambah Foto
+    </button>
+    </div>
+        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+        <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan ID Foto, ID Kegiatan, atau Nama UKM">
+        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+        <a href="proses_galeri.php" class="btn btn-outline-secondary ml-2">
+  <i class="fas fa-sync-alt"></i>
+</a>
+    </div>
+</form>
+   
+
+<div class="content">
     <table class="table">
         <thead>
             <tr>
@@ -338,15 +392,6 @@ $result_galeri = mysqli_query($conn, $query_galeri);
             ?>
         </tbody>
 </table>
-<div class="container">
-            <div class="row justify-content-center">
-                <!-- Wrap the form with a card component -->
-                <div class="card">
-               
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         $(document).ready(function() {
