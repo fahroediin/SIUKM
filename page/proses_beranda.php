@@ -39,21 +39,21 @@ function uploadImage($fileInputName, $targetDir, $carouselNumber) {
         $uniqueFilename = "carousel" . $carouselNumber . "." . $imageFileExtension;
         $targetFilePath = $targetDir . $uniqueFilename;
 
-        // Delete the existing file (if any)
-        $existingFilePath = $targetDir . $uniqueFilename;
-        if (file_exists($existingFilePath)) {
-            unlink($existingFilePath);
-        }
-
-        // Move the uploaded file to the target directory
-        if (move_uploaded_file($_FILES[$fileInputName]["tmp_name"], $targetFilePath)) {
-            return $uniqueFilename;
-        } else {
-            return false; // File upload failed
-        }
-    }
-    return null; // File not uploaded
-}
+          // Delete the existing file (if any)
+          $existingFilePath = $targetDir . $uniqueFilename;
+          if (file_exists($existingFilePath)) {
+              unlink($existingFilePath);
+          }
+  
+          // Move the uploaded file to the target directory
+          if (move_uploaded_file($_FILES[$fileInputName]["tmp_name"], $targetFilePath)) {
+              return $uniqueFilename;
+          } else {
+              return false; // File upload failed
+          }
+      }
+      return null; // File not uploaded
+  }
 
 
 // Check if the form has been submitted
@@ -182,7 +182,9 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
     max-height: 200px;
     margin-top: 10px;
 }
-
+.is-invalid {
+        border-color: #dc3545;
+    }
    </style>
 
  <!-- Sidebar -->
@@ -232,39 +234,64 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
         <input type="hidden" name="action" value="<?php echo isset($row_beranda) ? 'edit' : 'add'; ?>">
         <div class="form-group">
-            <label for="informasi">Informasi:</label>
-            <textarea id="informasi" name="informasi" rows="4" class="form-control"><?php echo isset($row_beranda) ? $row_beranda['informasi'] : ''; ?></textarea>
-        </div>
-        <div class="form-group">
-            <label for="foto1">Slide 1:</label>
-            <input type="file" id="foto1" name="foto1" accept="image/*" class="form-control-file">
-            <div class="image-preview" id="foto1-preview">
-            <?php if(isset($row_beranda['foto1']) && !empty($row_beranda['foto1'])): ?>
-                <img src="../assets/images/carousel/<?php echo $row_beranda['foto1']; ?>" class="preview-image" alt="Foto 1">
-                <p style="font-size: 14px;">Foto saat ini</p>
-                <?php endif; ?>
-        </div>
+    <label for="informasi">Informasi:</label>
+    <textarea id="informasi" name="informasi" rows="4" class="form-control"><?php echo isset($row_beranda) ? $row_beranda['informasi'] : ''; ?></textarea>
+    <div id="validation-message" class="invalid-feedback"></div>
+</div>
+
+<script>
+    const informasiTextarea = document.getElementById('informasi');
+    const validationMessage = document.getElementById('validation-message');
+
+    informasiTextarea.addEventListener('input', function () {
+        const informasiValue = informasiTextarea.value;
+        if (informasiValue.length < 500) {
+            validationMessage.textContent = 'Minimal 500 karakter diperlukan.';
+            informasiTextarea.classList.add('is-invalid');
+        } else if (informasiValue.length > 800) {
+            validationMessage.textContent = 'Maksimal 800 karakter diizinkan.';
+            informasiTextarea.classList.add('is-invalid');
+        } else {
+            validationMessage.textContent = '';
+            informasiTextarea.classList.remove('is-invalid');
+        }
+    });
+</script>
+<div class="form-group">
+    <label for="foto1">Slide 1:</label>
+    <input type="file" id="foto1" name="foto1" accept=".jpeg, .jpg, .png" class="form-control-file">
+    <div class="image-preview" id="foto1-preview">
+        <?php if(isset($row_beranda['foto1']) && !empty($row_beranda['foto1'])): ?>
+            <img src="../assets/images/carousel/<?php echo $row_beranda['foto1']; ?>" class="preview-image" alt="Foto 1">
+            <p style="font-size: 14px;">Foto saat ini</p>
+        <?php endif; ?>
     </div>
-        <div class="form-group">
-            <label for="foto2">Slide 2:</label>
-            <input type="file" id="foto2" name="foto2" accept="image/*" class="form-control-file">
-            <div class="image-preview" id="foto2-preview">
-            <?php if(isset($row_beranda['foto2']) && !empty($row_beranda['foto2'])): ?>
-                <img src="../assets/images/carousel/<?php echo $row_beranda['foto2']; ?>" class="preview-image" alt="Foto 2">
-                <p style="font-size: 14px;">Foto saat ini</p>
-                <?php endif; ?>
-        </div>
+    <p style="font-size: 14px; color: #888;">Unggah gambar dengan resolusi minimal 1440x720</p>
+</div>
+
+<div class="form-group">
+    <label for="foto2">Slide 2:</label>
+    <input type="file" id="foto2" name="foto2" accept=".jpeg, .jpg, .png" class="form-control-file">
+    <div class="image-preview" id="foto2-preview">
+        <?php if(isset($row_beranda['foto2']) && !empty($row_beranda['foto2'])): ?>
+            <img src="../assets/images/carousel/<?php echo $row_beranda['foto2']; ?>" class="preview-image" alt="Foto 2">
+            <p style="font-size: 14px;">Foto saat ini</p>
+        <?php endif; ?>
     </div>
-        <div class="form-group">
-            <label for="foto3">Slide 3:</label>
-            <input type="file" id="foto3" name="foto3" accept="image/*" class="form-control-file">
-            <div class="image-preview" id="foto3-preview">
-            <?php if(isset($row_beranda['foto3']) && !empty($row_beranda['foto3'])): ?>
-                <img src="../assets/images/carousel/<?php echo $row_beranda['foto3']; ?>" class="preview-image" alt="Foto 3">
-                <p style="font-size: 14px;">Foto saat ini</p>
-                <?php endif; ?>
-        </div>
+    <p style="font-size: 14px; color: #888;">Unggah gambar dengan resolusi minimal 1440x720</p>
+</div>
+
+<div class="form-group">
+    <label for="foto3">Slide 3:</label>
+    <input type="file" id="foto3" name="foto3" accept=".jpeg, .jpg, .png" class="form-control-file">
+    <div class="image-preview" id="foto3-preview">
+        <?php if(isset($row_beranda['foto3']) && !empty($row_beranda['foto3'])): ?>
+            <img src="../assets/images/carousel/<?php echo $row_beranda['foto3']; ?>" class="preview-image" alt="Foto 3">
+            <p style="font-size: 14px;">Foto saat ini</p>
+        <?php endif; ?>
     </div>
+    <p style="font-size: 14px; color: #888;">Unggah gambar dengan resolusi minimal 1440x720</p>
+</div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
@@ -272,38 +299,68 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
 </div>
 <script>
     // Function to handle image preview
-function handleImagePreview(input, previewElementId) {
-    const previewElement = document.getElementById(previewElementId);
-    const file = input.files[0];
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const imagePreview = document.createElement('img');
-            imagePreview.src = event.target.result;
-            imagePreview.classList.add('preview-image');
-            previewElement.innerHTML = ''; // Clear previous preview
-            previewElement.appendChild(imagePreview);
-        };
-        reader.readAsDataURL(file);
-    } else {
-        previewElement.innerHTML = ''; // Clear preview when no file is selected
+    function handleImagePreview(input, previewElementId) {
+        const previewElement = document.getElementById(previewElementId);
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imagePreview = document.createElement('img');
+                imagePreview.src = event.target.result;
+                imagePreview.classList.add('preview-image');
+                previewElement.innerHTML = ''; // Clear previous preview
+                previewElement.appendChild(imagePreview);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewElement.innerHTML = ''; // Clear preview when no file is selected
+        }
     }
-}
+// Additional validation for the submit button
+document.getElementById('submit-button').addEventListener('click', function(event) {
+        const foto1Input = document.getElementById('foto1');
+        const foto2Input = document.getElementById('foto2');
+        const foto3Input = document.getElementById('foto3');
 
-// Attach event listeners to file input fields
-document.getElementById('foto1').addEventListener('change', function() {
-    handleImagePreview(this, 'foto1-preview');
-});
+        const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png'];
 
-document.getElementById('foto2').addEventListener('change', function() {
-    handleImagePreview(this, 'foto2-preview');
-});
+        // Validate foto1
+        if (foto1Input.files.length > 0) {
+            if (!allowedFormats.includes(foto1Input.files[0].type)) {
+                event.preventDefault();
+                alert('Format gambar untuk Slide 1 tidak valid. Hanya format .jpeg, .jpg, dan .png yang diperbolehkan.');
+            }
+        }
 
-document.getElementById('foto3').addEventListener('change', function() {
-    handleImagePreview(this, 'foto3-preview');
-});
+        // Validate foto2
+        if (foto2Input.files.length > 0) {
+            if (!allowedFormats.includes(foto2Input.files[0].type)) {
+                event.preventDefault();
+                alert('Format gambar untuk Slide 2 tidak valid. Hanya format .jpeg, .jpg, dan .png yang diperbolehkan.');
+            }
+        }
 
+        // Validate foto3
+        if (foto3Input.files.length > 0) {
+            if (!allowedFormats.includes(foto3Input.files[0].type)) {
+                event.preventDefault();
+                alert('Format gambar untuk Slide 3 tidak valid. Hanya format .jpeg, .jpg, dan .png yang diperbolehkan.');
+            }
+        }
+    // Attach event listeners to file input fields
+    document.getElementById('foto1').addEventListener('change', function() {
+        handleImagePreview(this, 'foto1-preview');
+    });
+
+    document.getElementById('foto2').addEventListener('change', function() {
+        handleImagePreview(this, 'foto2-preview');
+    });
+
+    document.getElementById('foto3').addEventListener('change', function() {
+        handleImagePreview(this, 'foto3-preview');
+    });
 </script>
+
 </body>
 </html>
