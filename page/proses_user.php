@@ -623,7 +623,7 @@ function logout() {
         let input = event.target.value;
         
         // Remove non-letter characters using a regular expression
-        input = input.replace(/[^a-zA-Z]/g, '');
+        input = input.replace(/[^a-zA-Z ]/g, '');
 
         // Limit the length to a maximum of 70 characters
         input = input.slice(0, 70);

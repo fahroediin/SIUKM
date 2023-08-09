@@ -136,30 +136,36 @@ $result = $conn->query($sql);
         <div class="container my-4">
             <h1 class="text-center">SELAMAT DATANG DI (SIUKM)<br> STMIK KOMPUTAMA MAJENANG</h1>
             <div class="row">
-                <div class="col-md-7">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000">
-                        <ol class="carousel-indicators">
-                            <?php for ($i = 0; $i < count($carousel_images); $i++) { ?>
-                                <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" <?php echo ($i == 0) ? 'class="active"' : ''; ?>></li>
-                            <?php } ?>
-                        </ol>
-                        <div class="carousel-inner">
-                            <?php foreach ($carousel_images as $index => $carousel_image) { ?>
-                                <div class="carousel-item <?php echo ($index == 0) ? 'active' : ''; ?>">
-                                    <img class="d-block img-fluid" src="<?php echo $carousel_dir . $carousel_image; ?>" alt="Slide <?php echo ($index + 1); ?>">
-                                </div>
-                            <?php } ?>
-                        </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                    </div>
-                </div>
+			<div class="col-md-7">
+			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000">
+				<ol class="carousel-indicators">
+					<?php for ($i = 0; $i < min(3, count($carousel_images)); $i++) { ?>
+						<li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" <?php echo ($i == 0) ? 'class="active"' : ''; ?>></li>
+					<?php } ?>
+				</ol>
+				<div class="carousel-inner">
+					<?php $counter = 0; ?>
+					<?php foreach ($carousel_images as $index => $carousel_image) {
+						if ($counter >= 3) {
+							break; // Only display the first 3 images
+						}
+						?>
+						<div class="carousel-item <?php echo ($index == 0) ? 'active' : ''; ?>">
+							<img class="d-block img-fluid" src="<?php echo $carousel_dir . $carousel_image; ?>" alt="Slide <?php echo ($index + 1); ?>">
+						</div>
+						<?php $counter++; ?>
+					<?php } ?>
+				</div>
+				<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div>
+		</div>
 
 				<div class="col-md-5">
 					<div class="info">

@@ -317,37 +317,7 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
             previewElement.innerHTML = ''; // Clear preview when no file is selected
         }
     }
-// Additional validation for the submit button
-document.getElementById('submit-button').addEventListener('click', function(event) {
-        const foto1Input = document.getElementById('foto1');
-        const foto2Input = document.getElementById('foto2');
-        const foto3Input = document.getElementById('foto3');
 
-        const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png'];
-
-        // Validate foto1
-        if (foto1Input.files.length > 0) {
-            if (!allowedFormats.includes(foto1Input.files[0].type)) {
-                event.preventDefault();
-                alert('Format gambar untuk Slide 1 tidak valid. Hanya format .jpeg, .jpg, dan .png yang diperbolehkan.');
-            }
-        }
-
-        // Validate foto2
-        if (foto2Input.files.length > 0) {
-            if (!allowedFormats.includes(foto2Input.files[0].type)) {
-                event.preventDefault();
-                alert('Format gambar untuk Slide 2 tidak valid. Hanya format .jpeg, .jpg, dan .png yang diperbolehkan.');
-            }
-        }
-
-        // Validate foto3
-        if (foto3Input.files.length > 0) {
-            if (!allowedFormats.includes(foto3Input.files[0].type)) {
-                event.preventDefault();
-                alert('Format gambar untuk Slide 3 tidak valid. Hanya format .jpeg, .jpg, dan .png yang diperbolehkan.');
-            }
-        }
     // Attach event listeners to file input fields
     document.getElementById('foto1').addEventListener('change', function() {
         handleImagePreview(this, 'foto1-preview');
