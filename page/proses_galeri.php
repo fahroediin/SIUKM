@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $id_kegiatan = generateIdKegiatan($tgl);
 
         // Prepare the SQL query to insert data into tab_galeri table
-    $sql = "INSERT INTO tab_galeri (id_foto, id_ukm, nama_ukm, id_kegiatan, nama_kegiatan, jenis, deskripsi, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tab_galeri (id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, jenis, deskripsi, foto_kegiatan, tgl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Prepare the statement
     $stmt = $conn->prepare($sql);

@@ -35,15 +35,20 @@ $image_files = getImagesFromDir('../assets/images/kegiatan/');
 
 // Function to get additional data (nama_kegiatan, tgl, and nama_ukm) from the database for a given image file
 function getDataForImage($conn, $image_file) {
-    $query = "SELECT nama_kegiatan, tgl, nama_ukm FROM tab_galeri WHERE foto_kegiatan = ?";
+    $query = "SELECT nama_kegiatan, tgl, nama_ukm, jenis FROM tab_galeri WHERE foto_kegiatan = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $image_file);
     $stmt->execute();
-    $stmt->bind_result($nama_kegiatan, $tgl, $nama_ukm);
+    $stmt->bind_result($nama_kegiatan, $tgl, $nama_ukm, $jenis); // Include jenis in bind_result
     $stmt->fetch();
     $stmt->close();
 
-    return array("nama_kegiatan" => $nama_kegiatan, "tgl" => $tgl, "nama_ukm" => $nama_ukm);
+    return array(
+        "nama_kegiatan" => $nama_kegiatan,
+        "tgl" => $tgl,
+        "nama_ukm" => $nama_ukm,
+        "jenis" => $jenis // Include jenis in the returned array
+    );
 }
 
 ?>
@@ -184,16 +189,20 @@ function getDataForImage($conn, $image_file) {
             $tgl = $data["tgl"];
             $nama_ukm = $data["nama_ukm"];
 			?>
-			<div class="gallery-item">
-				<!-- Add data attributes for the modal -->
-				<img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" width="720" height="360"
-					data-toggle="modal" data-target="#imageModal" data-image-id="<?php echo $image_id; ?>" />
-				<div class="caption">
-				<p><strong>Nama Kegiatan :</strong> <?php echo $nama_kegiatan; ?></p>
-                    <p><strong>Tanggal :</strong> <?php echo date('d F Y', strtotime($tgl)); ?></p>
-                    <p><strong>UKM :</strong> <?php echo $nama_ukm; ?></p>
-				</div>
-			</div>
+		<div class="gallery-item">
+    <!-- Add data attributes for the modal -->
+    <div class="card">
+        <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" class="card-img-top"
+            data-toggle="modal" data-target="#imageModal" data-image-id="<?php echo $image_id; ?>" />
+        <div class="card-body">
+            <h5 class="card-title"><?php echo $nama_kegiatan; ?></h5>
+            <p class="card-text"><strong></strong> <?php echo date('d F Y', strtotime($tgl)); ?></p>
+            <p class="card-text"><strong></strong> <?php echo $nama_ukm; ?></p>
+            <p class="card-text"><strong></strong> <?php echo $jenis; ?></p>
+                </div>
+            </div>
+        </div>
+
 			<?php
         }
         ?>
