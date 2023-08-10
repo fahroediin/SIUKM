@@ -62,7 +62,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 <head>
 <title>Kegiatan - SIUKM</title>
 <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -72,7 +72,23 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
        
+       .header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
 
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+.content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
         .card {
             border: 1px solid #ccc;
             border-radius: 8px;
@@ -134,6 +150,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
+    
     </style>
 </head>
 <div class="sidebar">
@@ -153,7 +170,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
-    <a href="lpj_upload.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
+    <a href="proses_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -177,8 +194,94 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     wrapButtonsWithBorder();
 </script>
 <body>
-    <!-- Modal -->
- <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
+ 
+    <div class="content">
+        <div class="header">
+    <h2>Data Kegiatan</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
+    <i class="fas fa-plus"></i>Tambah Kegiatan
+    </button>
+    </div>
+        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+        <input class="form-control mr-sm-2" type="text" placeholder="Cari berdasarkan ID Foto, ID Kegiatan, atau Nama UKM">
+        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+        <a href="proses_kegiatan.php" class="btn btn-outline-secondary ml-2">
+  <i class="fas fa-sync-alt"></i>
+</a>
+    </div>
+</form>
+
+<div class="content">
+    <table class="table">
+        <thead>
+            <tr>
+            <th>ID Kegiatan</th>
+            <th>Nama UKM</th>
+            <th>Nama Kegiatan</th>
+            <th>Deskripsi</th>
+            <th>Jenis Kegiatan</th>
+            <th>Tanggal</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+    // Define Indonesian month names
+    $indonesianMonths = array(
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    );
+
+    while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
+        // Output table rows
+        echo "<tr>";
+        echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
+        echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
+        echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
+        echo "<td>" . $row_kegiatan['deskripsi'] . "</td>";
+        echo "<td>" . $row_kegiatan['jenis'] . "</td>";
+        echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
+        echo "<td>
+                <a href='edit_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Edit</a>
+                <a href='delete_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "' onclick='return confirmDelete(\"" . $row_kegiatan['nama_kegiatan'] . "\");'>Hapus</a>
+            </td>";
+        echo "</tr>";
+    }
+    ?>
+</tbody>
+</table>
+</div>
+
+<!-- Add your JavaScript code here to populate the nama_ukm field -->
+    <script>
+    const idUkmSelect = document.getElementById("id_ukm_dropdown");
+    const namaUkmField = document.getElementById("nama_ukm");
+
+    idUkmSelect.addEventListener("change", function() {
+        const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
+        const namaUkm = selectedOption.text; // Get the text of the selected option
+        namaUkmField.value = namaUkm; // Set the value of the hidden input field
+    });
+
+     // Function to confirm the delete action
+     function confirmDelete() {
+        return confirm("Apakah Anda yakin akan menghapus data kegiatan?");
+    }
+    // Fungsi untuk logout
+    function logout() {
+        // Redirect ke halaman logout
+        window.location.href = "?logout=true";
+    }
+</script>
+<script>
+    // Fungsi untuk mengaktifkan modal ketika tombol "Tambah Kegiatan" di dalam modal diklik
+    document.getElementById("submitForm").addEventListener("click", function() {
+        // Simulasikan klik pada tombol submit di form sebenarnya
+        document.querySelector(".modal-body form").submit();
+    });
+</script>
+   <!-- Modal -->
+   <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -240,82 +343,5 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
             </div>
         </div>
     </div>
-<div class="content">
-    <h2>Data Kegiatan</h2>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
-    Tambah Kegiatan
-</button>
-    <table class="table">
-        <thead>
-            <tr>
-            <th>ID Kegiatan</th>
-            <th>ID UKM</th>
-            <th>Nama UKM</th>
-            <th>Nama Kegiatan</th>
-            <th>Deskripsi</th>
-            <th>Jenis Kegiatan</th>
-            <th>Tanggal</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php
-    // Define Indonesian month names
-    $indonesianMonths = array(
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-        'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    );
-
-    while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
-        // Output table rows
-        echo "<tr>";
-        echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
-        echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
-        echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
-        echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
-        echo "<td>" . $row_kegiatan['deskripsi'] . "</td>";
-        echo "<td>" . $row_kegiatan['jenis'] . "</td>";
-        echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
-        echo "<td>
-                <a href='edit_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "'>Edit</a>
-                <a href='delete_kegiatan.php?id_kegiatan=" . $row_kegiatan['id_kegiatan'] . "' onclick='return confirmDelete(\"" . $row_kegiatan['nama_kegiatan'] . "\");'>Hapus</a>
-            </td>";
-        echo "</tr>";
-    }
-    ?>
-</tbody>
-</table>
-
- 
-
-<!-- Add your JavaScript code here to populate the nama_ukm field -->
-    <script>
-    const idUkmSelect = document.getElementById("id_ukm_dropdown");
-    const namaUkmField = document.getElementById("nama_ukm");
-
-    idUkmSelect.addEventListener("change", function() {
-        const selectedOption = idUkmSelect.options[idUkmSelect.selectedIndex];
-        const namaUkm = selectedOption.text; // Get the text of the selected option
-        namaUkmField.value = namaUkm; // Set the value of the hidden input field
-    });
-
-     // Function to confirm the delete action
-     function confirmDelete() {
-        return confirm("Apakah Anda yakin akan menghapus data kegiatan?");
-    }
-    // Fungsi untuk logout
-    function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
-</script>
-<script>
-    // Fungsi untuk mengaktifkan modal ketika tombol "Tambah Kegiatan" di dalam modal diklik
-    document.getElementById("submitForm").addEventListener("click", function() {
-        // Simulasikan klik pada tombol submit di form sebenarnya
-        document.querySelector(".modal-body form").submit();
-    });
-</script>
-
 </body>
 </html>

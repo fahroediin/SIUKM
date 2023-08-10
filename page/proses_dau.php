@@ -251,7 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
-    <a href="lpj_upload.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
+    <a href="proses_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -283,7 +283,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </button>
             </div>
             <form class="form-inline mt-2 mt-md-0 float-right" method="get">
-    <input class="form-control mr-sm-2" type="text" placeholder="Cari..." name="search" aria-label="Search">
+    <input class="form-control mr-sm-2" type="text" placeholder="Cari id anggota/id user/nama" name="search" aria-label="Search">
     <button type="submit" class="btn btn-outline-primary">Search</button>
     <a href="proses_dau.php" class="btn btn-outline-secondary ml-2">
         <i class="fas fa-sync-alt"></i>

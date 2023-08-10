@@ -197,7 +197,7 @@ $row_profil = mysqli_fetch_assoc($result_profil);
     <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
-    <a href="lpj_upload.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
+    <a href="proses_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -251,15 +251,15 @@ $row_profil = mysqli_fetch_assoc($result_profil);
                 </div>
                 <div class="form-group">
                     <label for="deskripsi">*Deskripsi:</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['deskripsi'] : ''; ?></textarea>
+                    <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Maksimal 500 Karakter" class="form-control"><?php echo isset($row_profil) ? $row_profil['deskripsi'] : ''; ?></textarea>
                 </div>
                 <div class="form-group">
                     <label for="visi">*Visi</label>
-                    <textarea id="visi" name="visi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['visi'] : ''; ?></textarea>
+                    <textarea id="visi" name="visi" rows="4" placeholder="Maksimal 500 Karakter" class="form-control"><?php echo isset($row_profil) ? $row_profil['visi'] : ''; ?></textarea>
                 </div>
                 <div class="form-group">
                     <label for="misi">*Misi</label>
-                    <textarea id="misi" name="misi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['misi'] : ''; ?></textarea>
+                    <textarea id="misi" name="misi" rows="4" placeholder="Maksimal 500 Karakter" class="form-control"><?php echo isset($row_profil) ? $row_profil['misi'] : ''; ?></textarea>
                 </div>
      
                 </div>
