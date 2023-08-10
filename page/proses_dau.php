@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Anggota UKM - SIUKM</title>
+    <title>Data Anggota - SIUKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -277,7 +277,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 <div class="content">
         <div class="header">
-            <h2>Data Anggota UKM</h2>
+            <h2>Data Anggota</h2>
             <button type="button" class="btn btn-primary btn-sm btn-medium" data-toggle="modal" data-target="#tambahAnggotaModal">
                 <i class="fas fa-plus"></i> Tambah Anggota
             </button>

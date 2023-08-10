@@ -49,8 +49,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-$result_ukm = mysqli_query($conn, $query_ukm);
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
+$result = mysqli_query($conn, $query);
+
+// Inisialisasi variabel untuk opsi combobox
+$options = "";
+
+// Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
+$namaUKM = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    $id_ukm = $row['id_ukm'];
+    $nama_ukm = $row['nama_ukm'];
+    $namaUKM[$id_ukm] = $nama_ukm;
+}
 
 $query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, deskripsi, jenis, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
@@ -60,7 +71,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 <html>
 
 <head>
-<title>Kegiatan - SIUKM</title>
+<title>Manajemen Kegiatan - SIUKM</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -152,6 +163,20 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     }
     
     </style>
+    <script>
+    // Define the updateNamaUKM function
+    function updateNamaUKM(selectElement) {
+        var selectedIdUkm = selectElement.value;
+        var namaUkmField = document.getElementById("nama_ukm");
+        
+        // Set the value of the "nama_ukm" field based on the selected "id_ukm"
+        if (selectedIdUkm in <?php echo json_encode($namaUKM); ?>) {
+            namaUkmField.value = <?php echo json_encode($namaUKM); ?>[selectedIdUkm];
+        } else {
+            namaUkmField.value = '';
+        }
+    }
+</script>
 </head>
 <div class="sidebar">
     <a href="beranda.php">
@@ -294,21 +319,37 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
                 <div class="card-body">
                         <h2 style="text-align: center;">Tambah Kegiatan</h2>
                         <div class="form-group">
-                            <label for="id_ukm">*Nama UKM:</label>
-                            <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required onchange="updateNamaUKM(this)">
-                        <option value="">Pilih Nama UKM</option>
-                        <?php
-                        // Fetch data from the tab_ukm table and populate the dropdown options
-                        $ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-                        $ukmResult = mysqli_query($conn, $ukmQuery);
+                        <div class="form-group">
+    <label for="id_ukm">*Nama UKM:</label>
+    <select id="id_ukm" class="form-control" name="id_ukm" required onchange="updateNamaUKM(this)">
+        <option value="" selected disabled>Pilih UKM</option>
+        <?php
+        // Membuat opsi combobox dari hasil query
+        foreach ($namaUKM as $id_ukm => $nama_ukm) {
+            $selected = ($kegiatan['id_ukm'] == $id_ukm) ? 'selected' : '';
+            echo "<option value='$id_ukm' $selected>$nama_ukm</option>";
+        }
+        ?>
+    </select>
+    <!-- Hidden input field to store the nama_ukm value -->
+    <input type="hidden" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $kegiatan['nama_ukm']; ?>" readonly>
+</div>
+<script>
+    function updateNamaUKM(selectElement) {
+    var selectedIdUkm = selectElement.value;
+    var namaUkmField = document.getElementById("nama_ukm");
+    var namaUkmHiddenField = document.getElementById("nama_ukm_hidden");
 
-                        while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
-                            echo '<option value="' . $ukmRow['id_ukm'] . '">' . $ukmRow['nama_ukm'] . '</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
+    // Set the value of the "nama_ukm" field based on the selected "id_ukm"
+    if (selectedIdUkm in <?php echo json_encode($namaUKM); ?>) {
+        namaUkmField.value = <?php echo json_encode($namaUKM); ?>[selectedIdUkm];
+        namaUkmHiddenField.value = <?php echo json_encode($namaUKM); ?>[selectedIdUkm]; // Set the hidden field value
+    } else {
+        namaUkmField.value = '';
+        namaUkmHiddenField.value = '';
+    }
+}
+</script>
 
                            
                                 <input type="hidden" id="id_kegiatan" name="id_kegiatan" class="form-control" readonly>

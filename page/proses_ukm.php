@@ -109,36 +109,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
 $result = mysqli_query($conn, $query);
 
-// Inisialisasi variabel untuk opsi combobox
-$options = "";
-
-// Buat array untuk menyimpan data nama_ukm berdasarkan id_ukm
 $namaUKM = array();
 while ($row = mysqli_fetch_assoc($result)) {
     $id_ukm = $row['id_ukm'];
-    $nama_ukm = $row['nama_ukm'];
-    $logo_ukm = $row['logo_ukm'];
-    $instagram = $row['instagram'];
-    $facebook = $row['facebook'];
-    $sejarah = $row['sejarah'];
-    $visi = $row['visi'];
-    $misi = $row['misi'];
-    $namaUKM[$id_ukm] = $nama_ukm;
+    $id_ukm = $row['id_ukm'];
+    $namaUKM[$id_ukm] = $row['nama_ukm'];
 }
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kelola Data UKM - SIUKM</title>
+    <title>Data UKM - SIUKM</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <script>
@@ -224,6 +214,24 @@ while ($row = mysqli_fetch_assoc($result)) {
         border-radius: 50%;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    .content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
+
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
+
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
 </style>
   <!-- Sidebar -->
 
@@ -270,80 +278,61 @@ while ($row = mysqli_fetch_assoc($result)) {
 <body>
 <!-- Main content -->
 <div class="content">
+        <div class="header">
+            <h2>Data UKM</h2>
+            <button type="button" class="btn btn-primary btn-sm btn-medium" onclick="openTambahUkmModal()">
+                <i class="fas fa-plus"></i> Tambah UKM Baru
+            </button>
+        </div>
+        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+        <input class="form-control mr-sm-2" type="text" placeholder="Cari Nama UKM" name="search" aria-label="Search">
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+    <a href="proses_ukm.php" class="btn btn-outline-secondary ml-2">
+  <i class="fas fa-sync-alt"></i>
+</a>
+    </div>
+</form>
+
+<?php foreach ($namaUKM as $id_ukm => $nama_ukm) { ?>
     <div class="card">
-    <h2 style="text-align: center;">Data UKM</h2>
-    <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
-            <div class="form-group">
-            <label for="id_ukm_type">Pilih Tipe ID UKM:</label>
-            <select class="form-control" id="id_ukm_type" name="id_ukm_type" onchange="toggleIdUkmField()">
-                <option value="dropdown">Dropdown</option>
-                <option value="textfield">Text Field</option>
-            </select>
+        <img src="<?php echo $row[$id_ukm]['logo_ukm']; ?>" alt="Logo UKM" class="card-img-top">
+        <div class="card-body">
+            <h5 class="card-title"><?php echo $row[$id_ukm]['nama_ukm']; ?></h5>
+            <p class="card-text"><?php echo $row[$id_ukm]['sejarah']; ?></p>
+            <p class="card-text"><?php echo $row[$id_ukm]['visi']; ?></p>
+            <p class="card-text"><?php echo $row[$id_ukm]['misi']; ?></p>
+            <p class="card-text"><?php echo $row[$id_ukm]['instagram']; ?></p>
+            <p class="card-text"><?php echo $row[$id_ukm]['facebook']; ?></p>
+            <a href="#" class="btn btn-primary">Edit</a>
         </div>
-
-        <div class="form-group" id="id_ukm_dropdown">
-            <label for="id_ukm_dropdown">ID UKM:</label>
-            <select class="form-control" id="id_ukm" name="id_ukm" onchange="updateFormData(this)">
-                <option value="" selected disabled>Pilih ID UKM</option>
-                <?php
-                // Membuat opsi combobox dari hasil query
-                foreach ($namaUKM as $id_ukm => $nama_ukm) {
-                    echo "<option value='$id_ukm'>$id_ukm</option>";
-                }
-                ?>
-            </select>
-        </div>
-
-        <div class="form-group" id="id_ukm_textfield" style="display: none;">
-            <label for="id_ukm_textfield">ID UKM Baru:</label>
-            <input type="text" class="form-control" id="id_ukm_new" name="id_ukm_new">
-        </div>
-
-            <div class="form-group">
-                <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
-            </div>
-            <div class="form-group">
-                <label for="sejarah">Sejarah:</label>
-                <textarea class="form-control" placeholder="Isikan sejarah UKM" id="sejarah" name="sejarah" rows="5"></textarea>
-            </div>
-                    <div class="form-group">
-                <label for="logo_ukm">Logo UKM:</label>
-                <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm">
-                <!-- Add this img tag to display the logo preview -->
-                <img id="logo_ukm_preview" src="" alt="Logo UKM" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
-
-                <!-- Add the message for logo upload -->
-                <p class="mt-2" style="font-size: 12px; color: #777;">Upload logo UKM dengan resolusi 512x512 pixel.</p>
-            </div>
-            <div class="form-group">
-            <label for="instagram">Instagram:</label>
-            <input type="text" placeholder="Masukkan akun instagram ukm tanpa @" class="form-control" id="instagram" name="instagram" pattern="[a-zA-Z]+">
-        </div>
-        <div class="form-group">
-            <label for="facebook">Facebook:</label>
-            <input type="text" placeholder="Masukkan akun facebook ukm tanpa @" class="form-control" id="facebook" name="facebook" pattern="[a-zA-Z]+">
-        </div>
-
-            <div class="form-group">
-                <label for="visi">Visi:</label>
-                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="visi" name="visi" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="misi">Misi:</label>
-                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="misi" name="misi" rows="3"></textarea>
-            </div>
-            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
-            <button type="submit" class="btn btn-primary btn-sm btn-medium"  onclick="showConfirmation(event)" name="submit">
-    <i class="fas fa-save"></i> Simpan
-</button>
     </div>
-        </form>
-    </div>
+<?php } ?>
+
+    
 
     <!-- Snackbar -->
 <div id="snackbar"></div>
 <script>
+    // Function to open the "Tambah UKM Baru" modal
+function openTambahUkmModal() {
+    // Reset form fields when opening the modal
+    resetAllTextFields();
+    
+    // Show the modal
+    $('#tambahUkmBaruModal').modal('show');
+}
+
+// Function to submit the form inside the modal
+function submitForm() {
+    // Show confirmation dialog
+    var confirmation = confirm("Apakah Anda yakin ingin menyimpan data?");
+    
+    if (confirmation) {
+        // Submit the form inside the modal
+        document.getElementById("dataForm").submit();
+    }
+}
+
   function showConfirmation(event) {
     event.preventDefault(); // Menghentikan pengiriman form secara langsung
 
@@ -426,6 +415,93 @@ function toggleIdUkmField() {
         window.location.href = "?logout=true";
     }
     </script>
-    
+    <!-- Modal for adding new UKM -->
+<div class="modal fade" id="tambahUkmBaruModal" tabindex="-1" role="dialog" aria-labelledby="tambahUkmBaruModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <div class="card">
+    <h2 style="text-align: center;">Data UKM</h2>
+    <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
+            <div class="form-group">
+            <label for="id_ukm_type">Pilih Tipe ID UKM:</label>
+            <select class="form-control" id="id_ukm_type" name="id_ukm_type" onchange="toggleIdUkmField()">
+                <option value="dropdown">Dropdown</option>
+                <option value="textfield">Text Field</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="id_ukm_dropdown">
+            <label for="id_ukm_dropdown">ID UKM:</label>
+            <select class="form-control" id="id_ukm" name="id_ukm" onchange="updateFormData(this)">
+                <option value="" selected disabled>Pilih ID UKM</option>
+                <?php
+                // Membuat opsi combobox dari hasil query
+                foreach ($namaUKM as $id_ukm => $nama_ukm) {
+                    echo "<option value='$id_ukm'>$id_ukm</option>";
+                }
+                ?>
+            </select>
+        </div>
+
+        <div class="form-group" id="id_ukm_textfield" style="display: none;">
+            <label for="id_ukm_textfield">ID UKM Baru:</label>
+            <input type="text" class="form-control" id="id_ukm_new" name="id_ukm_new">
+        </div>
+
+            <div class="form-group">
+                <label for="nama_ukm">Nama UKM:</label>
+                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
+            </div>
+            <div class="form-group">
+                <label for="sejarah">Sejarah:</label>
+                <textarea class="form-control" placeholder="Isikan sejarah UKM" id="sejarah" name="sejarah" rows="5"></textarea>
+            </div>
+                    <div class="form-group">
+                <label for="logo_ukm">Logo UKM:</label>
+                <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm">
+                <!-- Add this img tag to display the logo preview -->
+                <img id="logo_ukm_preview" src="" alt="Logo UKM" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+
+                <!-- Add the message for logo upload -->
+                <p class="mt-2" style="font-size: 12px; color: #777;">Upload logo UKM dengan resolusi 512x512 pixel.</p>
+            </div>
+            <div class="form-group">
+            <label for="instagram">Instagram:</label>
+            <input type="text" placeholder="Masukkan akun instagram ukm tanpa @" class="form-control" id="instagram" name="instagram" pattern="[a-zA-Z]+">
+        </div>
+        <div class="form-group">
+            <label for="facebook">Facebook:</label>
+            <input type="text" placeholder="Masukkan akun facebook ukm tanpa @" class="form-control" id="facebook" name="facebook" pattern="[a-zA-Z]+">
+        </div>
+
+            <div class="form-group">
+                <label for="visi">Visi:</label>
+                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="visi" name="visi" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="misi">Misi:</label>
+                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="misi" name="misi" rows="3"></textarea>
+            </div>
+            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
+            <button type="submit" class="btn btn-primary btn-sm btn-medium"  onclick="showConfirmation(event)" name="submit">
+    <i class="fas fa-save"></i> Simpan
+</button>
+    </div>
+        </form>
+    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
         </body>
         </html>
