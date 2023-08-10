@@ -194,17 +194,18 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
 </a>
     <h2><i>Beranda</i></h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
-            <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
-            <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
-    <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+    <p style="text-align: center;">--Manajemen--</p>
+    <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
+    <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="proses_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
     <a href="proses_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
+    <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="lpj_upload.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -233,10 +234,11 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
                 <!-- Wrap the form with a card component -->
                 <div class="card">
                 <h2 style="text-align: center;">Data Beranda</h2>
+                <p>*Wajib diisi</p>
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
         <input type="hidden" name="action" value="<?php echo isset($row_beranda) ? 'edit' : 'add'; ?>">
         <div class="form-group">
-    <label for="informasi">Informasi:</label>
+    <label for="informasi">*Informasi</label>
     <textarea id="informasi" name="informasi" rows="4" class="form-control"><?php echo isset($row_beranda) ? $row_beranda['informasi'] : ''; ?></textarea>
     <div id="validation-message" class="invalid-feedback"></div>
 </div>
@@ -260,7 +262,7 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
     });
 </script>
 <div class="form-group">
-    <label for="foto1">Slide 1:</label>
+    <label for="foto1">Slide 1</label>
     <input type="file" id="foto1" name="foto1" accept=".jpeg, .jpg, .png" class="form-control-file">
     <div class="image-preview" id="foto1-preview">
         <?php if(isset($row_beranda['foto1']) && !empty($row_beranda['foto1'])): ?>
@@ -272,7 +274,7 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
 </div>
 
 <div class="form-group">
-    <label for="foto2">Slide 2:</label>
+    <label for="foto2">Slide 2</label>
     <input type="file" id="foto2" name="foto2" accept=".jpeg, .jpg, .png" class="form-control-file">
     <div class="image-preview" id="foto2-preview">
         <?php if(isset($row_beranda['foto2']) && !empty($row_beranda['foto2'])): ?>
@@ -284,7 +286,7 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
 </div>
 
 <div class="form-group">
-    <label for="foto3">Slide 3:</label>
+    <label for="foto3">Slide 3</label>
     <input type="file" id="foto3" name="foto3" accept=".jpeg, .jpg, .png" class="form-control-file">
     <div class="image-preview" id="foto3-preview">
         <?php if(isset($row_beranda['foto3']) && !empty($row_beranda['foto3'])): ?>

@@ -186,17 +186,18 @@ $row_profil = mysqli_fetch_assoc($result_profil);
 </a>
     <h2><i>Profil</i></h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
-            <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
-            <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
-    <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+    <p style="text-align: center;">--Manajemen--</p>
+    <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_beranda') echo 'active'; ?>">Beranda</a>
+    <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="proses_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
     <a href="proses_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="proses_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
+    <a href="proses_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="proses_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
     <a href="calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="lpj_upload.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'lpj') echo 'active'; ?>">LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -226,10 +227,11 @@ $row_profil = mysqli_fetch_assoc($result_profil);
         <!-- Wrap the form with a card component -->
         <div class="card">
             <h2 style="text-align: center;">Data Profil</h2>
+            <p>*Wajib diisi</p>
                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
                     <input type="hidden" name="action" value="<?php echo isset($row_profil) ? 'edit' : 'add'; ?>">
                         <div class="form-group">
-                        <label for="logo_siukm">Logo SIUKM:</label>
+                        <label for="logo_siukm">*Logo SIUKM</label>
                     <input type="file" id="logo_siukm" name="logo_siukm" accept="image/*" class="form-control-file">
                     <div class="image-preview" id="logo_siukm-preview">
                     <?php if(isset($row_profil['logo_siukm']) && !empty($row_profil['logo_siukm'])): ?>
@@ -240,23 +242,23 @@ $row_profil = mysqli_fetch_assoc($result_profil);
                 </div>
 
                     <div class="form-group">
-                    <label for="nama_web">Nama Web:</label>
+                    <label for="nama_web">*Nama Web</label>
                     <input type="text" id="nama_web" name="nama_web" class="form-control" value="<?php echo isset($row_profil) ? $row_profil['nama_web'] : ''; ?>">
                 </div>
                 <div class="form-group">
-                    <label for="nama_instansi">Nama Instansi:</label>
+                    <label for="nama_instansi">*Nama Instansi</label>
                     <input type="text" id="nama_instansi" name="nama_instansi" class="form-control" value="<?php echo isset($row_profil) ? $row_profil['nama_instansi'] : ''; ?>">
                 </div>
                 <div class="form-group">
-                    <label for="deskripsi">Deskripsi:</label>
+                    <label for="deskripsi">*Deskripsi:</label>
                     <textarea id="deskripsi" name="deskripsi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['deskripsi'] : ''; ?></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="visi">Visi:</label>
+                    <label for="visi">*Visi</label>
                     <textarea id="visi" name="visi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['visi'] : ''; ?></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="misi">Misi:</label>
+                    <label for="misi">*Misi</label>
                     <textarea id="misi" name="misi" rows="4" class="form-control"><?php echo isset($row_profil) ? $row_profil['misi'] : ''; ?></textarea>
                 </div>
      

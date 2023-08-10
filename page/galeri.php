@@ -70,15 +70,53 @@ function getDataForImage($conn, $image_file) {
 
 	</head>
     <style>
-      .container {
-        max-width: 1444px;
-        margin: 0 auto;
-        padding: 20px;
+     h1 {
+		padding-top: 40px;
+		     }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .divider {
+        border: none;
+        border-top: 1px solid #ccc;
+        margin: 20px 0;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .filter-button {
+        border-radius: 0.25rem;
+        padding: 6px 12px;
     }
 
-    h1 {
-        padding-top: 40px;
+    /* Style the search icon */
+    .filter-button i {
+        margin-right: 5px;
     }
+
+    /* Style the filter form */
+    .filter-form {
+        margin-bottom: 20px;
+    }
+    /* Center the modal dialog vertically and horizontally */
+  .custom-modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ensure the modal covers the entire viewport height */
+    padding: 0;
+  }
 
     .gallery {
         display: flex;
@@ -138,8 +176,6 @@ function getDataForImage($conn, $image_file) {
     padding: 3px 8px;
     border-radius: 5px;
 }
-
-
     </style>
 	 <script>
         // Add jQuery click event handler to handle the zoom effect
@@ -210,6 +246,15 @@ function getDataForImage($conn, $image_file) {
 	</nav>
 	<div class="container">
         <h1>Galeri</h1>
+        <form action="" method="get" class="filter-form">
+    <label for="jenis">Filter by:</label>
+    <select name="jenis" id="jenis">
+        <option value="">All</option>
+        <option value="Rutin">Rutin</option>
+        <option value="Tidak Rutin">Tidak Rutin</option>
+    </select>
+    <button type="submit">Apply Filter</button>
+</form>
         <div class="container">
         <div class="gallery">
         <?php
@@ -249,9 +294,8 @@ function getDataForImage($conn, $image_file) {
         }
         ?>
     </div>
-    
 	</div>
-	</div>
+    </div>
 	<!-- Modal to display enlarged image -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
