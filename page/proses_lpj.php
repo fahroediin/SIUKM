@@ -65,6 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_ukm = $_POST['id_ukm'];
     $nama_ukm = $_POST['nama_ukm'];
     $tgl_laporan = $_POST['tgl_laporan'];
+    $tanggal = date("d F Y", strtotime($tgl_laporan)); // Ubah format tanggal ke 12 Agustus 2023
+
 
     // Generate a unique id_laporan
     $id_laporan = generateUniqueId();
@@ -178,6 +180,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     max-height: 200px;
     margin-top: 10px;
 }
+.header {
+    /* Atur tata letak (layout) untuk header */
+    display: flex;
+    align-items: center;
+}
+
+.header h2 {
+    /* Atur gaya untuk elemen H2 pada header */
+    margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+.content {
+    /* Atur tata letak (layout) untuk kontainer utama */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Penyesuaian padding atau margin sesuai kebutuhan */
+}
    </style>
  <!-- Sidebar -->
  <div class="sidebar">
@@ -223,7 +242,75 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 <div class="content">
-        <div class="row justify-content-center">
+    <div class="header">
+    <h2>Data LPJ</h2>
+    <button type="button" class="btn btn-primary" onclick="openLaporModal()">Tambah LPJ</button>
+    </div>
+</div>
+
+<div class="content">
+     <!-- Table to display LPJ data -->
+    <table class="table">
+            <thead>
+            <tr>
+                <th>ID Laporan</th>
+                <th>Jenis</th>
+                <th>Nama UKM</th>
+                <th>Tanggal Laporan</th>
+                <th>File</th>
+            </tr>
+        </thead>
+
+        <tbody>
+    <?php
+    // Fetch data from the tab_lpj table
+    $lpjQuery = "SELECT * FROM tab_lpj";
+    $lpjResult = mysqli_query($conn, $lpjQuery);
+
+    function formatTanggalIndonesia($tanggal) {
+        $bulan = array(
+            1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        );
+    
+        // Ambil bagian tanggal dari format datetime
+        $tanggal_array = explode(' ', $tanggal);
+        $date_part = $tanggal_array[0];
+        $tanggal_parts = explode('-', $date_part);
+        $day = $tanggal_parts[2];
+        $month = intval($tanggal_parts[1]);
+        $year = $tanggal_parts[0];
+    
+        return $day . ' ' . $bulan[$month] . ' ' . $year;
+    }
+    
+
+    while ($lpjRow = mysqli_fetch_assoc($lpjResult)) {
+        echo '<tr>';
+        echo '<td>' . $lpjRow['id_laporan'] . '</td>';
+        echo '<td>' . $lpjRow['jenis'] . '</td>';
+        echo '<td>' . $lpjRow['nama_ukm'] . '</td>';
+        echo '<td>' . formatTanggalIndonesia($lpjRow['tgl_laporan']) . '</td>';
+        echo '<td><a href="view_lpj.php?file=' . $lpjRow['file_lpj'] . '">Download</a></td>';
+        echo '</tr>';                
+    }
+    ?>
+</tbody>
+
+    </table>
+</div>
+<!-- Modal for Lapor LPJ -->
+<div class="modal fade" id="laporModal" tabindex="-1" role="dialog" aria-labelledby="laporModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="laporModalLabel">Lapor LPJ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <div class="row justify-content-center">
             <div class="card">
                 <h2 style="text-align: center;">UNGGAH LPJ</h2>
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
@@ -273,6 +360,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+       
+<script>
+    // Function to open the Lapor LPJ modal
+    function openLaporModal() {
+        $('#laporModal').modal('show');
+    }
+</script>
 
 <script>
     function updateNamaUKM(selectElement) {

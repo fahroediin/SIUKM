@@ -305,12 +305,12 @@ while ($row = mysqli_fetch_assoc($result)) {
         <div class="carousel-inner">
             <?php foreach ($ukmData as $index => $ukm) { ?>
                 <div class="carousel-item <?php if ($index === 0) echo 'active'; ?>">
-    <div class="row">
-        <div class="col-md-12 mb-12">
+    
+        <div class="col-md-12">
             <div class="card">
                 <img src="../assets/images/logoukm/<?php echo $ukm['logo_ukm']; ?>" alt="Logo UKM" class="card-img-top mx-auto d-block" style="max-width: 100px; max-height: 100px;" data-toggle="modal" data-target="#ukmDetailsModal<?php echo $ukm['id_ukm']; ?>">
             </div>
-        </div>
+    
     </div>
 </div>
 
@@ -321,7 +321,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <div class="modal-header">
                                     <div class="card-body">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="ukmDetailsModalLabel<?php echo $ukm['id_ukm']; ?>"><?php echo $ukm['nama_ukm']; ?></h5>
+                                        <h2 class="modal-title" id="ukmDetailsModalLabel<?php echo $ukm['id_ukm']; ?>"><?php echo $ukm['nama_ukm']; ?></h2>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
