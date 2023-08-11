@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                 // Redirect ke halaman dashboard.php
-                header("Location: kemahasiswaan.php");
+                header("Location: admin.php");
                 exit();
             } else {
                 // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan

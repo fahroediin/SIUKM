@@ -413,7 +413,7 @@ if ($resultGaleriSnapshotCount) {
                                 <div class="profile-details">
                                     <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
                                     <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
-                                    <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
+                                    <p><span class="label">Nomor HP:</span> <span class="value"><?php echo $no_hp; ?></span></p>
                                 </div>
                                 <!-- Tombol Ganti Password -->
                                 <a href="ganti_password_admin.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>

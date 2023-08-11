@@ -112,11 +112,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
 $result = mysqli_query($conn, $query);
 
-$namaUKM = array();
+$ukmData = array();
 while ($row = mysqli_fetch_assoc($result)) {
-    $id_ukm = $row['id_ukm'];
-    $id_ukm = $row['id_ukm'];
-    $namaUKM[$id_ukm] = $row['nama_ukm'];
+    $ukmData[] = $row;
 }
 ?>
 
@@ -179,7 +177,6 @@ while ($row = mysqli_fetch_assoc($result)) {
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-
     .form-group {
         margin-bottom: 15px;
     }
@@ -231,6 +228,16 @@ while ($row = mysqli_fetch_assoc($result)) {
 .header h2 {
     /* Atur gaya untuk elemen H2 pada header */
     margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    display: inline-block;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    margin-top: 7px;
 }
 </style>
   <!-- Sidebar -->
@@ -293,20 +300,78 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
 </form>
 
-<?php foreach ($namaUKM as $id_ukm => $nama_ukm) { ?>
-    <div class="card">
-        <img src="<?php echo $row[$id_ukm]['logo_ukm']; ?>" alt="Logo UKM" class="card-img-top">
-        <div class="card-body">
-            <h5 class="card-title"><?php echo $row[$id_ukm]['nama_ukm']; ?></h5>
-            <p class="card-text"><?php echo $row[$id_ukm]['sejarah']; ?></p>
-            <p class="card-text"><?php echo $row[$id_ukm]['visi']; ?></p>
-            <p class="card-text"><?php echo $row[$id_ukm]['misi']; ?></p>
-            <p class="card-text"><?php echo $row[$id_ukm]['instagram']; ?></p>
-            <p class="card-text"><?php echo $row[$id_ukm]['facebook']; ?></p>
-            <a href="#" class="btn btn-primary">Edit</a>
+<div class="container">
+    <div id="ukmCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <?php foreach ($ukmData as $index => $ukm) { ?>
+                <div class="carousel-item <?php if ($index === 0) echo 'active'; ?>">
+    <div class="row">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <img src="../assets/images/logoukm/<?php echo $ukm['logo_ukm']; ?>" alt="Logo UKM" class="card-img-top mx-auto d-block" style="max-width: 100px; max-height: 100px;" data-toggle="modal" data-target="#ukmDetailsModal<?php echo $ukm['id_ukm']; ?>">
+            </div>
         </div>
     </div>
-<?php } ?>
+</div>
+
+<!-- Modal for UKM Details -->
+<div class="modal fade" id="ukmDetailsModal<?php echo $ukm['id_ukm']; ?>" tabindex="-1" role="dialog" aria-labelledby="ukmDetailsModalLabel<?php echo $ukm['id_ukm']; ?>" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                                    <div class="card-body">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ukmDetailsModalLabel<?php echo $ukm['id_ukm']; ?>"><?php echo $ukm['nama_ukm']; ?></h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="ukm-info">
+                                    <p class="text-center"><strong>Sejarah</strong></p>
+                                        <p><?php echo $ukm['sejarah']; ?></p>
+                                    </div>
+                                    <div class="ukm-info text-center">
+                                    <p class="text-center"><strong>Visi</strong></p>
+                                        <p><?php echo $ukm['visi']; ?></p>
+                                    </div>
+                                    <div class="ukm-info">
+                                    <p class="text-center"><strong>Misi</strong></p>
+                                        <p><?php echo $ukm['misi']; ?></p>
+                                    </div>
+                                    <div class="ukm-info">
+                                        <p><strong>Instagram:</strong> @<?php echo $ukm['instagram']; ?></p>
+                                    </div>
+                                    <div class="ukm-info">
+                                        <p><strong>Facebook:</strong> <?php echo $ukm['facebook']; ?></p>
+                                
+                                    </div>
+                                    <a href="detail_ukm.php?id=<?php echo $ukm['id_ukm']; ?>" class="btn btn-primary">Edit</a>
+                                    <a href="detail_ukm.php?id=<?php echo $ukm['id_ukm']; ?>" class="btn btn-secondary">Detail</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+            </div>
+        </div>
+</div>                
+        <a class="carousel-control-prev" href="#ukmCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#ukmCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
 
     
 

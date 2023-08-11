@@ -63,7 +63,16 @@ while ($row = mysqli_fetch_assoc($result)) {
     $namaUKM[$id_ukm] = $nama_ukm;
 }
 
+// Construct the base query
 $query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, deskripsi, jenis, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
+
+// Check if a search query is provided
+if (isset($_GET['search_query']) && !empty($_GET['search_query'])) {
+    $search_query = mysqli_real_escape_string($conn, $_GET['search_query']);
+    $query_kegiatan .= " WHERE id_kegiatan LIKE '%$search_query%' OR nama_ukm LIKE '%$search_query%' OR nama_kegiatan LIKE '%$search_query%'";
+}
+
+// Execute the final query
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 ?>
 
@@ -227,11 +236,14 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <i class="fas fa-plus"></i>Tambah Kegiatan
     </button>
     </div>
-        <form class="form-inline mt-2 mt-md-0 float-right" method="get">
-        <input class="form-control mr-sm-2" type="text" placeholder="Cari berdasarkan ID Foto, ID Kegiatan, atau Nama UKM">
-        <button type="submit" class="btn btn-primary btn-sm">Search</button>
-        <a href="proses_kegiatan.php" class="btn btn-outline-secondary ml-2">
-  <i class="fas fa-sync-alt"></i>
+    <form class="form-inline mt-2 mt-md-0 float-right" method="get">
+    <input class="form-control mr-sm-2" type="text" placeholder="Cari berdasarkan ID Kegiatan, Nama UKM, atau Nama Kegiatan" name="search_query">
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    <a href="proses_kegiatan.php" class="btn btn-outline-secondary ml-2">
+        <i class="fas fa-sync-alt"></i>
+    </a>
+</form>
+
 </a>
     </div>
 </form>
