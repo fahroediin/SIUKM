@@ -63,26 +63,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Define the target directory for image uploads
     $targetDir = "../assets/images/carousel/";
+    $targetDirLogin = "../assets/images/bg/";
 
     // Upload and replace images
     $foto1 = uploadImage("foto1", $targetDir, 1);
     $foto2 = uploadImage("foto2", $targetDir, 2);
     $foto3 = uploadImage("foto3", $targetDir, 3);
+    $bg_login = uploadImage("bg_login", $targetDirLogin, 1);
+
 
     // Prepare the SQL query to insert/update data into tab_beranda table
     if ($_POST["action"] === "edit") {
         // Edit existing data in tab_beranda
-        $sql = "UPDATE tab_beranda SET informasi = ?, foto1 = ?, foto2 = ?, foto3 = ?";
+        $sql = "UPDATE tab_beranda SET informasi = ?, foto1 = ?, foto2 = ?, foto3 = ?, bg_login = ?";
     } else {
         // Insert new data into tab_beranda
-        $sql = "INSERT INTO tab_beranda (informasi, foto1, foto2, foto3) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO tab_beranda (informasi, foto1, foto2, foto3, bg_login) VALUES (?, ?, ?, ?, ?)";
     }
 
     // Prepare the statement
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters
-    $stmt->bind_param("ssss", $informasi, $foto1, $foto2, $foto3);
+    $stmt->bind_param("sssss", $informasi, $foto1, $foto2, $foto3, $bg_login);
 
     // Execute the query
     if ($stmt->execute()) {
@@ -296,6 +299,19 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
     </div>
     <p style="font-size: 14px; color: #888;">Unggah gambar dengan resolusi minimal 1440x720</p>
 </div>
+
+<div class="form-group">
+    <label for="bg_login">Background Login</label>
+    <input type="file" id="bg_login" name="bg_login" accept=".jpeg, .jpg, .png" class="form-control-file">
+    <div class="image-preview" id="bg_login-preview">
+        <?php if(isset($row_beranda['bg_login']) && !empty($row_beranda['bg_login'])): ?>
+            <img src="../assets/images/bg/<?php echo $row_beranda['bg_login']; ?>" class="preview-image" alt="Background Login">
+            <p style="font-size: 14px;">Background saat ini</p>
+        <?php endif; ?>
+    </div>
+    <p style="font-size: 14px; color: #888;">Unggah gambar dengan resolusi minimal 1440x720</p>
+</div>
+
 
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>

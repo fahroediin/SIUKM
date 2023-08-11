@@ -32,6 +32,9 @@ if ($handle = opendir($carousel_dir)) {
 // Query untuk mengambil data dari tab_ukm
 $sql = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result = $conn->query($sql);
+$query_profil = "SELECT nama_instansi FROM tab_profil";
+$result_profil = mysqli_query($conn, $query_profil);
+$row_profil = mysqli_fetch_assoc($result_profil);
 ?>
 
 <!DOCTYPE html>
@@ -134,7 +137,9 @@ $result = $conn->query($sql);
 <body>
     <div class="jumbotron">
         <div class="container my-4">
-            <h1 class="text-center">SELAMAT DATANG DI (SIUKM)<br> STMIK KOMPUTAMA MAJENANG</h1>
+            <h1 class="text-center">SELAMAT DATANG DI (SIUKM)</h1>
+			<h2 class="no-padding-bottom"><?php echo $row_profil['nama_instansi']; ?></h2>
+
             <div class="row">
 			<div class="col-md-7">
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000">

@@ -246,15 +246,55 @@ function getDataForImage($conn, $image_file) {
 	</nav>
 	<div class="container">
         <h1>Galeri</h1>
-        <form action="" method="get" class="filter-form">
-    <label for="jenis">Filter by:</label>
-    <select name="jenis" id="jenis">
-        <option value="">All</option>
-        <option value="Rutin">Rutin</option>
-        <option value="Tidak Rutin">Tidak Rutin</option>
-    </select>
-    <button type="submit">Apply Filter</button>
-</form>
+        <div class="divider"></div>
+      <!-- Filter form -->
+   <form method="get">
+        <label for="year">Filter by Year:</label>
+        <select name="year" id="year">
+            <option value="">All</option>
+            <?php
+            // Get unique years from the tgl_prestasi column
+            $year_query = "SELECT DISTINCT YEAR(tgl_prestasi) AS year FROM tab_prestasi ORDER BY year DESC";
+            $year_result = mysqli_query($conn, $year_query);
+            while ($year_row = mysqli_fetch_assoc($year_result)) {
+                echo '<option value="' . $year_row['year'] . '">' . $year_row['year'] . '</option>';
+            }
+            ?>
+        </select>
+
+        <label for="ukm">Filter by UKM:</label>
+        <select name="ukm" id="ukm">
+            <option value="">All</option>
+            <?php
+        // Get the filter values from the form submission
+        $filter_jenis = $_GET['jenis'];
+        $filter_ukm = $_GET['ukm'];
+
+        // Add the filters to the SQL query
+        $query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tingkat, p.tgl_prestasi, p.sertifikat, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
+
+        if (!empty($filter_jenis)) {
+            $query .= " WHERE JENIS(p.tgl_prestasi) = '$filter_jenis'";
+        }
+
+        if (!empty($filter_ukm)) {
+            $query .= !empty($filter_year) ? " AND u.nama_ukm = '$filter_ukm'" : " WHERE u.nama_ukm = '$filter_ukm'";
+        }
+
+        $result = mysqli_query($conn, $query);
+            // Get unique UKM names from the tab_ukm table
+            $ukm_query = "SELECT DISTINCT nama_ukm FROM tab_ukm ORDER BY nama_ukm";
+            $ukm_result = mysqli_query($conn, $ukm_query);
+            while ($ukm_row = mysqli_fetch_assoc($ukm_result)) {
+                echo '<option value="' . $ukm_row['nama_ukm'] . '">' . $ukm_row['nama_ukm'] . '</option>';
+            }
+            ?>
+        </select>
+
+        <button type="submit" class="btn btn-primary filter-button">
+        <i class="fas fa-search"></i> Filter
+    </button>
+    </form>
         <div class="container">
         <div class="gallery">
         <?php
@@ -280,8 +320,8 @@ function getDataForImage($conn, $image_file) {
 <div class="gallery-item">
     <!-- Add data attributes for the modal -->
     <div class="card">
-        <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" class="card-img-top"
-            data-toggle="modal" data-target="#imageModal" data-image-id="<?php echo $image_id; ?>" />
+    <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" class="card-img-top"
+     data-toggle="modal" data-target="#imageModal" />
         <div class="card-body">
             <h3 class="card-title"><?php echo $nama_kegiatan; ?></h3>
             <p class="card-text"><?php echo date('d F Y', strtotime($tgl)); ?></p>

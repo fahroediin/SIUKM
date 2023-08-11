@@ -35,16 +35,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
+    $query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
+$result_bg = mysqli_query($conn, $query_bg);
+if ($result_bg && mysqli_num_rows($result_bg) > 0) {
+    $row_bg = mysqli_fetch_assoc($result_bg);
+    $background_image_filename = $row_bg["bg_login"];
+
+    // Construct the background image URL
+    $background_image_url = "../assets/images/bg/" . $background_image_filename;
+} else {
+    $background_image_url = ""; // Set a default image URL if not found
+}
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Registrasi Pengguna</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="../assets/js/script.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,10 +142,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
     </style>
 </head>
-<body>
-    <h1>Registrasi Pengguna</h1>
-
-    <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+<body style="background-image: url('<?php echo $background_image_url; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="container">   
+<form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+    <h1>Register</h1>
     <div>
     <label for="id_user">ID User (NIM):</label>
     <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
@@ -276,11 +293,12 @@ function validasiNomorHP(event) {
     input.value = filteredValue; // Update nilai input yang telah difilter
 }
 </script>
-        <div>
-            <button type="submit">Daftar</button>
-        </div>
-    </form>
-
+<div>
+    <button type="submit">Daftar</button>
+</form>
+<br>
+<p>Sudah memiliki akun? <a href="login.php" style="color: black;"><i class="fas fa-sign-in-alt"></i> Login</a></p>
+</div>
 
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

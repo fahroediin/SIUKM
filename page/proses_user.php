@@ -517,7 +517,6 @@ function logout() {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-       
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -529,18 +528,18 @@ function logout() {
             <div class="form-group">
             <div class="form-group">
     <label for="id_user">*ID User:</label>
-    <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
+    <input type="text" class="form-control" placeholder="ID User menggunakan NIM/NIDN" id="id_user" maxlength="10" name="id_user" required>
     <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
 </div>
 
 <script>
     document.getElementById("id_user").addEventListener("input", function(event) {
         let input = event.target.value;
-        
-        // Remove characters that are not letters or numbers using a regular expression
-        input = input.replace(/[^a-zA-Z0-9]/g, '');
 
-        // Limit the length to a maximum of 10 characters
+        // Remove non-numeric characters using a regular expression
+        input = input.replace(/\D/g, '');
+
+        // Limit the length to a maximum of 10 digits
         input = input.slice(0, 10);
 
         event.target.value = input;
@@ -555,6 +554,7 @@ function logout() {
         }
     });
 </script>
+
 
   <div class="form-group">
     <label for="password">*Password:</label>
@@ -733,8 +733,8 @@ function logout() {
                 <label for="level">Level:</label>
                 <select id="level" name="level" class="form-control">
                     <option value="3">User</option>
-                    <option value="2">Kemahasiswaan</option>
-                    <option value="1">Admin</option>
+                    <option value="2">Pengurus UKM</option>
+                    <option value="1">Kemahasiswaan</option>
                 </select>
             </div>
             <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->

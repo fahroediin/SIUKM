@@ -57,6 +57,26 @@ if (mysqli_num_rows($result) > 0) {
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
+$query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
+$result_bg = mysqli_query($conn, $query_bg);
+if ($result_bg && mysqli_num_rows($result_bg) > 0) {
+    $row_bg = mysqli_fetch_assoc($result_bg);
+    $background_image_filename = $row_bg["bg_login"];
+
+    // Construct the background image URL
+    $background_image_url = "../assets/images/bg/" . $background_image_filename;
+} else {
+    $background_image_url = ""; // Set a default image URL if not found
+}
+$query_logo = "SELECT logo_siukm FROM tab_profil LIMIT 1";
+$result_logo = mysqli_query($conn, $query_logo);
+
+if ($result_logo && mysqli_num_rows($result_logo) > 0) {
+    $row_logo = mysqli_fetch_assoc($result_logo);
+    $logo_image_path = $row_logo["logo_siukm"];
+} else {
+    $logo_image_path = ""; // Set a default logo path if not found
+}
 ?>
 
 
@@ -83,15 +103,31 @@ if (mysqli_num_rows($result) > 0) {
 			line-height: 1.5;
 			margin: 0;
 			padding: 0;
-		}
+			display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
 		.container {
+			z-index: 1;
 			background-color: #fff;
 			border-radius: 5px;
 			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 			margin: 80px auto;
 			max-width: 400px;
 			padding: 20px;
-		}
+			display: flex;
+			flex-direction: column;
+			align-items: center; /* Tengahkan horizontal */
+			opacity: 0.75;
+				}
 		.container-form {
 			display: flex;
 			flex-direction: column;
@@ -230,6 +266,11 @@ if (mysqli_num_rows($result) > 0) {
 	.forgot-password-link {
         margin-top: 10px; /* Add margin to create space between the link and the password field */
     }
+	.login-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
     </style>
 	<script>
   function resetForm() {
@@ -238,7 +279,6 @@ if (mysqli_num_rows($result) > 0) {
   }
 </script>
 </head>
-<body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
@@ -286,7 +326,11 @@ if (mysqli_num_rows($result) > 0) {
 			</ul>
 		</div>
 	</nav>
-    <div class="container">
+	<body style="background-image: url('<?php echo $background_image_url; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+	<div class="logo-container">
+    <img src="../assets/images/logo/<?php echo $logo_image_path; ?>" alt="SIUKM Logo" width="240" height="240">
+</div>
+	<div class="container">
         <h1>SIGN IN</h1>
         <?php
         // Menampilkan pesan kesalahan jika ada
@@ -319,12 +363,13 @@ if (mysqli_num_rows($result) > 0) {
 			</div>
 		</div>
 		</form>
-
 <div class="signup">
-  <p>Tidak punya akun? <a href="register.php">Daftar</a></p>
+<p>Tidak punya akun? <a href="register.php"><i class="fas fa-user-plus"></i> Daftar</a></p>
 </div>
-	</div>
-	
+</div>
+</div>
+
+
     <script>
 		  function goToBeranda() {
         window.location.href = "beranda.php";
@@ -344,7 +389,7 @@ if (mysqli_num_rows($result) > 0) {
         }
     });
 </script>
-
+	
 </body>
 <footer>SIUKM @2023 | Visit our<a href="https://stmikkomputama.ac.id/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
   <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>

@@ -58,11 +58,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama_web = mysqli_real_escape_string($conn, $_POST["nama_web"]);
     $nama_instansi = mysqli_real_escape_string($conn, $_POST["nama_instansi"]);
 
-    // Define the target directory for image uploads
-    $targetDir = "../assets/images/logo/";
+    // Fetch existing data from the tab_profil table
+    $query_profil = "SELECT * FROM tab_profil";
+    $result_profil = mysqli_query($conn, $query_profil);
+    $row_profil = mysqli_fetch_assoc($result_profil);
 
-    $logo_siukm = uploadImage("logo_siukm", $targetDir);
-    
+    // Check if a new logo has been uploaded
+    if (isset($_FILES["logo_siukm"]["name"]) && $_FILES["logo_siukm"]["name"] != "") {
+        // Delete the previous logo file if it exists
+        if (isset($row_profil['logo_siukm']) && !empty($row_profil['logo_siukm'])) {
+            $previousLogoPath = $targetDir . $row_profil['logo_siukm'];
+            if (file_exists($previousLogoPath)) {
+                unlink($previousLogoPath);
+            }
+        }
+
+        // Upload the new logo and update the logo_siukm field
+        $logo_siukm = uploadImage("logo_siukm", $targetDir);
+    } else {
+        // Keep the existing logo if no new logo is uploaded
+        $logo_siukm = isset($row_profil['logo_siukm']) ? $row_profil['logo_siukm'] : null;
+    }
+
     // Prepare the SQL query to insert/update data into tab_profil table
     if ($_POST["action"] === "edit") {
         // Edit existing data in tab_profil

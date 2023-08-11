@@ -24,10 +24,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Save the token, id_user, email, and expiry timestamp to the password_reset_tokens table
         $expiry_timestamp = time() + (24 * 60 * 60); // Token valid for 24 hours
-        $query = "INSERT INTO password_reset_tokens (token, id_user, email, expiry_timestamp) VALUES (?, ?, ?, ?)";
+
+        // Insert or update token in password_reset_tokens table
+        $query = "INSERT INTO password_reset_tokens (token, id_user, email, expiry_timestamp) VALUES (?, ?, ?, ?)
+                  ON DUPLICATE KEY UPDATE token = VALUES(token), expiry_timestamp = VALUES(expiry_timestamp)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("sssi", $token, $id_user, $email, $expiry_timestamp);
         $stmt->execute();
+        
+        // Clean up expired tokens
+        $cleanup_query = "DELETE FROM password_reset_tokens WHERE expiry_timestamp < ?";
+        $cleanup_stmt = $conn->prepare($cleanup_query);
+        $cleanup_stmt->bind_param("i", time());
+        $cleanup_stmt->execute();
+        
 
         // Send email to the user with the password reset link
         $reset_link = "http://localhost/SIUKMSTMIK/page/forgot_password.php?token=" . $token;
@@ -52,6 +62,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo 'alert("Username tidak terdaftar atau email tidak benar, ulangi.");';
         echo '</script>';
     }
+}
+$query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
+$result_bg = mysqli_query($conn, $query_bg);
+if ($result_bg && mysqli_num_rows($result_bg) > 0) {
+    $row_bg = mysqli_fetch_assoc($result_bg);
+    $background_image_filename = $row_bg["bg_login"];
+
+    // Construct the background image URL
+    $background_image_url = "../assets/images/bg/" . $background_image_filename;
+} else {
+    $background_image_url = ""; // Set a default image URL if not found
 }
 ?>
 
@@ -79,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 .card {
+    opacity: 0.75;
   width: 400px;
   padding: 20px;
   border: 1px solid #ccc;
@@ -102,7 +124,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 .btn-primary:hover {
   background-color: #0069d9;
 }
-
+body {
+            background-image: url('<?php echo $background_image_url; ?>');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Add any other styles you want for the body */
+        }
     </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">

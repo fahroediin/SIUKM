@@ -325,6 +325,53 @@ p {
     text-align: center; 
     font-size: 18px; 
   }
+  /* Style for the "Lihat SK" button */
+.sk-button {
+    float: right;
+    margin-top: -40px; /* Adjust this value as needed */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Style for the modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
     </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -461,7 +508,11 @@ p {
 		</div>
     <div class="card shadow mb-4">
     <div class="container">
-    <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
+        <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
+        <div class="ukm-button-grid">
+        <button id="lihat-sk-button" class="sk-button" title="Tekan tombol untuk melihat SK UKM">
+            <i class="fas fa-file-alt"></i>
+        </button>
     <p><?php echo $nama_ukm; ?></p>
     <?php
     $id_ukm_target = 'pramuka';
@@ -495,5 +546,39 @@ p {
 | Connect with us on <a href="https://www.facebook.com/stmikkomputama"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
   <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
 </svg> Facebook</a></footer>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("sk-modal");
+    const modalImage = document.getElementById("sk-image");
+    const button = document.getElementById("lihat-sk-button");
+    const close = document.getElementsByClassName("close")[0];
+
+    // When the button is clicked, show the modal and set the image source
+    button.addEventListener("click", function() {
+        modal.style.display = "block";
+        modalImage.src = "../assets/images/sk/tab_ukm.jpg"; // Adjust the image path as needed
+    });
+
+    // When the close button is clicked, close the modal
+    close.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
+    // When the user clicks anywhere outside the modal, close it
+    window.addEventListener("click", function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    });
+});
+</script>
+
+<!-- Modal -->
+<div id="sk-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <img id="sk-image" src="" alt="SK Image">
+    </div>
+</div>
 </body>
 </html>
