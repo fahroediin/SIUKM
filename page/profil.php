@@ -106,13 +106,13 @@ mysqli_close($conn);
 						Pilih UKM
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+						<a class="dropdown-item" href="pramuka.php">Racana</a>
+						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
+						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
+						<a class="dropdown-item" href="english.php">English Conversation Club</a>
+						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
 						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
 					</div>
 				</li>
 			</ul>
@@ -151,16 +151,16 @@ mysqli_close($conn);
 				<p><?php echo $row_profil['nama_instansi']; ?></p>
 			</div>
 
-				<div class="jumbotron">
-    <h3>Deskripsi Singkat</h3>
-    <p><?php echo $row_profil['deskripsi']; ?></p>
+			<div class="jumbotron">
+			<h3>Deskripsi Singkat</h3>
+			<p><?php echo $row_profil['deskripsi']; ?></p>
 
-    <h3>Visi</h3>
-    <p><?php echo $row_profil['visi']; ?></p>
+			<h3>Visi</h3>
+   			 <p style="font-style: italic; text-align: center;"><?php echo $row_profil['visi']; ?></p>
 
-    <h3>Misi</h3>
-	<p><?php echo $row_profil['misi']; ?></p>
-</div>
+			<h3>Misi</h3>
+    		<p style="font-style: italic; text-align: center;"><?php echo $row_profil['misi']; ?></p>
+		</div>
 			
 		
 <!-- Update this part of the code in your HTML body -->

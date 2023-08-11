@@ -109,14 +109,14 @@ $result = mysqli_query($conn, $query);
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
 						Pilih UKM
 					</a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="pramuka.php">Racana</a>
+						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
+						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
+						<a class="dropdown-item" href="english.php">English Conversation Club</a>
+						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
 						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
 					</div>
 				</li>
 			</ul>

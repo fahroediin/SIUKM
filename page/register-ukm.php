@@ -503,15 +503,15 @@ button[type=reset]:hover {
 
 
             <div class="form-group">
-            <label for="email">*Email:</label>
+            <label for="email">*Email</label>
             <input type="text" id="email" name="email" value="<?php echo $row['email']; ?>" required>
         </div>
         <div class="form-group">
-            <label for="no_hp">*Nomor HP:</label>
+            <label for="no_hp">*Nomor HP</label>
             <input type="text" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required>
         </div>
         <div class="form-group">
-                            <label for="id_ukm">*Nama UKM:</label>
+                            <label for="id_ukm">*Nama UKM</label>
                             <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required onchange="updateNamaUKM(this)">
                         <option value="">Pilih Nama UKM</option>
                         <?php

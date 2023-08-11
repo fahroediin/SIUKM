@@ -155,7 +155,7 @@ $facebook = "https://www.facebook.com/" . $facebook;
 <!DOCTYPE html>
 <html>
 <head>
-	<title>MAPALA - SIUKM STMIK KOMPUTAMA MAJENANG</title>
+	<title><?php echo $nama_ukm; ?></title>
   <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -346,19 +346,19 @@ p {
         <a class="nav-link" href="galeri.php">Galeri</a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-          Pilih UKM
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+						Pilih UKM
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="pramuka.php">Racana</a>
+						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
+						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
+						<a class="dropdown-item" href="english.php">English Conversation Club</a>
+						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
 						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
 					</div>
-      </li>
+				</li>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">

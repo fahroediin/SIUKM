@@ -86,26 +86,14 @@ $row_profil = mysqli_fetch_assoc($result_profil);
 						Pilih UKM
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<?php
-					if ($result->num_rows > 0) {
-						while ($row = $result->fetch_assoc()) {
-							$id_ukm = $row["id_ukm"];
-							$nama_ukm = $row["nama_ukm"];
-							$link = strtolower($id_ukm) . ".php";
-					?>
-							<a class="dropdown-item" href="<?php echo $link; ?>">
-								<?php echo $nama_ukm; ?>
-							</a>
-					<?php
-						}
-					} else {
-						echo "Tidak ada data UKM yang ditemukan.";
-					}
-
-					// Menutup koneksi database
-					$conn->close();
-					?>
-				</div>
+						<a class="dropdown-item" href="pramuka.php">Racana</a>
+						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
+						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
+						<a class="dropdown-item" href="english.php">English Conversation Club</a>
+						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
+						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
+					</div>
 				</li>
 			</ul>
 			<ul class="navbar-nav ml-auto ">

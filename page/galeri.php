@@ -204,18 +204,18 @@ function getDataForImage($conn, $image_file) {
 				<li class="nav-item">
 					<a class="nav-link active" href="galeri.php">Galeri</a>
 				</li>
-				<li class="nav-item dropdown">
+                <li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
 						Pilih UKM
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
+						<a class="dropdown-item" href="pramuka.php">Racana</a>
+						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
+						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
+						<a class="dropdown-item" href="english.php">English Conversation Club</a>
+						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
 						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
 					</div>
 				</li>
 			</ul>
@@ -248,91 +248,63 @@ function getDataForImage($conn, $image_file) {
         <h1>Galeri</h1>
         <div class="divider"></div>
       <!-- Filter form -->
-   <form method="get">
-        <label for="year">Filter by Year:</label>
-        <select name="year" id="year">
-            <option value="">All</option>
-            <?php
-            // Get unique years from the tgl_prestasi column
-            $year_query = "SELECT DISTINCT YEAR(tgl_prestasi) AS year FROM tab_prestasi ORDER BY year DESC";
-            $year_result = mysqli_query($conn, $year_query);
-            while ($year_row = mysqli_fetch_assoc($year_result)) {
-                echo '<option value="' . $year_row['year'] . '">' . $year_row['year'] . '</option>';
-            }
-            ?>
+      <form class="filter-form">
+        <label for="jenis">Jenis Kegiatan:</label>
+        <select id="jenis" name="jenis">
+            <option value="all">All</option>
+            <option value="Rutin">Rutin</option>
+            <option value="Tidak Rutin">Tidak Rutin</option>
+            <!-- Add more options based on your actual types -->
         </select>
-
-        <label for="ukm">Filter by UKM:</label>
-        <select name="ukm" id="ukm">
-            <option value="">All</option>
-            <?php
-        // Get the filter values from the form submission
-        $filter_jenis = $_GET['jenis'];
-        $filter_ukm = $_GET['ukm'];
-
-        // Add the filters to the SQL query
-        $query = "SELECT p.id_prestasi, p.nama_prestasi, p.penyelenggara, p.tingkat, p.tgl_prestasi, p.sertifikat, u.nama_ukm FROM tab_prestasi p INNER JOIN tab_ukm u ON p.id_ukm = u.id_ukm";
-
-        if (!empty($filter_jenis)) {
-            $query .= " WHERE JENIS(p.tgl_prestasi) = '$filter_jenis'";
-        }
-
-        if (!empty($filter_ukm)) {
-            $query .= !empty($filter_year) ? " AND u.nama_ukm = '$filter_ukm'" : " WHERE u.nama_ukm = '$filter_ukm'";
-        }
-
-        $result = mysqli_query($conn, $query);
-            // Get unique UKM names from the tab_ukm table
-            $ukm_query = "SELECT DISTINCT nama_ukm FROM tab_ukm ORDER BY nama_ukm";
-            $ukm_result = mysqli_query($conn, $ukm_query);
-            while ($ukm_row = mysqli_fetch_assoc($ukm_result)) {
-                echo '<option value="' . $ukm_row['nama_ukm'] . '">' . $ukm_row['nama_ukm'] . '</option>';
-            }
-            ?>
-        </select>
-
-        <button type="submit" class="btn btn-primary filter-button">
-        <i class="fas fa-search"></i> Filter
-    </button>
+        <button type="submit" class="btn btn-primary filter-button"><i class="fas fa-filter"></i> Filter</button>
     </form>
+
         <div class="container">
         <div class="gallery">
         <?php
-        // Loop through the image files and display them
-        foreach ($image_files as $index => $image_file) {
-            // Calculate the index of the image to display (0 to 3)
-            $image_index = $index % 4;
+// Loop through the image files and display them
+foreach ($image_files as $index => $image_file) {
+    // Calculate the index of the image to display (0 to 3)
+    $image_index = $index % 4;
 
-            // Get the original dimensions of the image
-            list($width, $height) = getimagesize($image_file);
+    // Get the original dimensions of the image
+    list($width, $height) = getimagesize($image_file);
 
-            // Calculate the proportional height for 720px width
-            $new_width = 720;
-            $new_height = $height * ($new_width / $width);
+    // Get additional data (nama_kegiatan, tgl, and nama_ukm) from the database
+    $data = getDataForImage($conn, basename($image_file));
+    $nama_kegiatan = $data["nama_kegiatan"];
+    $tgl = $data["tgl"];
+    $nama_ukm = $data["nama_ukm"];
+    $jenis = $data["jenis"];
 
-            // Get additional data (nama_kegiatan, tgl, and nama_ukm) from the database
-            $data = getDataForImage($conn, basename($image_file));
-            $nama_kegiatan = $data["nama_kegiatan"];
-            $tgl = $data["tgl"];
-            $nama_ukm = $data["nama_ukm"];
-            $jenis = $data["jenis"];
-			?>
-<div class="gallery-item">
-    <!-- Add data attributes for the modal -->
-    <div class="card">
-    <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" class="card-img-top"
-     data-toggle="modal" data-target="#imageModal" />
-        <div class="card-body">
-            <h3 class="card-title"><?php echo $nama_kegiatan; ?></h3>
-            <p class="card-text"><?php echo date('d F Y', strtotime($tgl)); ?></p>
-            <p class="card-text"><?php echo $nama_ukm; ?></p>
-        </div>
-        <p class="card-jenis"><?php echo $jenis; ?></p> <!-- Display jenis value here -->
-    </div>
-</div>
-			<?php
-        }
+    // Get the selected filter type
+    $filterType = isset($_GET['jenis']) ? $_GET['jenis'] : 'all';
+    
+    // Get the jenis (type) for the current image from the database
+    $imageJenis = $data["jenis"];
+
+    // Check if the image matches the filter type
+    if ($filterType === 'all' || $imageJenis === $filterType) {
+        // Display the gallery item with the filtered images
         ?>
+        <div class="gallery-item">
+            <!-- Add data attributes for the modal -->
+            <div class="card">
+                <img src="<?php echo $image_file; ?>" alt="Image <?php echo ($index + 1); ?>" class="card-img-top"
+                     data-toggle="modal" data-target="#imageModal" />
+                <div class="card-body">
+                    <h3 class="card-title"><?php echo $nama_kegiatan; ?></h3>
+                    <p class="card-text"><?php echo date('d F Y', strtotime($tgl)); ?></p>
+                    <p class="card-text"><?php echo $nama_ukm; ?></p>
+                </div>
+                <p class="card-jenis"><?php echo $jenis; ?></p>
+            </div>
+        </div>
+        <?php
+    }
+}
+?>
+
     </div>
 	</div>
     </div>

@@ -15,47 +15,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    // Mempersiapkan pernyataan SQL untuk memeriksa username dan password
-    $query = "SELECT * FROM tab_user WHERE id_user = ? AND password = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    
-    // Memasukkan nilai parameter ke pernyataan SQL
-    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+    // Mempersiapkan pernyataan SQL untuk memeriksa username
+    $id_user_query = "SELECT * FROM tab_user WHERE id_user = ?";
+    $id_user_stmt = mysqli_prepare($conn, $id_user_query);
+    mysqli_stmt_bind_param($id_user_stmt, "s", $username);
+    mysqli_stmt_execute($id_user_stmt);
+    $id_user_result = mysqli_stmt_get_result($id_user_stmt);
 
-    // Menjalankan pernyataan SQL
-    mysqli_stmt_execute($stmt);
+    // Inisialisasi pesan error
+    $id_user_error = "";
+    $password_error = "";
 
-    // Mengambil hasil query
-    $result = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($id_user_result) === 0) {
+        $id_user_error = "ID user tidak terdaftar.";
+    } else {
+        // Fetch the user's data
+        $row = mysqli_fetch_assoc($id_user_result);
 
-   // Memeriksa apakah username dan password sesuai
-if (mysqli_num_rows($result) > 0) {
-	// Jika sesuai, arahkan ke halaman beranda atau halaman lain yang diinginkan
-	$row = mysqli_fetch_assoc($result);
-	$_SESSION["id_user"] = $row["id_user"];
-	$_SESSION["nama_lengkap"] = $row["nama_lengkap"];
+        if ($password !== $row["password"]) {
+            $password_error = "Password salah.";
+        } else {
+            // Jika sesuai, arahkan ke halaman beranda atau halaman lain yang diinginkan
+            $_SESSION["id_user"] = $row["id_user"];
+            $_SESSION["nama_lengkap"] = $row["nama_lengkap"];
 	$_SESSION["nim"] = $row["nim"];
 	$_SESSION["prodi"] = $row["prodi"];
 	$_SESSION["semester"] = $row["semester"];
 	$_SESSION["level"] = $row["level"];
 	$lowercaseLevel = strtolower($row["level"]);
-    
-    if ($lowercaseLevel == "1" || $lowercaseLevel == "admin") {
-        header("Location: admin.php");
-    } elseif ($lowercaseLevel == "2" || $lowercaseLevel == "kemahasiswaan") {
-        header("Location: kemahasiswaan.php");
-    } elseif ($lowercaseLevel == "3") {
-        header("Location: beranda.php");
-    }
-    exit();
-} else {
-    // Jika tidak sesuai, tampilkan pesan kesalahan
-    $error_message = "Username atau password salah. Silakan coba lagi.";
+
+	if ($lowercaseLevel == "1" || $lowercaseLevel == "admin") {
+		header("Location: admin.php");
+	} elseif ($lowercaseLevel == "2" || $lowercaseLevel == "kemahasiswaan") {
+		header("Location: kemahasiswaan.php");
+	} elseif ($lowercaseLevel == "3") {
+		header("Location: beranda.php");
+	}
+	exit();
+}
 }
 
-    // Menutup pernyataan dan koneksi database
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
+// Menutup pernyataan untuk memeriksa ID user
+mysqli_stmt_close($id_user_stmt);
+
 }
 $query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
 $result_bg = mysqli_query($conn, $query_bg);
@@ -86,11 +88,11 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 <head>
     <title>Halaman Login - SIUKM STMIK Komputama Majenang</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/js/script.js">
+    <script src="../assets/js/script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -220,7 +222,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 		}
 
 		.form-control::placeholder {
-		color: #ccc;
+		color: #;
 		}
 		 .button-group {
 			display: flex;
@@ -242,6 +244,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 
 		.forgot-password-link {
 			font-size: 15px;
+			margin-top: 10px;
 		}
 		.password-input {
     position: relative;
@@ -263,72 +266,53 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
         max-width: 250px;
         margin: auto;
     }
-	.forgot-password-link {
-        margin-top: 10px; /* Add margin to create space between the link and the password field */
-    }
 	.login-bg {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
   }
     </style>
-	<script>
-  function resetForm() {
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-  }
-</script>
 </head>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-	        	<div class="collapse navbar-collapse" id="collapsibleNavbar">
-			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link" href="beranda.php">Beranda</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="profil.php">Profil</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="prestasi.php">Prestasi</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="galeri.php">Galeri</a>
-				</li>
-				<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-						Pilih UKM
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<?php
-					if ($result->num_rows > 0) {
-						while ($row = $result->fetch_assoc()) {
-							$id_ukm = $row["id_ukm"];
-							$nama_ukm = $row["nama_ukm"];
-							$link = strtolower($id_ukm) . ".php";
-					?>
-							<a class="dropdown-item" href="<?php echo $link; ?>">
-								<?php echo $nama_ukm; ?>
-							</a>
-					<?php
-						}
-					} else {
-						echo "Tidak ada data UKM yang ditemukan.";
-					}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="beranda.php">Beranda</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="profil.php">Profil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="prestasi.php">Prestasi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="galeri.php">Galeri</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                    Pilih UKM
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="racana.php">Pramuka</a>
+                    <a class="dropdown-item" href="wanacetta.php">Wanacetta</a>
+                    <a class="dropdown-item" href="agrogreen.php">Agro Green</a>
+                    <a class="dropdown-item" href="ecc.php">ECC</a>
+                    <a class="dropdown-item" href="riset.php">Riset</a>
+                    <a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
+                    <a class="dropdown-item" href="hsr.php">HSR</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-					// Menutup koneksi database
-					$conn->close();
-					?>
-				</div>
-				</li>
-			</ul>
-		</div>
-	</nav>
 	<body style="background-image: url('<?php echo $background_image_url; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
 	<div class="logo-container">
-    <img src="../assets/images/logo/<?php echo $logo_image_path; ?>" alt="SIUKM Logo" width="240" height="240">
+	<img src="../assets/images/logo/<?php echo $logo_image_path; ?>" alt="SIUKM Logo" class="img-fluid" width="240" height="240">
+
 </div>
 	<div class="container">
         <h1>SIGN IN</h1>
@@ -341,15 +325,17 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 		<form action="" method="POST">
 		<div class="container-form">
 		<div class="form-group">
-		<label for="username">Username:</label>
-		<input type="text" class="form-control" id="username" name="username" maxlength="15" required>
+		<label for="username">ID User</label>
+		<input type="text" class="form-control" placeholder="Masukan id user anda" id="username" name="username" maxlength="10" required>
+		<div class="invalid-feedback" id="usernameError"></div>
 		</div>
 		<div class="form-group">
-			<label for="password">Password:</label>
+			<label for="password">Password</label>
 			<div class="password-input">
-				<input type="password" class="form-control" id="password" name="password" maxlength="30" required>
+				<input type="password" class="form-control" placeholder="Masukan password ada" id="password" name="password" maxlength="30" required>
 				<i class="fas fa-eye" id="passwordToggle"></i>
 			</div>
+			<div class="invalid-feedback" id="passwordError"></div>
 		</div>
 
 		<p class="forgot-password-link">Lupa Password? <a href="forgot_password.php">Reset Password</a></p>
@@ -368,8 +354,17 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 </div>
 </div>
 </div>
-
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('username').addEventListener('input', function() {
+        document.getElementById('usernameError').textContent = '';
+    });
+    
+    document.getElementById('password').addEventListener('input', function() {
+        document.getElementById('passwordError').textContent = '';
+    });
+});
+</script>
     <script>
 		  function goToBeranda() {
         window.location.href = "beranda.php";

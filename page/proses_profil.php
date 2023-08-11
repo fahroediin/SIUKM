@@ -244,7 +244,7 @@ $row_profil = mysqli_fetch_assoc($result_profil);
         <!-- Wrap the form with a card component -->
         <div class="card">
             <h2 style="text-align: center;">Data Profil</h2>
-            <p>*Wajib diisi</p>
+            
                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
                     <input type="hidden" name="action" value="<?php echo isset($row_profil) ? 'edit' : 'add'; ?>">
                         <div class="form-group">
@@ -278,9 +278,13 @@ $row_profil = mysqli_fetch_assoc($result_profil);
                     <label for="misi">*Misi</label>
                     <textarea id="misi" name="misi" rows="4" placeholder="Maksimal 500 Karakter" class="form-control"><?php echo isset($row_profil) ? $row_profil['misi'] : ''; ?></textarea>
                 </div>
-     
+                <p style="font-size: 14px;">* Wajib diisi</p>
                 </div>
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
             </form>
         </div>
     </div>

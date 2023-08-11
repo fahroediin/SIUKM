@@ -101,7 +101,19 @@ if ($result_bg && mysqli_num_rows($result_bg) > 0) {
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-
+        .container {
+			z-index: 1;
+			background-color: #fff;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+			margin: 80px auto;
+			max-width: 400px;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center; /* Tengahkan horizontal */
+			opacity: 0.75;
+				}
         button[type="submit"] {
             display: block;
             width: 100%;
@@ -147,7 +159,7 @@ if ($result_bg && mysqli_num_rows($result_bg) > 0) {
 <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <h1>Register</h1>
     <div>
-    <label for="id_user">ID User (NIM):</label>
+    <label for="id_user">*ID User (NIM)</label>
     <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
     <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
 </div>
@@ -169,14 +181,14 @@ document.getElementById("id_user").addEventListener("input", function(event) {
 });
 </script>
 <div class="form-group">
-    <label for="password">Password:</label>
+    <label for="password">*Password:</label>
     <div class="password-input">
         <input type="password" class="form-control" id="password" name="password" required>
         <i class="fas fa-eye" id="passwordToggle1"></i>
     </div>
 </div>
 <div class="form-group">
-    <label for="konfirmasi_password">Konfirmasi Password:</label>
+    <label for="konfirmasi_password">*Konfirmasi Password</label>
     <div class="password-input">
         <input type="password" class="form-control" id="konfirmasi_password" name="confirmPassword" required>
         <i class="fas fa-eye" id="passwordToggle2"></i>
@@ -201,7 +213,7 @@ document.getElementById("id_user").addEventListener("input", function(event) {
     });
 </script>
     <div>
-    <label for="nama_lengkap">Nama Lengkap:</label>
+    <label for="nama_lengkap">*Nama Lengkap</label>
     <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Masukkan Nama Lengkap" oninput="validasiHuruf(event)">
     <div id="invalid-error" class="invalid-feedback" style="color: red;"></div>
 </div>
@@ -233,7 +245,7 @@ document.getElementById("nama_lengkap").addEventListener("input", function(event
 
 
        <div>
-    <label for="email">Email:</label>
+    <label for="email">*Email</label>
     <input type="email" id="email" name="email" required placeholder="Masukkan Email">
     <div id="email-error" class="invalid-feedback" style="color: red;"></div>
 </div>
@@ -260,7 +272,7 @@ function validateEmail(email) {
 </script>
 
 <div>
-    <label for="no_hp">Nomor HP:</label>
+    <label for="no_hp">*Nomor HP</label>
     <input type="text" id="no_hp" name="no_hp" required placeholder="Masukkan Nomor HP" oninput="validasiNomorHP(event)">
     <div id="no-hp-error" class="invalid-feedback" style="color: red;"></div>
 </div>

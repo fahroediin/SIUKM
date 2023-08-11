@@ -129,7 +129,6 @@ body {
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            /* Add any other styles you want for the body */
         }
     </style>
 <body>
@@ -169,16 +168,17 @@ body {
     </div>
 </nav>
 
-<div class="container">
+<div class="container d-flex align-items-center justify-content-center">
     <div class="card">
-        <h2>Lupa Password</h2>
+        <h2 style="text-align: center;">Lupa Password</h2>
         <form action="" method="POST">
             <div class="form-group">
-                <label for="id_user">Username:</label>
+                <label for="id_user">*ID User
+                </label>
                 <input type="text" class="form-control" id="id_user" name="id_user" required>
             </div>
             <div class="form-group">
-                <label for="email">Email:</label>
+                <label for="email">*Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <button type="submit" class="btn btn-primary">Reset Password</button>

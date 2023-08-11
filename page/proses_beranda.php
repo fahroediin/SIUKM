@@ -237,7 +237,6 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
                 <!-- Wrap the form with a card component -->
                 <div class="card">
                 <h2 style="text-align: center;">Data Beranda</h2>
-                <p>*Wajib diisi</p>
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data" class="form">
         <input type="hidden" name="action" value="<?php echo isset($row_beranda) ? 'edit' : 'add'; ?>">
         <div class="form-group">
@@ -310,10 +309,13 @@ $row_beranda = mysqli_fetch_assoc($result_beranda);
         <?php endif; ?>
     </div>
     <p style="font-size: 14px; color: #888;">Unggah gambar dengan resolusi minimal 1440x720</p>
-</div>
-
-
-        <button type="submit" class="btn btn-primary">Simpan</button>
+<p style="font-size: 14px;">* Wajib diisi</p>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
     </form>
 </div>
 </div>
