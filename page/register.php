@@ -112,7 +112,7 @@ if ($result_bg && mysqli_num_rows($result_bg) > 0) {
 			display: flex;
 			flex-direction: column;
 			align-items: center; /* Tengahkan horizontal */
-			opacity: 0.75;
+			opacity: 0.90;
 				}
         button[type="submit"] {
             display: block;

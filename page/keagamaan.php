@@ -341,6 +341,17 @@ p {
 .nav-link.btn-signout:hover {
   background-color: #c00; /* Replace with your desired hover background color */
 }
+  /* Style for the "Lihat SK" button */
+  .sk-button {
+    float: right;
+    margin-top: -40px; /* Adjust this value as needed */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
     </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -470,6 +481,10 @@ p {
     <div class="card shadow mb-4">
     <div class="container">
     <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
+        <div class="ukm-button-grid">
+        <button id="lihat-sk-button" class="sk-button" title="Tekan tombol untuk melihat SK UKM">
+            <i class="fas fa-file-alt"></i>
+        </button>
     <p><?php echo $nama_ukm; ?></p>
     <?php
     $id_ukm_target = 'keagamaan';
@@ -482,7 +497,7 @@ p {
                 foreach ($anggota as $data) {
                     $nim = $data['nim'];
                     $nama_lengkap = $data['nama_lengkap'];
-                    echo "<tr><td>$nama_lengkap</td><td>$nim</td></tr>";
+                    echo "<tr><td>$nim</td><td>$nama_lengkap</td></tr>";
                 }
             }
         }

@@ -57,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $facebook = $_POST["facebook"];
     $visi = $_POST["visi"];
     $misi = $_POST["misi"];
+    $sk = $_POST["sk"];
 
 
     if ($id_ukm_type === "dropdown") {
@@ -95,9 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // SQL query to update data in tab_ukm table
-    $sql = "UPDATE tab_ukm SET nama_ukm=?, sejarah=?, logo_ukm=?, instagram=?, facebook=?, visi=?, misi=? WHERE id_ukm=?";
+    $sql = "UPDATE tab_ukm SET nama_ukm=?, sejarah=?, logo_ukm=?, instagram=?, facebook=?, visi=?, misi=?, sk=? WHERE id_ukm=?";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "sssssssi", $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $id_ukm);
+    mysqli_stmt_bind_param($stmt, "ssssssssi", $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $sk, $id_ukm);
     $result = mysqli_stmt_execute($stmt);
 
     if ($result) {
@@ -109,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi, sk FROM tab_ukm";
 $result = mysqli_query($conn, $query);
 
 $ukmData = array();
@@ -123,6 +124,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 <head>
     <title>Data UKM - SIUKM</title>
     <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -229,16 +232,26 @@ while ($row = mysqli_fetch_assoc($result)) {
     /* Atur gaya untuk elemen H2 pada header */
     margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
 }
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    display: inline-block;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 15px;
-    height: 15px;
-    margin-top: 7px;
+.ukm-card {
+    display: flex;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
+
+.ukm-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ukm-logo {
+    max-width: 100px;
+    max-height: 100px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 50%;
+}
+
 </style>
   <!-- Sidebar -->
 
@@ -300,71 +313,154 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
 </form>
 
-<div class="container">
-    <div id="ukmCarousel" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-            <?php foreach ($ukmData as $index => $ukm) { ?>
-                <div class="carousel-item <?php if ($index === 0) echo 'active'; ?>">
-    
-        <div class="col-md-12">
-            <div class="card">
-                <img src="../assets/images/logoukm/<?php echo $ukm['logo_ukm']; ?>" alt="Logo UKM" class="card-img-top mx-auto d-block" style="max-width: 100px; max-height: 100px;" data-toggle="modal" data-target="#ukmDetailsModal<?php echo $ukm['id_ukm']; ?>">
+<div class="row">
+    <?php foreach ($ukmData as $index => $ukm) { ?>
+        <div class="col-md-6">
+            <div class="card ukm-card">
+                <img src="../assets/images/logoukm/<?php echo $ukm['logo_ukm']; ?>" alt="Logo UKM" class="card-img-top mx-auto d-block ukm-logo">
+                <div class="card-body">
+                    <h3 class="card-title text-center"><?php echo $ukm['nama_ukm']; ?></h3>
+                    <p class="text-center"><strong>Sejarah</strong></p>
+                    <?php
+                    $sejarah = $ukm['sejarah'];
+                    if (strlen($sejarah) > 50) {
+                        $sejarah = substr($sejarah, 0, 50) . "...";
+                        echo "<p>" . $sejarah . "</p>";
+                        echo '<p><a href="#" class="read-more-link" data-toggle="modal" data-target="#sejarahModal' . $index . '">Read More</a></p>';
+                    } else {
+                        echo "<p>" . $sejarah . "</p>";
+                    }
+                    ?>
+                     <p class="text-center"><strong>Visi</strong></p>
+                    <?php
+                    $visi = $ukm['visi'];
+                    if (strlen($visi) > 50) {
+                        $visi = substr($visi, 0, 50) . "...";
+                        echo "<p>" . $visi . "</p>";
+                        echo '<p><a href="#" class="read-more-link" data-toggle="modal" data-target="#visiModal' . $index . '">Read More</a></p>';
+                    } else {
+                        echo "<p>" . $visi . "</p>";
+                    }
+                    ?>
+                      <p class="text-center"><strong>Misi</strong></p>
+                     <?php
+                    $misi = $ukm['misi'];
+                    if (strlen($misi) > 50) {
+                        $misi = substr($misi, 0, 50) . "...";
+                        echo "<p>" . $misi . "</p>";
+                        echo '<p><a href="#" class="read-more-link" data-toggle="modal" data-target="#misiModal' . $index . '">Read More</a></p>';
+                    } else {
+                        echo "<p>" . $misi . "</p>";
+                    }
+                    ?>
+                     <p class="text-center"><strong>Social Media</strong></p>
+                    <p>Instagram: <?php echo $ukm['instagram']; ?></p>
+                    <p>Facebook: <?php echo $ukm['facebook']; ?></p>
+                    <p>SK: <?php echo $ukm['sk']; ?></p>
+                    <p class="text-center">
+                        <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal">Edit</a>
+                        <a href="<?php echo $ukm['id_ukm']; ?>.php" class="btn btn-secondary">View UKM</a>
+                    </p>
+                </div>
             </div>
-    
-    </div>
-</div>
-
-<!-- Modal for UKM Details -->
-<div class="modal fade" id="ukmDetailsModal<?php echo $ukm['id_ukm']; ?>" tabindex="-1" role="dialog" aria-labelledby="ukmDetailsModalLabel<?php echo $ukm['id_ukm']; ?>" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                                    <div class="card-body">
-                                    <div class="modal-header">
-                                        <h2 class="modal-title" id="ukmDetailsModalLabel<?php echo $ukm['id_ukm']; ?>"><?php echo $ukm['nama_ukm']; ?></h2>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="ukm-info">
-                                    <p class="text-center"><strong>Sejarah</strong></p>
-                                        <p><?php echo $ukm['sejarah']; ?></p>
-                                    </div>
-                                    <div class="ukm-info text-center">
-                                    <p class="text-center"><strong>Visi</strong></p>
-                                        <p><?php echo $ukm['visi']; ?></p>
-                                    </div>
-                                    <div class="ukm-info">
-                                    <p class="text-center"><strong>Misi</strong></p>
-                                        <p><?php echo $ukm['misi']; ?></p>
-                                    </div>
-                                    <div class="ukm-info">
-                                        <p><strong>Instagram:</strong> @<?php echo $ukm['instagram']; ?></p>
-                                    </div>
-                                    <div class="ukm-info">
-                                        <p><strong>Facebook:</strong> <?php echo $ukm['facebook']; ?></p>
-                                
-                                    </div>
-                                    <a href="detail_ukm.php?id=<?php echo $ukm['id_ukm']; ?>" class="btn btn-primary">Edit</a>
-                                    <a href="detail_ukm.php?id=<?php echo $ukm['id_ukm']; ?>" class="btn btn-secondary">Detail</a>
-                                </div>
-                            </div>
-                        </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="sejarahModal<?php echo $index; ?>" tabindex="-1" role="dialog" aria-labelledby="sejarahModalLabel<?php echo $index; ?>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sejarahModalLabel<?php echo $index; ?>">Sejarah - <?php echo $ukm['nama_ukm']; ?></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><?php echo $ukm['sejarah']; ?></p>
                     </div>
                 </div>
-            <?php } ?>
-        </div>
             </div>
         </div>
-</div>                
-        <a class="carousel-control-prev" href="#ukmCarousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#ukmCarousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+        <div class="modal fade" id="visiModal<?php echo $index; ?>" tabindex="-1" role="dialog" aria-labelledby="visiModalLabel<?php echo $index; ?>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="visiModalLabel<?php echo $index; ?>">Visi - <?php echo $ukm['nama_ukm']; ?></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><?php echo $ukm['visi']; ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="misiModal<?php echo $index; ?>" tabindex="-1" role="dialog" aria-labelledby="misiModalLabel<?php echo $index; ?>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="misiModalLabel<?php echo $index; ?>">Misi - <?php echo $ukm['nama_ukm']; ?></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><?php echo $ukm['misi']; ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php if (($index + 1) % 2 === 0) { ?>
+            </div><div class="row">
+        <?php } ?>
+    <?php } ?>
+</div>
+
+<!-- Modal for editing UKM -->
+<div class="modal fade" id="editUkmModal<?php echo $ukm['id_ukm']; ?>" tabindex="-1" role="dialog" aria-labelledby="editUkmModalLabel<?php echo $ukm['id_ukm']; ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUkmModalLabel<?php echo $ukm['id_ukm']; ?>">Edit Data UKM</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for editing UKM data -->
+                <form method="POST" action="proses_edit_ukm.php" enctype="multipart/form-data">
+                    <input type="hidden" name="id_ukm" value="<?php echo $ukm['id_ukm']; ?>">
+                    <div class="form-group">
+                        <label for="nama_ukm">Nama UKM:</label>
+                        <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $ukm['nama_ukm']; ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sejarah">Sejarah:</label>
+                        <textarea class="form-control" id="sejarah" name="sejarah" rows="5"><?php echo $ukm['sejarah']; ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="instagram">Instagram:</label>
+                        <input type="text" class="form-control" id="instagram" name="instagram" value="<?php echo $ukm['instagram']; ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="facebook">Facebook:</label>
+                        <input type="text" class="form-control" id="facebook" name="facebook" value="<?php echo $ukm['facebook']; ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="visi">Visi:</label>
+                        <textarea class="form-control" id="visi" name="visi" rows="3"><?php echo $ukm['visi']; ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="misi">Misi:</label>
+                        <textarea class="form-control" id="misi" name="misi" rows="3"><?php echo $ukm['misi']; ?></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -377,6 +473,12 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     <!-- Snackbar -->
 <div id="snackbar"></div>
+<script>
+    // Function to open the Lapor LPJ modal
+    function openEditUkmModal() {
+        $('#editUkmModal').modal('show');
+    }
+</script>
 <script>
     // Function to open the "Tambah UKM Baru" modal
 function openTambahUkmModal() {

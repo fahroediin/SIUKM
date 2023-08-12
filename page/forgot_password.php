@@ -100,7 +100,7 @@ if ($result_bg && mysqli_num_rows($result_bg) > 0) {
 }
 
 .card {
-    opacity: 0.75;
+    opacity: 0.90;
   width: 400px;
   padding: 20px;
   border: 1px solid #ccc;
@@ -151,19 +151,19 @@ body {
                 <a class="nav-link" href="galeri.php">Galeri</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    Pilih UKM
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="racana.php">Pramuka</a>
-                    <a class="dropdown-item" href="wanacetta.php">Wanacetta</a>
-                    <a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-                    <a class="dropdown-item" href="ecc.php">ECC</a>
-                    <a class="dropdown-item" href="riset.php">Riset</a>
-                    <a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-                    <a class="dropdown-item" href="hsr.php">HSR</a>
-                </div>
-            </li>
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+						Pilih UKM
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="pramuka.php">Racana</a>
+						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
+						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
+						<a class="dropdown-item" href="english.php">English Conversation Club</a>
+						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
+						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
+						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
+					</div>
+				</li>
         </ul>
     </div>
 </nav>

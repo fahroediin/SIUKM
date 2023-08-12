@@ -121,6 +121,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Mendapatkan data ID UKM dan nama UKM dari tabel tab_ukm
 $query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result_ukm = mysqli_query($conn, $query_ukm);
+$query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
+$result_bg = mysqli_query($conn, $query_bg);
+if ($result_bg && mysqli_num_rows($result_bg) > 0) {
+    $row_bg = mysqli_fetch_assoc($result_bg);
+    $background_image_filename = $row_bg["bg_login"];
+
+    // Construct the background image URL
+    $background_image_url = "../assets/images/bg/" . $background_image_filename;
+} else {
+    $background_image_url = ""; // Set a default image URL if not found
+}
+$query_logo = "SELECT logo_siukm FROM tab_profil LIMIT 1";
+$result_logo = mysqli_query($conn, $query_logo);
+
+if ($result_logo && mysqli_num_rows($result_logo) > 0) {
+    $row_logo = mysqli_fetch_assoc($result_logo);
+    $logo_image_path = $row_logo["logo_siukm"];
+} else {
+    $logo_image_path = ""; // Set a default logo path if not found
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -237,6 +257,7 @@ button[type=reset]:hover {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   margin-left: auto;
   margin-right: auto;
+  opacity: 0.90;
 }
 
 .checkbox-container {
@@ -445,7 +466,7 @@ button[type=reset]:hover {
         </ul>
       </div>
     </nav>
-    <body>
+    <body style="background-image: url('<?php echo $background_image_url; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <div class="container" style="margin-top: 75px; margin-bottom: 75px;">
         <h2 style="text-align: center;">Form Pendaftaran Anggota</h2>
         <h3 style="text-align: center;">Unit Kegiatan Mahasiswa</h3>
@@ -532,7 +553,7 @@ button[type=reset]:hover {
             <img id="pasfotoPreview" src="#" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px; display: none;">
         </div>
         <div class="form-group">
-            <label for="foto_ktm">*Foto Kartu KTM</label>
+            <label for="foto_ktm">*Foto KTM</label>
             <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*" onchange="showPreview(this, 'fotoKtmPreview')">
             <img id="fotoKtmPreview" src="#" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px; display: none;">
         </div>

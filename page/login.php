@@ -128,7 +128,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 			display: flex;
 			flex-direction: column;
 			align-items: center; /* Tengahkan horizontal */
-			opacity: 0.75;
+			opacity: 0.90;
 				}
 		.container-form {
 			display: flex;
