@@ -11,6 +11,23 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
+// Memeriksa apakah id_anggota ada pada session
+if (isset($_SESSION['id_anggota'])) {
+    $id_anggota_session = $_SESSION['id_anggota'];
+    // Jika id_anggota ada pada session, tampilkan tombol-tombol
+    $showButtons = true;
+} else {
+    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
+    $showButtons = false;
+}
+$id_anggota_session = $_SESSION['id_anggota'];
+
+// Menambahkan parameter placeholder pada query
+$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau WHERE id_anggota = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $id_anggota_session);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 // Fungsi logout
 function logout() {
@@ -66,30 +83,27 @@ $result = mysqli_query($conn, $query);
 
         }
 
-        /* Gaya CSS tambahan untuk mengatur tampilan tabel dan form */
-        .table {
-            width: 100%;
-        }
-        th {
-        white-space: nowrap;
-        }
-        .delete-button {
-        background-color: red;
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
+       /* Gaya tambahan untuk tampilan tabel */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        .form-row .form-control {
-            flex: 1;
-            margin-right: 5px;
-        }
+.table th, .table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+.table th {
+    background-color: #f2f2f2;
+}
+
+.table img {
+    max-height: 100px;
+    object-fit: cover;
+}
+
         .sidebar img {
         display: block;
         margin: 0 auto;
@@ -111,16 +125,13 @@ $result = mysqli_query($conn, $query);
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Anggota UKM</i></h2>
-<a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
-<p style="text-align: center;">--Monitoring--</p>
-            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_struktur') echo 'active'; ?>">Pengurus</a>
-    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
-    <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="view_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_user') echo 'active'; ?>">User Manager</a>
-    <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
-    <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
-    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
-    <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+<a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
+<?php if ($showButtons): ?>
+    <p style="text-align: center;">--Informasi--</p>
+<?php endif; ?>
+            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_struktur') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Pengurus</a>
+    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_dau') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Data Anggota</a>
+    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Kegiatan</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>

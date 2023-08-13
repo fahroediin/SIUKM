@@ -38,7 +38,15 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
-
+// Memeriksa apakah id_anggota ada pada session
+if (isset($_SESSION['id_anggota'])) {
+    $id_anggota_session = $_SESSION['id_anggota'];
+    // Jika id_anggota ada pada session, tampilkan tombol-tombol
+    $showButtons = true;
+} else {
+    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
+    $showButtons = false;
+}
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
 $userId = $_SESSION['id_user'];
 $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
@@ -57,64 +65,66 @@ if ($result) {
     $_SESSION['email'] = $user['email'];
     $_SESSION['no_hp'] = $user['no_hp'];
     $_SESSION['prodi'] = $user['prodi'];
+    $_SESSION['pasfoto'] = $user['pasfoto'];
+    $_SESSION['foto_ktm'] = $user['foto_ktm'];
     $_SESSION['semester'] = $user['semester'];
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
 }
 
-// Memeriksa apakah form telah disubmit
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Mengambil data dari form
+// Memeriksa apakah tombol update diklik
+if (isset($_POST['update'])) {
+    // Memeriksa apakah parameter id_user telah diberikan
+    if (isset($_POST['id_user'])) {
+        // Get the ID and other user data from the POST request
     $id_user = $_POST['id_user'];
     $nama_lengkap = $_POST['nama_lengkap'];
-    $email = $_POST['email'];
-    $no_hp = $_POST['no_hp'];
     $prodi = $_POST['prodi'];
     $semester = $_POST['semester'];
+    $email = $_POST['email'];
+    $no_hp = $_POST['no_hp'];
+    $level = $_POST['level'];
 
-    // Handle file uploads for pasfoto and foto_ktm
-    if (isset($_FILES['pasfoto']) && isset($_FILES['foto_ktm'])) {
-        $pasfoto = $_FILES['pasfoto'];
-        $foto_ktm = $_FILES['foto_ktm'];
-
-        // Generate new filenames based on id_user and nama_lengkap
-        $pasfotoFileName = $_SESSION['id_user'] . "_" . $_SESSION['nama_lengkap'] . "_" . uniqid() . "." . pathinfo($pasfoto['name'], PATHINFO_EXTENSION);
-        $fotoKtmFileName = $_SESSION['id_user'] . "_" . $_SESSION['nama_lengkap'] . "_" . uniqid() . "." . pathinfo($foto_ktm['name'], PATHINFO_EXTENSION);
-
-        // Move uploaded files to the respective directories
-        $pasfotoDestination = "../assets/images/pasfoto/" . $pasfotoFileName;
-        $fotoKtmDestination = "../assets/images/ktm/" . $fotoKtmFileName;
-
-        if (move_uploaded_file($pasfoto['tmp_name'], $pasfotoDestination) && move_uploaded_file($foto_ktm['tmp_name'], $fotoKtmDestination)) {
-            // File uploads successful, update the database with the new filenames
-            $query = "UPDATE tab_user SET nama_lengkap=?, email=?, no_hp=?, prodi=?, semester=?, pasfoto=?, foto_ktm=? WHERE id_user=?";
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "sssssssi", $nama_lengkap, $email, $no_hp, $prodi, $semester, $pasfotoFileName, $fotoKtmFileName, $id_user);
-            $updateResult = mysqli_stmt_execute($stmt);
-
-            if ($updateResult) {
-                // Mengupdate data di dalam session
-                $_SESSION['nama_lengkap'] = $nama_lengkap;
-                $_SESSION['email'] = $email;
-                $_SESSION['no_hp'] = $no_hp;
-                $_SESSION['prodi'] = $prodi;
-                $_SESSION['semester'] = $semester;
-
-                // Redirect ke halaman dashboard.php
-                header("Location: dashboard.php");
-                exit();
-            } else {
-                // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-                $error = "Error: " . mysqli_error($conn);
-                echo "<script>alert('$error');</script>";
-            }
-        } else {
-            // File uploads failed, handle the error accordingly
-            $error = "Error uploading files. Please try again.";
-            echo "<script>alert('$error');</script>";
-        }
+    // File upload handling for pasfoto
+    if ($_FILES['pasfoto']['error'] === 0) {
+        $pasfoto_tmp_name = $_FILES['pasfoto']['tmp_name'];
+        $pasfoto_extension = pathinfo($_FILES['pasfoto']['name'], PATHINFO_EXTENSION);
+        $pasfoto_filename = $id_user . "_" . $nama_lengkap . "." . $pasfoto_extension; // Format the filename
+        $pasfoto_destination = "../assets/images/pasfoto/" . $pasfoto_filename;
+        move_uploaded_file($pasfoto_tmp_name, $pasfoto_destination);
+    } else {
+        // If no new pasfoto is uploaded, keep the existing filename
+        $pasfoto_filename = $row['pasfoto']; // Assuming 'pasfoto' is the column in the 'tab_user' table that stores the pasfoto filename
     }
+
+    // File upload handling for foto_ktm
+    if ($_FILES['foto_ktm']['error'] === 0) {
+        $foto_ktm_tmp_name = $_FILES['foto_ktm']['tmp_name'];
+        $foto_ktm_extension = pathinfo($_FILES['foto_ktm']['name'], PATHINFO_EXTENSION);
+        $foto_ktm_filename = $id_user . "_" . $nama_lengkap . "." . $foto_ktm_extension; // Format the filename
+        $foto_ktm_destination = "../assets/images/ktm/" . $foto_ktm_filename;
+        move_uploaded_file($foto_ktm_tmp_name, $foto_ktm_destination);
+    } else {
+        // If no new foto_ktm is uploaded, keep the existing filename
+        $foto_ktm_filename = $row['foto_ktm']; // Assuming 'foto_ktm' is the column in the 'tab_user' table that stores the foto_ktm filename
+    }
+
+    // Prepare the update query using prepared statements to avoid SQL injection
+    $stmt = $conn->prepare("UPDATE tab_user SET nama_lengkap = ?, prodi = ?, semester = ?, email = ?, no_hp = ?, level = ?, pasfoto = ?, foto_ktm = ? WHERE id_user = ?");
+    $stmt->bind_param("ssisssssi", $nama_lengkap, $prodi, $semester, $email, $no_hp, $level, $pasfoto_filename, $foto_ktm_filename, $id_user);
+
+    // Execute the update query
+    if ($stmt->execute()) {
+        // Redirect back to the user list after update
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        // If an error occurs during the update
+        echo "Error: " . $stmt->error;
+        exit();
+    }
+}
 }
 ?>
 
@@ -237,8 +247,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </a>
 <h2><i>Dashboard</i></h2>
 <a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="?logout=1" class="btn btn-primary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+<?php if ($showButtons): ?>
+    <p style="text-align: center;">--Informasi--</p>
+<?php endif; ?>
+            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_struktur') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Pengurus</a>
+    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_dau') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Data Anggota</a>
+    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Kegiatan</a>
+    <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
     </a>
 </div>
 <script>
@@ -269,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <form class="form-container" method="POST" action="" enctype="multipart/form-data">
     <div>
-        <label for="id_user">ID User (NIM):</label>
+        <label for="id_user">*ID User (NIM)</label>
         <input type="text" id="id_user" class="form-control" name="id_user" required placeholder="Masukkan ID User (NIM)" value="<?php echo $_SESSION['id_user']; ?>" oninput="validasiIdUser(event, 10)">
         </div>
         <script>
@@ -280,47 +296,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         </script>
         <div class="form-group">
-            <label for="nama_lengkap">Nama Lengkap:</label>
+            <label for="nama_lengkap">*Nama Lengkap</label>
             <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required value="<?php echo $_SESSION['nama_lengkap']; ?>">
         </div>
         <div class="form-group">
-        <label for="prodi">Program Studi:</label>
-        <select class="form-control" id="prodi" name="prodi" required>
-            <option value="Teknik Informatika">Teknik Informatika</option>
-            <option value="Sistem Informasi">Sistem Informasi</option>
-        </select>
+        <label for="prodi">*Program Studi</label>
+            <select class="form-control" id="prodi" name="prodi" required>
+                <option value="Teknik Informatika" <?php if ($user['prodi'] === 'Teknik Informatika') echo 'selected'; ?>>Teknik Informatika</option>
+                <option value="Sistem Informasi" <?php if ($user['prodi'] === 'Sistem Informasi') echo 'selected'; ?>>Sistem Informasi</option>
+            </select>
     </div>
     <div class="form-group">
-        <label for="semester">Semester:</label>
+        <label for="semester">*Semester</label>
         <select class="form-control" id="semester" name="semester" required>
-            <?php
-            for ($i = 1; $i <= 14; $i++) {
-                echo "<option value=\"$i\">$i</option>";
-            }
-            ?>
-        </select>
+        <?php
+        for ($i = 1; $i <= 14; $i++) {
+            $selected = ($user['semester'] == $i) ? 'selected' : '';
+            echo "<option value=\"$i\" $selected>$i</option>";
+        }
+        ?>
+    </select>
     </div>
         <div class="form-group">
-            <label for="email">Email:</label>
+            <label for="email">*Email</label>
             <input type="email" class="form-control" id="email" name="email" required value="<?php echo $_SESSION['email']; ?>">
         </div>
         <div class="form-group">
-            <label for="no_hp">Nomor Telepon:</label>
-            <input type="text" class="form-control" id="no_hp" name="no_hp" required value="<?php echo $_SESSION['no_hp']; ?>">
-        </div>
-        <!-- Pasfoto input -->
-    <div class="form-group">
-        <label for="pasfoto">Pasfoto:</label>
-        <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*" required>
-    </div>
+    <label for="no_hp">*Nomor HP</label>
+    <input type="text" class="form-control" id="no_hp" name="no_hp" value="<?php echo $_SESSION['no_hp']; ?>" required>
+</div>
 
-    <!-- Foto KTM input -->
-    <div class="form-group">
-        <label for="foto_ktm">Foto KTM:</label>
-        <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*" required>
-    </div>
+<script>
+    document.getElementById('no_hp').addEventListener('input', function () {
+        // Hapus semua karakter selain angka
+        this.value = this.value.replace(/\D/g, '');
+
+        // Batasi panjang input menjadi maksimal 13 karakter
+        if (this.value.length > 13) {
+            this.value = this.value.slice(0, 13);
+        }
+    });
+</script>
+
+  <!-- Pasfoto preview -->
+<div class="form-group">
+    <label for="pasfoto">*Pasfoto</label>
+    <input type="file" class="form-control-file" id="pasfoto" name="pasfoto" accept="image/*">
+    <?php if ($user['pasfoto']) { ?>
+        <img id="pasfoto-preview" src="../assets/images/pasfoto/<?php echo $user['pasfoto']; ?>" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px;">
+    <?php } ?>
+</div>
+
+<!-- Foto KTM preview -->
+<div class="form-group">
+    <label for="foto_ktm">*Foto KTM</label>
+    <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm" accept="image/*">
+    <?php if ($user['foto_ktm']) { ?>
+        <img id="foto-ktm-preview" src="../assets/images/ktm/<?php echo $user['foto_ktm']; ?>" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px;">
+    <?php } ?>
+</div>
+
+
+
     
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        <button type="submit" class="btn btn-primary" name="update">Simpan Perubahan</button>
             </div>
     </form>
     </div>
@@ -330,6 +369,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
 <script src="script.js"></script>
+<script>
+    // Function to update image preview based on selected file
+    function updateImagePreview(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Call the function to update the preview when a file is selected
+    document.getElementById("pasfoto").addEventListener("change", function() {
+        updateImagePreview("pasfoto", "pasfoto-preview");
+    });
+
+    document.getElementById("foto_ktm").addEventListener("change", function() {
+        updateImagePreview("foto_ktm", "foto-ktm-preview");
+    });
+</script>
+
 <script>
         function showSnackbar(message) {
             var snackbar = document.getElementById("snackbar");

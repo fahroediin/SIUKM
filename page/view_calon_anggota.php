@@ -145,7 +145,6 @@ $active_page = 'view_calon_anggota';
                                 <th>ID Calabar</th>
                                 <th>ID User</th>
                                 <th>Nama</th>
-                                <th>NIM</th>
                                 <th>Prodi</th>
                                 <th>ID UKM</th>
                                 <th>Nama UKM</th>
@@ -170,7 +169,6 @@ $active_page = 'view_calon_anggota';
                                 echo "<td>" . $row['id_calabar'] . "</td>";
                                 echo "<td>" . $row['id_user'] . "</td>";
                                 echo "<td>" . $row['nama_lengkap'] . "</td>";
-                                echo "<td>" . $row['nim'] . "</td>";
                                 echo "<td>" . $row['prodi'] . "</td>";
                                 echo "<td>" . $row['id_ukm'] . "</td>";
                                 echo "<td>" . $row['nama_ukm'] . "</td>";

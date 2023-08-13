@@ -18,7 +18,15 @@ if (!isset($_SESSION['id_user'])) {
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
 $userId = $_SESSION['id_user'];
 $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
-
+// Memeriksa apakah id_anggota ada pada session
+if (isset($_SESSION['id_anggota'])) {
+    $id_anggota_session = $_SESSION['id_anggota'];
+    // Jika id_anggota ada pada session, tampilkan tombol-tombol
+    $showButtons = true;
+} else {
+    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
+    $showButtons = false;
+}
 // Mengeksekusi query
 $result = mysqli_query($conn, $query);
 
@@ -51,31 +59,6 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
-
-// Memeriksa apakah form telah disubmit
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Mengambil data dari form
-    $id_user = $_POST['id_user'];
-    $password = $_POST['password'];
-
-    // Update data pengguna di tabel tab_user
-    $query = "UPDATE tab_user SET password='$password' WHERE id_user='$id_user'";
-    $updateResult = mysqli_query($conn, $query);
-
-    // Memeriksa apakah query update berhasil dieksekusi
-    if ($updateResult) {
-        // Mengupdate data pengguna di session
-        $_SESSION['nama_lengkap'] = $nama_lengkap;
-
-
-        // Redirect ke halaman dashboard.php
-        header("Location: dashboard.php");
-        exit();
-    } else {
-        // Jika query update gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-        echo "Error: " . mysqli_error($conn);
-    }
-}
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form
@@ -91,42 +74,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Menghindari SQL injection
         $oldPassword = mysqli_real_escape_string($conn, $oldPassword);
         $password = mysqli_real_escape_string($conn, $password);
-        $email = mysqli_real_escape_string($conn, $email);
-        $namaLengkap = mysqli_real_escape_string($conn, $namaLengkap);
-        $noHp = mysqli_real_escape_string($conn, $noHp);
 
-       // Mengecek kebenaran password lama
-$userId = $_SESSION['id_user'];
-$query = "SELECT * FROM tab_user WHERE id_user = '$userId' AND password = '$oldPassword'";
-$result = mysqli_query($conn, $query);
+            // Mengecek kebenaran password lama
+        $userId = $_SESSION['id_user'];
+        $query = "SELECT * FROM tab_user WHERE id_user = '$userId' AND password = '$oldPassword'";
+        $result = mysqli_query($conn, $query);
 
-if (mysqli_num_rows($result) === 0) {
-    // Password lama tidak cocok
-    echo "<script>showSnackbar('Password lama salah');</script>";
-} else {
-    // Membuat query update
-    $query = "UPDATE tab_user SET password = '$password' WHERE id_user = '$userId'";
+        if (mysqli_num_rows($result) === 0) {
+            // Password lama tidak cocok
+            echo "<script>showSnackbar('Password lama salah');</script>";
+        } else {
+            // Membuat query update
+            $query = "UPDATE tab_user SET password = '$password' WHERE id_user = '$userId'";
 
-    // Mengeksekusi query update
-    $updateResult = mysqli_query($conn, $query);
-
-    // Tampilkan snackbar jika data berhasil diubah
-    if ($updateResult) {
-        // Mengupdate data di dalam session
-        $_SESSION['password'] = $password;
-
-        $_SESSION['nama_lengkap'] = $namaLengkap;
-     
-        // Tampilkan snackbar jika data berhasil diubah
-        echo "<script>showSnackbar('Data berhasil diubah.');</script>";
-    } else {
-        // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
-        $error = "Error: " . mysqli_error($conn);
-        echo "<script>alert('$error');</script>";
-    }
-}
-    }
-    }
+            // Mengeksekusi query update
+            $updateResult = mysqli_query($conn, $query);
+        }
+            }
+            }
 ?>
 
 <!DOCTYPE html>
@@ -247,8 +212,14 @@ if (mysqli_num_rows($result) === 0) {
 </a>
 <h2><i>Dashboard</i></h2>
 <a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="?logout=1" class="btn btn-primary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+<?php if ($showButtons): ?>
+    <p style="text-align: center;">--Informasi--</p>
+<?php endif; ?>
+            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_struktur') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Pengurus</a>
+    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_dau') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Data Anggota</a>
+    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Kegiatan</a>
+    <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
     </a>
 </div>
 <script>

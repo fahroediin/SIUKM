@@ -19,21 +19,27 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
+// Memeriksa apakah id_anggota ada pada session
+if (isset($_SESSION['id_anggota'])) {
+    $id_anggota_session = $_SESSION['id_anggota'];
+    // Jika id_anggota ada pada session, tampilkan tombol-tombol
+    $showButtons = true;
+} else {
+    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
+    $showButtons = false;
+}
 
 function logout() {
     // Menghapus semua data session
     session_unset();
     // Menghancurkan session
     session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
-    header("Location: beranda.php");
-    exit();
 }
 
-// Memeriksa apakah tombol logout diklik
-if (isset($_GET['logout'])) {
-    // Memanggil fungsi logout
+if (isset($_POST['logout'])) {
     logout();
+    header("Location: beranda.php");
+    exit();
 }
 
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
@@ -226,8 +232,14 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
 </a>
 <h2><i>Dashboard</i></h2>
 <a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-            <p style="text-align: center;">--Manajemen--</p>
-            <a href="?logout=1" class="btn btn-primary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+<?php if ($showButtons): ?>
+    <p style="text-align: center;">--Informasi--</p>
+<?php endif; ?>
+            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_struktur') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Pengurus</a>
+    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if ($active_page == 'view_dau') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Data Anggota</a>
+    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>" <?php if (!$showButtons) echo 'style="display: none;"'; ?>>Kegiatan</a>
+    <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
     </a>
 </div>
 <script>
@@ -344,6 +356,12 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
             content.classList.toggle("collapsed");
             document.querySelector(".sidebar").classList.toggle("collapsed");
         });
+        function logout() {
+            const confirmLogout = confirm("Apakah Anda yakin ingin logout?");
+            if (confirmLogout) {
+                document.querySelector("form[name='logout-form']").submit();
+            }
+        }
     </script>
 </body>
 </html>

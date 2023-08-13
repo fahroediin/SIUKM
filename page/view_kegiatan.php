@@ -15,7 +15,18 @@ if (!isset($_SESSION['id_user'])) {
 // Menandai halaman yang aktif
 $active_page = 'view_kegiatan';
 
-
+// Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
+$userId = $_SESSION['id_user'];
+$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+// Memeriksa apakah id_anggota ada pada session
+if (isset($_SESSION['id_anggota'])) {
+    $id_anggota_session = $_SESSION['id_anggota'];
+    // Jika id_anggota ada pada session, tampilkan tombol-tombol
+    $showButtons = true;
+} else {
+    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
+    $showButtons = false;
+}
 
 $query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
@@ -103,16 +114,11 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Jadwal Kegiatan</i></h2>
-<a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
-<p style="text-align: center;">--Monitoring--</p>
+<a href="dashboard.php" class="btn btn-primary <?php if ($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
+            <p style="text-align: center;">--Informasi--</p>
             <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_struktur') echo 'active'; ?>">Pengurus</a>
     <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
-    <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="view_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_user') echo 'active'; ?>">User Manager</a>
-    <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
-    <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
-    <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>

@@ -528,9 +528,22 @@ button[type=reset]:hover {
             <input type="text" id="email" name="email" value="<?php echo $row['email']; ?>" required>
         </div>
         <div class="form-group">
-            <label for="no_hp">*Nomor HP</label>
-            <input type="text" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required>
-        </div>
+    <label for="no_hp">*Nomor HP</label>
+    <input type="text" id="no_hp" name="no_hp" value="<?php echo $row['no_hp']; ?>" required>
+</div>
+
+<script>
+    document.getElementById('no_hp').addEventListener('input', function () {
+        // Hapus semua karakter selain angka
+        this.value = this.value.replace(/\D/g, '');
+
+        // Batasi panjang input menjadi maksimal 13 karakter
+        if (this.value.length > 13) {
+            this.value = this.value.slice(0, 13);
+        }
+    });
+</script>
+
         <div class="form-group">
                             <label for="id_ukm">*Nama UKM</label>
                             <select class="form-control" name="id_ukm" id="id_ukm_dropdown" required onchange="updateNamaUKM(this)">
