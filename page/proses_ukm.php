@@ -135,16 +135,16 @@ while ($row = mysqli_fetch_assoc($result)) {
     <script>
     // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm, sejarah, nama_ketua, nim_ketua, visi, dan misi
     function updateFormData(select) {
-      var id_ukm = select.value;
-      var nama_ukmField = document.getElementById("nama_ukm");
-      var sejarahField = document.getElementById("sejarah");
-      var instagramField = document.getElementById("instagram");
-      var facebookField = document.getElementById("facebook");
-      var visiField = document.getElementById("visi");
-      var misiField = document.getElementById("misi");
-      var logo_ukmField = document.getElementById("logo_ukm_preview");
+    var id_ukm = select.value;
+    var nama_ukmField = document.getElementById("nama_ukm");
+    var sejarahField = document.getElementById("sejarah");
+    var instagramField = document.getElementById("instagram");
+    var facebookField = document.getElementById("facebook");
+    var visiField = document.getElementById("visi");
+    var misiField = document.getElementById("misi");
+    var logo_ukmField = document.getElementById("logo_ukm_preview");
 
-      // Mengirim permintaan AJAX ke server
+    // Mengirim permintaan AJAX ke server
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -233,11 +233,17 @@ while ($row = mysqli_fetch_assoc($result)) {
     margin-right: 10px; /* Jarak antara H2 dan tombol tambah */
 }
 .ukm-card {
-    display: flex;
+    margin-top: 20px;
     margin-bottom: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
+    width: 500px; /* Set the desired width */
+    height: 850px; /* Set the same value as the width for a square shape */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* To align content vertically */
 }
+
 
 .ukm-card:hover {
     transform: scale(1.05);
@@ -356,10 +362,9 @@ while ($row = mysqli_fetch_assoc($result)) {
                      <p class="text-center"><strong>Social Media</strong></p>
                     <p>Instagram: <?php echo $ukm['instagram']; ?></p>
                     <p>Facebook: <?php echo $ukm['facebook']; ?></p>
-                    <p>SK: <?php echo $ukm['sk']; ?></p>
                     <p class="text-center">
-                        <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal">Edit</a>
-                        <a href="<?php echo $ukm['id_ukm']; ?>.php" class="btn btn-secondary">View UKM</a>
+                    <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal" data-ukm-id="<?php echo $ukm['id_ukm']; ?>">Edit</a>
+                    <a href="<?php echo $ukm['id_ukm']; ?>.php" class="btn btn-secondary" target="_blank">Lihat Halaman</a>
                     </p>
                 </div>
             </div>
@@ -416,69 +421,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     <?php } ?>
 </div>
 
-<!-- Modal for editing UKM -->
-<div class="modal fade" id="editUkmModal<?php echo $ukm['id_ukm']; ?>" tabindex="-1" role="dialog" aria-labelledby="editUkmModalLabel<?php echo $ukm['id_ukm']; ?>" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editUkmModalLabel<?php echo $ukm['id_ukm']; ?>">Edit Data UKM</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form for editing UKM data -->
-                <form method="POST" action="proses_edit_ukm.php" enctype="multipart/form-data">
-                    <input type="hidden" name="id_ukm" value="<?php echo $ukm['id_ukm']; ?>">
-                    <div class="form-group">
-                        <label for="nama_ukm">Nama UKM:</label>
-                        <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $ukm['nama_ukm']; ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sejarah">Sejarah:</label>
-                        <textarea class="form-control" id="sejarah" name="sejarah" rows="5"><?php echo $ukm['sejarah']; ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="instagram">Instagram:</label>
-                        <input type="text" class="form-control" id="instagram" name="instagram" value="<?php echo $ukm['instagram']; ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="facebook">Facebook:</label>
-                        <input type="text" class="form-control" id="facebook" name="facebook" value="<?php echo $ukm['facebook']; ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="visi">Visi:</label>
-                        <textarea class="form-control" id="visi" name="visi" rows="3"><?php echo $ukm['visi']; ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="misi">Misi:</label>
-                        <textarea class="form-control" id="misi" name="misi" rows="3"><?php echo $ukm['misi']; ?></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-    
-
-    <!-- Snackbar -->
-<div id="snackbar"></div>
-<script>
-    // Function to open the Lapor LPJ modal
-    function openEditUkmModal() {
-        $('#editUkmModal').modal('show');
-    }
-</script>
 <script>
     // Function to open the "Tambah UKM Baru" modal
 function openTambahUkmModal() {
@@ -583,7 +525,7 @@ function toggleIdUkmField() {
     }
     </script>
     <!-- Modal for adding new UKM -->
-<div class="modal fade" id="tambahUkmBaruModal" tabindex="-1" role="dialog" aria-labelledby="tambahUkmBaruModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahUkmBaruModal" tabindex="-1" role="dialog" aria-labelledby="tambahUkmBaruModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -604,17 +546,17 @@ function toggleIdUkmField() {
         </div>
 
         <div class="form-group" id="id_ukm_dropdown">
-            <label for="id_ukm_dropdown">ID UKM:</label>
-            <select class="form-control" id="id_ukm" name="id_ukm" onchange="updateFormData(this)">
-                <option value="" selected disabled>Pilih ID UKM</option>
-                <?php
-                // Membuat opsi combobox dari hasil query
-                foreach ($namaUKM as $id_ukm => $nama_ukm) {
-                    echo "<option value='$id_ukm'>$id_ukm</option>";
-                }
-                ?>
-            </select>
-        </div>
+    <label for="id_ukm_dropdown">ID UKM:</label>
+    <select class="form-control" id="id_ukm" name="id_ukm" onchange="updateFormData(this)">
+        <option value="" selected disabled>Pilih ID UKM</option>
+        <?php
+        // Membuat opsi combobox dari hasil query
+        foreach ($namaUKM as $id_ukm => $nama_ukm) {
+            echo "<option value='$id_ukm' data-nama-ukm='$nama_ukm'>$id_ukm - $nama_ukm</option>";
+        }
+        ?>
+    </select>
+</div>
 
         <div class="form-group" id="id_ukm_textfield" style="display: none;">
             <label for="id_ukm_textfield">ID UKM Baru:</label>
@@ -662,10 +604,6 @@ function toggleIdUkmField() {
     </div>
         </form>
     </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" onclick="submitForm()">Simpan</button>
             </div>
         </div>
     </div>

@@ -81,7 +81,6 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 }
 ?>
 
-
 <!-- Kode HTML untuk halaman login -->
 <!DOCTYPE html>
 <html>
@@ -92,185 +91,14 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
+	<link rel="stylesheet" href="../assets/css/login.css">
     <script src="../assets/js/script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
-     body {
-			background-color: #f5f5f5;
-			font-family: Arial, sans-serif;
-			font-size: 16px;
-			line-height: 1.5;
-			margin: 0;
-			padding: 0;
-			display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-container {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: -1;
-        }
-		.container {
-			z-index: 1;
-			background-color: #fff;
-			border-radius: 5px;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-			margin: 80px auto;
-			max-width: 400px;
-			padding: 20px;
-			display: flex;
-			flex-direction: column;
-			align-items: center; /* Tengahkan horizontal */
-			opacity: 0.90;
-				}
-		.container-form {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			}
-			.button-group {
-			display: flex;
-			justify-content: space-between;
-			}
-
-			.button-group .button-login,
-			.button-group .button-batal {
-			background-color: #3F72AF;
-			border: none;
-			border-radius: 3px;
-			color: #fff;
-			cursor: pointer;
-			font-size: 16px;
-			padding: 10px 20px;
-			margin: 20px
-			}
-
-			.button-group .button-login:hover,
-			.button-group .button-batal:hover {
-			background-color: #112D4E;
-			}
-
-		h1 {
-			font-size: 28px;
-			margin: 0 0 20px;
-			text-align: center;
-		}
-		input[type="password"] {
-			border: 1px solid #ccc;
-			border-radius: 3px;
-			box-sizing: border-box;
-			display: block;
-			font-size: 16px;
-			padding: 10px;
-			width: 100%;
-		}
-		input[type="submit"],
-		input[type="button"] {
-			background-color: #3F72AF;
-			border: none;
-			border-radius: 4px;
-			color: #fff;
-			cursor: pointer;
-			font-size: 16px;
-			margin-right: 10px;
-			padding: 10px;
-			width: 100px;
-		}
-		input[type="submit"]:hover,
-		input[type="button"]:hover {
-			background-color: #112D4E;
-		}
-		.signup {
-			margin-top: 10px;
-			text-align: center;
-		}
-		.signup a {
-			color: #112D4E;
-			text-decoration: none;
-		}
-		.signup a:hover {
-			text-decoration: underline;
-		}
-		
-		.form-control {
-		display: block;
-		width: 100%;
-		padding: 10px;
-		font-size: 16px;
-		line-height: 1.5;
-		color: #555;
-		background-color: #fff;
-		background-image: none;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-		transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-		}
-
-		.form-control:focus {
-		border-color: #66afe9;
-		outline: 0;
-		box-shadow: 0 0 0 2px rgba(102, 175, 233, 0.6);
-		}
-
-		.form-control::placeholder {
-		color: #;
-		}
-		 .button-group {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-
-		.button-group .button-login {
-			width: 150px;
-			background-color: #007bff;
-			color: white;
-		}
-
-		.button-group .button-batal {
-			width: 150px;
-			background-color: #f44336;
-			color: white;
-		}
-
-		.forgot-password-link {
-			font-size: 15px;
-			margin-top: 10px;
-		}
-		.password-input {
-    position: relative;
-    }
-
-    .password-input input {
-    padding-right: 30px; /* To make space for the icon */
-    }
-
-    .password-input i {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    }
-	.form-group {
-        width: 100%;
-        max-width: 250px;
-        margin: auto;
-    }
-	.login-bg {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
+    
     </style>
 </head>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -326,7 +154,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 		<div class="container-form">
 		<div class="form-group">
 		<label for="username">ID User</label>
-		<input type="text" class="form-control" placeholder="Masukan id user anda" id="username" name="username" maxlength="10" required>
+		<input type="text" class="form-control" placeholder="Masukan id user(NIM) anda" id="username" name="username" maxlength="10" required>
 		<div class="invalid-feedback" id="usernameError"></div>
 		</div>
 		<div class="form-group">

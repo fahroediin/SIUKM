@@ -1,6 +1,32 @@
 <?php
 // Memasukkan file db_connect.php
 require_once "db_connect.php";
+if (isset($_GET['edit_id'])) {
+    $ukmId = $_GET['edit_id'];
+
+
+    // Query untuk mengambil data berdasarkan ukmId
+    $query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi, sk FROM tab_ukm WHERE id_ukm = '$ukmId'";
+    $result = mysqli_query($conn, $query);
+
+    // Pastikan data ditemukan sebelum menggunakan mysqli_fetch_assoc
+    if ($result && mysqli_num_rows($result) > 0) {
+        $ukmData = mysqli_fetch_assoc($result);
+    } else {
+        // Handle ketika data tidak ditemukan
+        echo "Data UKM tidak ditemukan.";
+        exit(); // Keluar dari skrip
+    }
+} else {
+    // Handle ketika edit_id tidak ada
+    echo "Parameter edit_id tidak ditemukan.";
+    exit(); // Keluar dari skrip
+}
+$ukmId = $_GET['edit_id']; // Assuming you have an edit_id parameter in the URL
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi, sk FROM tab_ukm WHERE id_ukm = '$ukmId'";
+$result = mysqli_query($conn, $query);
+
+$ukmData = mysqli_fetch_assoc($result);
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

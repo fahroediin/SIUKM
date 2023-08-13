@@ -12,8 +12,11 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
-    // Mendapatkan data terakhir dari tabel tab_pacab
-    $query = "SELECT * FROM tab_pacab ORDER BY id_calabar DESC LIMIT 1";
+if(isset($_SESSION['id_calabar'])) {
+    $id_calabar = $_SESSION['id_calabar'];
+
+    // Retrieve data from the tab_pacab table based on the stored id_calabar
+    $query = "SELECT * FROM tab_pacab WHERE id_calabar = $id_calabar";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
 
@@ -29,9 +32,9 @@ if (!isset($_SESSION['id_user'])) {
     $nama_ukm = $row['nama_ukm'];
     $alasan = $row['alasan'];
 
-    // Mengatur path untuk pasfoto dan foto KTM
     $pasfoto_path = "../assets/images/pasfoto/" . $row['pasfoto'];
     $foto_ktm_path = "../assets/images/ktm/" . $row['foto_ktm'];
+}
     ?>
 <!DOCTYPE html>
 <html>

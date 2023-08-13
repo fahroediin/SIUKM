@@ -65,7 +65,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_ukm = $_POST['id_ukm'];
     $nama_ukm = $_POST['nama_ukm'];
     $tgl_laporan = $_POST['tgl_laporan'];
-    $tanggal = date("d F Y", strtotime($tgl_laporan)); // Ubah format tanggal ke 12 Agustus 2023
+    $selectedMonth = $_POST['laporan_bulan'];
+    $selectedYear = $_POST['laporan_tahun'];
+    $laporan_bulan_tahun = $selectedYear . '-' . str_pad($selectedMonth, 2, '0', STR_PAD_LEFT); // Format: YYYY-MM
+    $daftar_hadir = $_POST['daftar_hadir'];
+    $foto_bimbingan = $_POST['foto_bimbingan'];
+    $foto_nonrutin = $_POST['foto_nonrutin'];
+    $saran = $_POST['saran'];
+    $tanggal = date("d F Y", strtotime($tgl_laporan));
 
 
     // Generate a unique id_laporan
@@ -85,13 +92,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Move the uploaded file to the destination directory
         if (move_uploaded_file($file_tmp, $destination_directory . $unique_filename)) {
-            $sql = "INSERT INTO tab_lpj (id_laporan, jenis, id_ukm, nama_ukm, tgl_laporan, file_lpj) VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssss", $id_laporan, $jenis, $id_ukm, $nama_ukm, $tgl_laporan, $unique_filename);
+        $sql = "INSERT INTO tab_lpj (id_laporan, jenis, id_ukm, nama_ukm, tgl_laporan, file_lpj, laporan_bulan_tahun, daftar_hadir, foto_bimbingan, foto_nonrutin, saran) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssssssss", $id_laporan, $jenis, $id_ukm, $nama_ukm, $tgl_laporan, $unique_filename, $laporan_bulan_tahun, $daftar_hadir, $foto_bimbingan, $foto_nonrutin, $saran);
 
-            if ($stmt->execute()) {
-                header("Location: proses_lpj.php?success=1");
-                exit();
+        if ($stmt->execute()) {
+            header("Location: proses_lpj.php?success=1");
+            exit();
             } else {
                 echo "Sorry, there was an error uploading your file.";
                 exit();
@@ -346,10 +353,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </select>
                 </div>
                 <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
-                <div class="form-group">
-                    <label for="tgl_laporan">*Tanggal Laporan</label>
-                    <input type="date" id="tgl_laporan" name="tgl_laporan" class="form-control" value="<?php echo date("Y-m-d"); ?>" readonly>
-                </div>
+                    <input type="hidden" id="tgl_laporan" name="tgl_laporan" class="form-control" value="<?php echo date("Y-m-d"); ?>" readonly>
                 <div class="form-group">
                     <label for="file">*File</label>
                     <input type="file" id="file" name="file" accept=".pdf" class="form-control-file">
@@ -358,6 +362,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <p>Existing File: <a href="../assets/lpj/<?php echo $row_lpj['file']; ?>" target="_blank"><?php echo $row_lpj['file']; ?></a></p>
                     <?php endif; ?>
                 </div>
+                <div class="form-group">
+    <label for="laporan_bulan_tahun">Laporan Bulan/Tahun</label>
+    <div class="row">
+        <div class="col-md-6">
+            <select id="laporan_bulan" name="laporan_bulan" class="form-control">
+                <option value="">Pilih Bulan</option>
+                <?php
+                // Generate options for months
+                $months = array(
+                    1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                );
+
+                foreach ($months as $monthNumber => $monthName) {
+                    echo '<option value="' . $monthNumber . '">' . $monthName . '</option>';
+                }
+                ?>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <select id="laporan_tahun" name="laporan_tahun" class="form-control">
+                <option value="">Pilih Tahun</option>
+                <?php
+                // Generate options for years (you can customize the range)
+                $currentYear = date('Y');
+                $startYear = $currentYear - 10; // Example: Show options from 10 years ago
+                $endYear = $currentYear + 10;   // Example: Show options up to 10 years in the future
+
+                for ($year = $startYear; $year <= $endYear; $year++) {
+                    echo '<option value="' . $year . '">' . $year . '</option>';
+                }
+                ?>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="daftar_hadir">Daftar Hadir</label>
+    <input type="file" id="daftar_hadir" name="daftar_hadir" class="form-control">
+</div>
+<div class="form-group">
+    <label for="foto_bimbingan">Foto Bimbingan</label>
+    <input type="file" id="foto_bimbingan" name="foto_bimbingan" class="form-control">
+</div>
+<div class="form-group">
+    <label for="foto_nonrutin">Foto Nonrutin</label>
+    <input type="file" id="foto_nonrutin" name="foto_nonrutin" class="form-control">
+</div>
+
+<div class="form-group">
+    <label for="saran">Saran</label>
+    <textarea id="saran" name="saran" class="form-control"></textarea>
+</div>
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
             </div>

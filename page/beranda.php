@@ -62,7 +62,6 @@ $row_profil = mysqli_fetch_assoc($result_profil);
 		}
     </style>
 </head>
-
 	<nav class="navbar navbar-expand-md navbar-dark fixed-top">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 			<span class="navbar-toggler-icon"></span>
