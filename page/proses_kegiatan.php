@@ -90,6 +90,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
        
        .header {
@@ -299,16 +300,6 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         const namaUkm = selectedOption.text; // Get the text of the selected option
         namaUkmField.value = namaUkm; // Set the value of the hidden input field
     });
-
-     // Function to confirm the delete action
-     function confirmDelete() {
-        return confirm("Apakah Anda yakin akan menghapus data kegiatan?");
-    }
-    // Fungsi untuk logout
-    function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
 </script>
 <script>
     // Fungsi untuk mengaktifkan modal ketika tombol "Tambah Kegiatan" di dalam modal diklik
@@ -397,4 +388,24 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         </div>
     </div>
 </body>
+<script>
+    // Fungsi untuk logout dengan konfirmasi
+    function logout() {
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
+    }
+</script>
 </html>

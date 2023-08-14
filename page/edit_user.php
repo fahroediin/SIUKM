@@ -513,16 +513,7 @@ if (isset($_POST['update'])) {
         return true;
     }
 </script>
-<script>// Ambil elemen toggle button dan sidebar
-const toggleBtn = document.querySelector('.toggle-btn');
-const sidebar = document.querySelector('.sidebar');
-
-// Tambahkan event listener untuk toggle button
-toggleBtn.addEventListener('click', () => {
-  // Toggle class 'collapsed' pada sidebar
-  sidebar.classList.toggle('collapsed');
-});
-
+<script>
 // Function to handle delete user
 function deleteUser(userId) {
   // Prompt the user for confirmation
@@ -547,11 +538,6 @@ for (var i = 0; i < deleteButtons.length; i++) {
     deleteUser(userId);
   });
 }
-// Fungsi untuk logout
-function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
 </script>
 <script>
     // Function to update photo preview
@@ -579,6 +565,26 @@ function logout() {
     fotoKtmInput.addEventListener('change', function () {
         updatePreview(this, 'fotoKtmPreview');
     });
+</script>
+<script>
+    // Fungsi untuk logout dengan konfirmasi
+    function logout() {
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
+    }
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

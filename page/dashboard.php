@@ -5,9 +5,29 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-// Check if id_user is sent through the form submission
-if (isset($_POST['id_user'])) {
-    $id_user = $_POST['id_user'];
+error_reporting(0);
+
+// Memeriksa apakah pengguna sudah login
+if (!isset($_SESSION['id_user'])) {
+    // Jika belum login, redirect ke halaman login.php
+    header("Location: login.php");
+    exit();
+}
+
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke beranda.php setelah logout
+    header("Location: beranda.php");
+    exit();
+}
+
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
 }
 
 // Menandai halaman yang aktif
@@ -19,27 +39,25 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
-// Memeriksa apakah id_anggota ada pada session
-if (isset($_SESSION['id_anggota'])) {
-    $id_anggota_session = $_SESSION['id_anggota'];
-    // Jika id_anggota ada pada session, tampilkan tombol-tombol
-    $showButtons = true;
+// Memeriksa apakah id_user ada pada session dan terdapat dalam tab_dau
+$id_user_session = $_SESSION['id_user'];
+$queryCheckIdUser = "SELECT COUNT(*) AS user_exists FROM tab_dau WHERE id_user = '$id_user_session'";
+$resultCheckIdUser = mysqli_query($conn, $queryCheckIdUser);
+
+if ($resultCheckIdUser) {
+    $userExistsData = mysqli_fetch_assoc($resultCheckIdUser);
+    $userExists = $userExistsData['user_exists'];
+
+    if ($userExists > 0) {
+        // Jika user ditemukan dalam tab_dau, tampilkan tombol-tombol
+        $showButtons = true;
+    } else {
+        // Jika user tidak ditemukan dalam tab_dau, sembunyikan tombol-tombol
+        $showButtons = false;
+    }
 } else {
-    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
-    $showButtons = false;
-}
-
-function logout() {
-    // Menghapus semua data session
-    session_unset();
-    // Menghancurkan session
-    session_destroy();
-}
-
-if (isset($_POST['logout'])) {
-    logout();
-    header("Location: beranda.php");
-    exit();
+    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+    echo "Error: " . mysqli_error($conn);
 }
 
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
@@ -107,6 +125,45 @@ $querySnapshotData = "SELECT nama_ukm, id_anggota, sjk_bergabung FROM tab_dau WH
 
 // Execute the query to fetch snapshot data
 $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
+// Get the id_user from the session
+$id_user = $_SESSION['id_user'];
+
+// Query to fetch id_ukm based on the logged-in user's id_user
+$queryIdUkm = "SELECT id_ukm FROM tab_dau WHERE id_user = '$id_user'";
+$resultIdUkm = mysqli_query($conn, $queryIdUkm);
+
+if ($resultIdUkm) {
+    $rowIdUkm = mysqli_fetch_assoc($resultIdUkm);
+    $id_ukm = $rowIdUkm['id_ukm'];
+
+    // Query to fetch schedule of events based on id_ukm
+    $querySchedule = "SELECT nama_kegiatan, tgl, deskripsi FROM tab_kegiatan WHERE id_ukm = '$id_ukm'";
+    $resultSchedule = mysqli_query($conn, $querySchedule);
+
+    if ($resultSchedule && mysqli_num_rows($resultSchedule) > 0) {
+        echo '<script>';
+        echo 'document.addEventListener("DOMContentLoaded", function() {';
+        echo '    Swal.fire({';
+        echo '        icon: "info",';
+        echo '        title: "Jadwal Kegiatan",';
+        echo '        html: `';
+
+        while ($rowSchedule = mysqli_fetch_assoc($resultSchedule)) {
+            echo '<p><span class="label">Nama Kegiatan:</span> ' . $rowSchedule['nama_kegiatan'] . '</p>';
+            echo '<p><span class="label">Tanggal:</span> ' . date('d M Y', strtotime($rowSchedule['tgl'])) . '</p>';
+            echo '<p><span class="label">Deskripsi:</span> ' . $rowSchedule['deskripsi'] . '</p>';
+            echo '<hr class="divider">';
+        }
+
+        echo '        `,';
+        echo '        confirmButtonText: "Tutup",';
+        echo '    });';
+        echo '});';
+        echo '</script>';
+    }
+} else {
+    echo "Error fetching id_ukm: " . mysqli_error($conn);
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -117,8 +174,11 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
   .navbar .logout-btn {
             display: flex;
@@ -241,6 +301,7 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
+
 </div>
 <script>
     // Function to wrap buttons with a border, except for the Logout button
@@ -342,26 +403,27 @@ $resultSnapshotData = mysqli_query($conn, $querySnapshotData);
 
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script src="script.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
     <script>
-        // Ambil elemen toggle button dan content
-        const toggleBtn = document.querySelector(".toggle-btn");
-        const content = document.querySelector(".content");
-
-        // Tambahkan event listener untuk toggle button
-        toggleBtn.addEventListener("click", function () {
-            // Toggle class 'collapsed' pada content dan sidebar
-            content.classList.toggle("collapsed");
-            document.querySelector(".sidebar").classList.toggle("collapsed");
-        });
-        function logout() {
-            const confirmLogout = confirm("Apakah Anda yakin ingin logout?");
-            if (confirmLogout) {
-                document.querySelector("form[name='logout-form']").submit();
+    // Fungsi untuk logout dengan konfirmasi
+    function logout() {
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
             }
-        }
-    </script>
+        });
+    }
+</script>
 </body>
 </html>

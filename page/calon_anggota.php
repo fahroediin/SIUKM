@@ -53,6 +53,7 @@ $active_page = 'calon_anggota';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         /* Perubahan pada tampilan tombol */
         .update-button {
@@ -155,7 +156,6 @@ $active_page = 'calon_anggota';
                                 <th>ID Calabar</th>
                                 <th>ID User</th>
                                 <th>Nama</th>
-                                <th>NIM</th>
                                 <th>Prodi</th>
                                 <th>ID UKM</th>
                                 <th>Nama UKM</th>
@@ -182,7 +182,6 @@ $active_page = 'calon_anggota';
                                 echo "<td>" . $row['id_calabar'] . "</td>";
                                 echo "<td>" . $row['id_user'] . "</td>";
                                 echo "<td>" . $row['nama_lengkap'] . "</td>";
-                                echo "<td>" . $row['nim'] . "</td>";
                                 echo "<td>" . $row['prodi'] . "</td>";
                                 echo "<td>" . $row['id_ukm'] . "</td>";
                                 echo "<td>" . $row['nama_ukm'] . "</td>";
@@ -272,20 +271,23 @@ $active_page = 'calon_anggota';
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-    // Ambil elemen toggle button dan sidebar
-    const toggleBtn = document.querySelector('.toggle-btn');
-    const sidebar = document.querySelector('.sidebar');
-
-    // Tambahkan event listener untuk toggle button
-    toggleBtn.addEventListener('click', () => {
-        // Toggle class 'collapsed' pada sidebar
-        sidebar.classList.toggle('collapsed');
-    });
-
-    // Fungsi untuk logout
+    // Fungsi untuk logout dengan konfirmasi
     function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
     }
 </script>
 </body>

@@ -11,25 +11,39 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke beranda.php setelah logout
+    header("Location: beranda.php");
+    exit();
+}
 
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
+}
 // Menandai halaman yang aktif
 $active_page = 'view_kegiatan';
 
-// Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
-$userId = $_SESSION['id_user'];
-$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
-// Memeriksa apakah id_anggota ada pada session
-if (isset($_SESSION['id_anggota'])) {
-    $id_anggota_session = $_SESSION['id_anggota'];
-    // Jika id_anggota ada pada session, tampilkan tombol-tombol
-    $showButtons = true;
-} else {
-    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
-    $showButtons = false;
-}
+// Get the id_user from the session
+$id_user = $_SESSION['id_user'];
 
-$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
+// Query to fetch id_ukm based on the logged-in user's id_user
+$queryIdUkm = "SELECT id_ukm FROM tab_dau WHERE id_user = '$id_user'";
+$resultIdUkm = mysqli_query($conn, $queryIdUkm);
+
+// Fetch the id_ukm from the result
+$rowIdUkm = mysqli_fetch_assoc($resultIdUkm);
+$id_ukm = $rowIdUkm['id_ukm'];
+
+// Query to retrieve events from tab_kegiatan for the logged-in user's id_ukm
+$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, id_ukm, nama_ukm, tgl FROM tab_kegiatan WHERE id_ukm = '$id_ukm'";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
+
 ?>
 
 <!DOCTYPE html>
@@ -43,6 +57,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
        
 
@@ -143,44 +158,60 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 </script>
 <body>
 <div class="content">
-    <h2>Data Kegiatan</h2>
-    <table class="table">
-        <thead>
-            <tr>
-            <th>ID Kegiatan</th>
-            <th>ID UKM</th>
-            <th>Nama UKM</th>
-            <th>Nama Kegiatan</th>
-            <th>Tanggal</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php
-    // Define Indonesian month names
-    $indonesianMonths = array(
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-        'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    );
+        <h2>Data Kegiatan</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID Kegiatan</th>
+                    <th>ID UKM</th>
+                    <th>Nama UKM</th>
+                    <th>Nama Kegiatan</th>
+                    <th>Tanggal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Define Indonesian month names
+                $indonesianMonths = array(
+                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                    'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                );
 
-    while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
-        // Output table rows
-        echo "<tr>";
-        echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
-        echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
-        echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
-        echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
-        echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
-        echo "</tr>";
-    }
-    ?>
-</tbody>
-</table>
-<script>
-           // Fungsi untuk logout
+                // Loop through the retrieved events and display them in the table
+                while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
+                    // Output table rows
+                    echo "<tr>";
+                    echo "<td>" . $row_kegiatan['id_kegiatan'] . "</td>";
+                    echo "<td>" . $row_kegiatan['id_ukm'] . "</td>";
+                    echo "<td>" . $row_kegiatan['nama_ukm'] . "</td>";
+                    echo "<td>" . $row_kegiatan['nama_kegiatan'] . "</td>";
+                    echo "<td>" . date('d', strtotime($row_kegiatan['tgl'])) . " " . $indonesianMonths[intval(date('m', strtotime($row_kegiatan['tgl']))) - 1] . " " . date('Y', strtotime($row_kegiatan['tgl'])) . "</td>";
+                    echo "</tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Fungsi untuk logout dengan konfirmasi
     function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
     }
-    </script>
+</script>
 </body>
 </html>

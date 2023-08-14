@@ -5,13 +5,9 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-// Menonaktifkan pesan error
-error_reporting(0);
-
 // Menyimpan nilai id_user, nama_user, dan level ke dalam session
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mendapatkan nilai input dari form
-    $id_user = $_POST["id_user"];
     $username = $_POST["username"];
     $password = $_POST["password"];
 
@@ -38,26 +34,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Jika sesuai, arahkan ke halaman beranda atau halaman lain yang diinginkan
             $_SESSION["id_user"] = $row["id_user"];
             $_SESSION["nama_lengkap"] = $row["nama_lengkap"];
-	$_SESSION["nim"] = $row["nim"];
-	$_SESSION["prodi"] = $row["prodi"];
-	$_SESSION["semester"] = $row["semester"];
-	$_SESSION["level"] = $row["level"];
-	$lowercaseLevel = strtolower($row["level"]);
+            $_SESSION["prodi"] = $row["prodi"];
+            $_SESSION["semester"] = $row["semester"];
+            $_SESSION["level"] = $row["level"];
+            $lowercaseLevel = strtolower($row["level"]);
 
-	if ($lowercaseLevel == "1" || $lowercaseLevel == "admin") {
-		header("Location: admin.php");
-	} elseif ($lowercaseLevel == "2" || $lowercaseLevel == "kemahasiswaan") {
-		header("Location: kemahasiswaan.php");
-	} elseif ($lowercaseLevel == "3") {
-		header("Location: beranda.php");
-	}
-	exit();
-}
-}
+            $redirectPath = "";
+            if ($lowercaseLevel == "1" || $lowercaseLevel == "admin") {
+                $redirectPath = "admin.php";
+            } elseif ($lowercaseLevel == "2" || $lowercaseLevel == "kemahasiswaan") {
+                $redirectPath = "kemahasiswaan.php";
+            } elseif ($lowercaseLevel == "3") {
+                $redirectPath = "dashboard.php";
+            }
 
-// Menutup pernyataan untuk memeriksa ID user
-mysqli_stmt_close($id_user_stmt);
+            if ($redirectPath !== "") {
+                header("Location: $redirectPath");
+                exit();
+            }
+        }
+    }
 
+    // Menutup pernyataan untuk memeriksa ID user
+    mysqli_stmt_close($id_user_stmt);
 }
 $query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
 $result_bg = mysqli_query($conn, $query_bg);
@@ -81,6 +80,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 }
 ?>
 
+
 <!-- Kode HTML untuk halaman login -->
 <!DOCTYPE html>
 <html>
@@ -91,14 +91,185 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-	<link rel="stylesheet" href="../assets/css/login.css">
     <script src="../assets/js/script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <style>
-    
+     body {
+			background-color: #f5f5f5;
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			line-height: 1.5;
+			margin: 0;
+			padding: 0;
+			display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+		.container {
+			z-index: 1;
+			background-color: #fff;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+			margin: 80px auto;
+			max-width: 400px;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center; /* Tengahkan horizontal */
+			opacity: 0.90;
+				}
+		.container-form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			}
+			.button-group {
+			display: flex;
+			justify-content: space-between;
+			}
+
+			.button-group .button-login,
+			.button-group .button-batal {
+			background-color: #3F72AF;
+			border: none;
+			border-radius: 3px;
+			color: #fff;
+			cursor: pointer;
+			font-size: 16px;
+			padding: 10px 20px;
+			margin: 20px
+			}
+
+			.button-group .button-login:hover,
+			.button-group .button-batal:hover {
+			background-color: #112D4E;
+			}
+
+		h1 {
+			font-size: 28px;
+			margin: 0 0 20px;
+			text-align: center;
+		}
+		input[type="password"] {
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			box-sizing: border-box;
+			display: block;
+			font-size: 16px;
+			padding: 10px;
+			width: 100%;
+		}
+		input[type="submit"],
+		input[type="button"] {
+			background-color: #3F72AF;
+			border: none;
+			border-radius: 4px;
+			color: #fff;
+			cursor: pointer;
+			font-size: 16px;
+			margin-right: 10px;
+			padding: 10px;
+			width: 100px;
+		}
+		input[type="submit"]:hover,
+		input[type="button"]:hover {
+			background-color: #112D4E;
+		}
+		.signup {
+			margin-top: 10px;
+			text-align: center;
+		}
+		.signup a {
+			color: #112D4E;
+			text-decoration: none;
+		}
+		.signup a:hover {
+			text-decoration: underline;
+		}
+		
+		.form-control {
+		display: block;
+		width: 100%;
+		padding: 10px;
+		font-size: 16px;
+		line-height: 1.5;
+		color: #555;
+		background-color: #fff;
+		background-image: none;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+		transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+		}
+
+		.form-control:focus {
+		border-color: #66afe9;
+		outline: 0;
+		box-shadow: 0 0 0 2px rgba(102, 175, 233, 0.6);
+		}
+
+		.form-control::placeholder {
+		color: #;
+		}
+		 .button-group {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.button-group .button-login {
+			width: 150px;
+			background-color: #007bff;
+			color: white;
+		}
+
+		.button-group .button-batal {
+			width: 150px;
+			background-color: #f44336;
+			color: white;
+		}
+
+		.forgot-password-link {
+			font-size: 15px;
+			margin-top: 10px;
+		}
+		.password-input {
+    position: relative;
+    }
+
+    .password-input input {
+    padding-right: 30px; /* To make space for the icon */
+    }
+
+    .password-input i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    }
+	.form-group {
+        width: 100%;
+        max-width: 250px;
+        margin: auto;
+    }
+	.login-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
     </style>
 </head>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
@@ -154,7 +325,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 		<div class="container-form">
 		<div class="form-group">
 		<label for="username">ID User</label>
-		<input type="text" class="form-control" placeholder="Masukan id user(NIM) anda" id="username" name="username" maxlength="10" required>
+		<input type="text" class="form-control" placeholder="Masukan NIM anda" id="username" name="username" maxlength="10" required>
 		<div class="invalid-feedback" id="usernameError"></div>
 		</div>
 		<div class="form-group">

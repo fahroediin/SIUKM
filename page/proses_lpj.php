@@ -122,6 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
            .sidebar {
         text-align: center; /* Center the contents horizontally */
@@ -466,10 +467,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      function confirmDelete() {
         return confirm("Apakah Anda yakin akan menghapus data kegiatan?");
     }
-    // Fungsi untuk logout
+</script>
+<script>
+    // Fungsi untuk logout dengan konfirmasi
     function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
     }
 </script>
 </body>

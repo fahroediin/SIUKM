@@ -214,6 +214,7 @@ $conn->close();
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <style>
             .password-input {
@@ -547,11 +548,6 @@ endforeach; ?>
     function confirmDelete() {
         return confirm("Apakah Anda yakin akan menghapus data prestasi?");
     }
-    // Fungsi untuk logout
-    function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
 </script>
 <script>
     // Function to update certificate preview
@@ -603,5 +599,25 @@ endforeach; ?>
         </div>
     </div>
 </div>
+<script>
+    // Fungsi untuk logout dengan konfirmasi
+    function logout() {
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
+    }
+</script>
 </body>
 </html>

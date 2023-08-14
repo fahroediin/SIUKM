@@ -11,16 +11,26 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
-// Memeriksa apakah id_anggota ada pada session
-if (isset($_SESSION['id_anggota'])) {
-    $id_anggota_session = $_SESSION['id_anggota'];
-    // Jika id_anggota ada pada session, tampilkan tombol-tombol
-    $showButtons = true;
+// Memeriksa apakah id_user ada pada session dan terdapat dalam tab_dau
+$id_user_session = $_SESSION['id_user'];
+$queryCheckIdUser = "SELECT COUNT(*) AS user_exists FROM tab_dau WHERE id_user = '$id_user_session'";
+$resultCheckIdUser = mysqli_query($conn, $queryCheckIdUser);
+
+if ($resultCheckIdUser) {
+    $userExistsData = mysqli_fetch_assoc($resultCheckIdUser);
+    $userExists = $userExistsData['user_exists'];
+
+    if ($userExists > 0) {
+        // Jika user ditemukan dalam tab_dau, tampilkan tombol-tombol
+        $showButtons = true;
+    } else {
+        // Jika user tidak ditemukan dalam tab_dau, sembunyikan tombol-tombol
+        $showButtons = false;
+    }
 } else {
-    // Jika id_anggota tidak ada pada session, sembunyikan tombol-tombol
-    $showButtons = false;
+    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
+    echo "Error: " . mysqli_error($conn);
 }
-$id_anggota_session = $_SESSION['id_anggota'];
 
 // Menambahkan parameter placeholder pada query
 $query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau WHERE id_anggota = ?";
@@ -50,11 +60,22 @@ if (isset($_GET['logout'])) {
 // Menandai halaman yang aktif
 $active_page = 'view_dau';
 
-// Memperoleh data anggota UKM dari tabel tab_dau
-$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
-$result = mysqli_query($conn, $query);
-?>
+// Fetch the id_ukm associated with the current session user
+$queryIdUkm = "SELECT id_ukm FROM tab_dau WHERE id_user = ?";
+$stmtIdUkm = mysqli_prepare($conn, $queryIdUkm);
+mysqli_stmt_bind_param($stmtIdUkm, "s", $id_user_session);
+mysqli_stmt_execute($stmtIdUkm);
+$resultIdUkm = mysqli_stmt_get_result($stmtIdUkm);
+$rowIdUkm = mysqli_fetch_assoc($resultIdUkm);
+$id_ukm_user = $rowIdUkm['id_ukm'];
 
+// Query to retrieve members with matching id_ukm
+$queryMembers = "SELECT * FROM tab_dau WHERE id_ukm = ?";
+$stmtMembers = mysqli_prepare($conn, $queryMembers);
+mysqli_stmt_bind_param($stmtMembers, "s", $id_ukm_user);
+mysqli_stmt_execute($stmtMembers);
+$resultMembers = mysqli_stmt_get_result($stmtMembers);
+?>
 
 <!DOCTYPE html>
 <html>
@@ -66,6 +87,7 @@ $result = mysqli_query($conn, $query);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <style>
         /* Tambahkan gaya CSS berikut untuk mengatur layout sidebar dan konten */
@@ -155,55 +177,71 @@ $result = mysqli_query($conn, $query);
 </script>
 <body>
 <div class="content">
-    <h2>Data Anggota UKM</h2>
-    <div class="form-group">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>ID Anggota</th>
-                <th>ID User</th>
-                <th>Nama Lengkap</th>
-                <th>No. HP</th>
-                <th>Email</th>
-                <th>Program Studi</th>
-                <th>Semester</th>
-                <th>Pasfoto</th>
-                <th>Foto KTM</th>
-                <th>Nama UKM</th>
-                <th>Bergabung</th>
-            </tr>
-        </thead>
-        <tbody>
-    <?php
-    // Loop melalui hasil query untuk menampilkan data anggota UKM
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>" . $row['id_anggota'] . "</td>";
-        echo "<td>" . $row['id_user'] . "</td>";
-        echo "<td>" . $row['nama_lengkap'] . "</td>";
-        echo "<td>" . $row['no_hp'] . "</td>";
-        echo "<td>" . $row['email'] . "</td>";
-        echo "<td>" . $row['prodi'] . "</td>";
-        echo "<td>" . $row['semester'] . "</td>";
-        // Display the "Pasfoto" image
-        echo "<td><img src='../assets/images/pasfoto/" . $row['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
-        // Display the "Foto_KTM" image
-        echo "<td><img src='../assets/images/ktm/" . $row['foto_ktm'] . "' alt='Foto KTM' class='img-thumbnail' style='max-height: 100px;'></td>";
-        echo "<td>" . $row['nama_ukm'] . "</td>";
-        echo "<td>" . date('d-m-Y', strtotime($row['sjk_bergabung'])) . "</td>";
-        echo "</tr>";
-    }
-    ?>
-</tbody>
+        <h2>Data Anggota UKM</h2>
+        <div class="form-group">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID Anggota</th>
+                        <th>ID User</th>
+                        <th>Nama Lengkap</th>
+                        <th>No. HP</th>
+                        <th>Email</th>
+                        <th>Program Studi</th>
+                        <th>Semester</th>
+                        <th>Pasfoto</th>
+                        <th>Foto KTM</th>
+                        <th>Nama UKM</th>
+                        <th>Bergabung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Define Indonesian month names
+                    $indonesianMonths = array(
+                        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    );
+                    // Loop through the fetched members and display them in the table
+                    while ($rowMember = mysqli_fetch_assoc($resultMembers)) {
+                        echo "<tr>";
+                        echo "<td>" . $rowMember['id_anggota'] . "</td>";
+                        echo "<td>" . $rowMember['id_user'] . "</td>";
+                        echo "<td>" . $rowMember['nama_lengkap'] . "</td>";
+                        echo "<td>" . $rowMember['no_hp'] . "</td>";
+                        echo "<td>" . $rowMember['email'] . "</td>";
+                        echo "<td>" . $rowMember['prodi'] . "</td>";
+                        echo "<td>" . $rowMember['semester'] . "</td>";
+                        echo "<td><img src='../assets/images/pasfoto/" . $rowMember['pasfoto'] . "' alt='Pasfoto' class='img-thumbnail' style='max-height: 100px;'></td>";
+                        echo "<td><img src='../assets/images/ktm/" . $rowMember['foto_ktm'] . "' alt='Foto KTM' class='img-thumbnail' style='max-height: 100px;'></td>";
+                        echo "<td>" . $rowMember['nama_ukm'] . "</td>";
+                        echo "<td>" . date('d', strtotime($rowMember['sjk_bergabung'])) . " " . $indonesianMonths[intval(date('m', strtotime($rowMember['sjk_bergabung']))) - 1] . " " . date('Y', strtotime($rowMember['sjk_bergabung'])) . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
 
-    </table>
-        </div>
-        <script>
-           // Fungsi untuk logout
+                    </table>
+                        </div>
+                        <script>
+    // Fungsi untuk logout dengan konfirmasi
     function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
     }
-    </script>
+</script>
 </body>
 </html>
