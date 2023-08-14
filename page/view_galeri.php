@@ -182,6 +182,7 @@ $result_galeri = mysqli_query($conn, $query_galeri);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
            .sidebar {
         text-align: center; /* Center the contents horizontally */
@@ -252,12 +253,11 @@ $result_galeri = mysqli_query($conn, $query_galeri);
  <div class="sidebar">
     <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
     <h2><i>Galeri</i></h2>
-    <a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
-    <p style="text-align: center;">--Monitoring--</p>
-            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_struktur') echo 'active'; ?>">Pengurus</a>
-    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+            <p style="text-align: center;">--Manajemen--</p>
+    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="view_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_user') echo 'active'; ?>">User Manager</a>
     <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
@@ -322,11 +322,24 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         </tbody>
 </table>
 <script>
-           // Fungsi untuk logout
+    // Fungsi untuk logout dengan konfirmasi
     function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
     }
-    </script>
+</script>
 </body>
 </html>

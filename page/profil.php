@@ -5,7 +5,7 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-
+error_reporting(0);
 
 // Mendapatkan nama depan dari session
 $nama_lengkap = $_SESSION["nama_lengkap"];

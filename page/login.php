@@ -8,13 +8,13 @@ session_start();
 // Menyimpan nilai id_user, nama_user, dan level ke dalam session
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mendapatkan nilai input dari form
-    $username = $_POST["username"];
+    $id_user = $_POST["id_user"];
     $password = $_POST["password"];
 
-    // Mempersiapkan pernyataan SQL untuk memeriksa username
+    // Mempersiapkan pernyataan SQL untuk memeriksa id_user
     $id_user_query = "SELECT * FROM tab_user WHERE id_user = ?";
     $id_user_stmt = mysqli_prepare($conn, $id_user_query);
-    mysqli_stmt_bind_param($id_user_stmt, "s", $username);
+    mysqli_stmt_bind_param($id_user_stmt, "s", $id_user);
     mysqli_stmt_execute($id_user_stmt);
     $id_user_result = mysqli_stmt_get_result($id_user_stmt);
 
@@ -42,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $redirectPath = "";
             if ($lowercaseLevel == "1" || $lowercaseLevel == "admin") {
                 $redirectPath = "admin.php";
-            } elseif ($lowercaseLevel == "2" || $lowercaseLevel == "kemahasiswaan") {
-                $redirectPath = "kemahasiswaan.php";
+            } elseif ($lowercaseLevel == "2") {
+                $redirectPath = "pengurus.php";
             } elseif ($lowercaseLevel == "3") {
                 $redirectPath = "dashboard.php";
             }
@@ -290,20 +290,24 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
             <li class="nav-item">
                 <a class="nav-link" href="galeri.php">Galeri</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    Pilih UKM
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="racana.php">Pramuka</a>
-                    <a class="dropdown-item" href="wanacetta.php">Wanacetta</a>
-                    <a class="dropdown-item" href="agrogreen.php">Agro Green</a>
-                    <a class="dropdown-item" href="ecc.php">ECC</a>
-                    <a class="dropdown-item" href="riset.php">Riset</a>
-                    <a class="dropdown-item" href="kwu.php">Kewirausahaan</a>
-                    <a class="dropdown-item" href="hsr.php">HSR</a>
-                </div>
-            </li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+					Pilih UKM
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<?php
+					$ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+					$ukmResult = mysqli_query($conn, $ukmQuery);
+
+					while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+						$id_ukm = $ukmRow['id_ukm'];
+						$nama_ukm = $ukmRow['nama_ukm'];
+						
+						echo "<a class='dropdown-item' href='halaman_ukm.php?id_ukm=$id_ukm'>$nama_ukm</a>";
+					}
+					?>
+				</div>
+			</li>
         </ul>
     </div>
 </nav>
@@ -321,11 +325,11 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
             echo '<div class="alert alert-danger">' . $error_message . '</div>';
         }
         ?>
-		<form action="" method="POST">
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 		<div class="container-form">
 		<div class="form-group">
-		<label for="username">ID User</label>
-		<input type="text" class="form-control" placeholder="Masukan NIM anda" id="username" name="username" maxlength="10" required>
+		<label for="id_user">ID User</label>
+		<input type="text" class="form-control" placeholder="Masukan NIM anda" id="id_user" name="id_user" maxlength="10" required>
 		<div class="invalid-feedback" id="usernameError"></div>
 		</div>
 		<div class="form-group">

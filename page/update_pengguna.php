@@ -355,17 +355,10 @@ if (isset($_POST['update'])) {
         <img id="foto-ktm-preview" src="../assets/images/ktm/<?php echo $user['foto_ktm']; ?>" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px;">
     <?php } ?>
 </div>
-
-
-
-    
         <button type="submit" class="btn btn-primary" name="update">Simpan Perubahan</button>
             </div>
     </form>
     </div>
-
-    
-
 
 <!-- Masukkan link JavaScript Anda di sini jika diperlukan -->
 <script src="script.js"></script>

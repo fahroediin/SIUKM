@@ -735,7 +735,7 @@ function logout() {
                 <select id="level" name="level" class="form-control">
                     <option value="3">User</option>
                     <option value="2">Pengurus UKM</option>
-                    <option value="1">Kemahasiswaan</option>
+                    <option value="1">Admin</option>
                 </select>
             </div>
             <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->

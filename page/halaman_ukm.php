@@ -23,6 +23,7 @@ $query = "SELECT logo_ukm FROM tab_ukm WHERE id_ukm = '$id_ukm'";
 $logoResult = mysqli_query($conn, $query);
 
 if (!$logoResult) {
+
   echo "Error: " . mysqli_error($conn);
   exit();
 }
@@ -375,10 +376,10 @@ p {
 						echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					} elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
 						// Jika level 1 atau admin, arahkan ke halaman admin.php
-						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="pengurus.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					} elseif ($_SESSION['level'] == "2") {
 						// Jika level 2, arahkan ke halaman kemahasiswaan.php
-						echo '<a class="nav-link btn btn-signin" href="kemahasiswaan.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					}
         }
 			?>

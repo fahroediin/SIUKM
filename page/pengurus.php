@@ -11,7 +11,7 @@ if (isset($_POST['id_user'])) {
 }
 
 // Menandai halaman yang aktif
-$active_page = 'dashboard';
+$active_page = 'pengurus';
 
 // Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
@@ -77,17 +77,17 @@ $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
 // Mengeksekusi query
 $result = mysqli_query($conn, $query);
 // Prepare the SQL query to get the number of snapshots for tab_ukm
-$sqlUkmSnapshotCount = "SELECT COUNT(*) AS ukm_snapshot_count FROM tab_ukm";
+$sqlMemberSnapshotCount = "SELECT COUNT(*) AS member_snapshot_count FROM tab_dau";
 
 // Execute the query to get the ukm snapshot count
-$resultUkmSnapshotCount = mysqli_query($conn, $sqlUkmSnapshotCount);
+$resultMemberSnapshotCount = mysqli_query($conn, $sqlMemberSnapshotCount);
 
-if ($resultUkmSnapshotCount) {
+if ($resultMemberSnapshotCount) {
     // Fetch the ukm snapshot count
-    $ukmSnapshotCount = mysqli_fetch_assoc($resultUkmSnapshotCount)['ukm_snapshot_count'];
+    $memberSnapshotCount = mysqli_fetch_assoc($resultMemberSnapshotCount)['member_snapshot_count'];
 } else {
     // If the query fails, handle the error accordingly
-    $ukmSnapshotCount = 0;
+    $memberSnapshotCount = 0;
     echo "Error: " . mysqli_error($conn);
 }
 
@@ -106,17 +106,19 @@ if ($resultPacabSnapshotCount) {
     $pacabSnapshotCount = 0;
     echo "Error: " . mysqli_error($conn);
 }
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Kemahasiswaan</title>
+    <title>Dashboard Pengurus</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
   .navbar .logout-btn {
             display: flex;
@@ -231,16 +233,15 @@ if ($resultPacabSnapshotCount) {
   <img src="../assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Dashboard</i></h2>
-<a href="kemahasiswaan.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
-<p style="text-align: center;">--Monitoring--</p>
-            <a href="view_struktur.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
-    <a href="view_dau.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'data_anggota_ukm') echo 'active'; ?>">Data Anggota</a>
-    <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
-    <a href="view_user.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'user_manager') echo 'active'; ?>">User Manager</a>
-    <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'ukm') echo 'active'; ?>">Data UKM</a>
-    <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
-    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'kegiatan') echo 'active'; ?>">Kegiatan</a>
-    <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'pengurus') echo 'active'; ?>">Dashboard</a>
+            <p style="text-align: center;">--Manajemen--</p>
+    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
+    <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
+    <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
+    <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
+    <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
+    <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -264,7 +265,7 @@ if ($resultPacabSnapshotCount) {
 </script>
 <body>
         <div class="content">
-            <h1>Kemahasiswaan</h1>
+            <h1>Pengurus UKM</h1>
             <hr class="divider">
             <div class="wrapper">
     <div class="col-md-12 col-sm-12">
@@ -304,8 +305,8 @@ if ($resultPacabSnapshotCount) {
 
                 <div class="col-md-12">
                 <div class="card shadow">
-                    <h4 class="mb-4">Total UKM</h4>
-                    <p class="font-weight-bold" style="font-size: 50px;"><?php echo $ukmSnapshotCount; ?></p>
+                    <h4 class="mb-4">Total Anggota UKM</h4>
+                    <p class="font-weight-bold" style="font-size: 50px;"><?php echo $memberSnapshotCount; ?></p>
                 </div>
                 </div>
             </div>
@@ -317,11 +318,24 @@ if ($resultPacabSnapshotCount) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-           // Fungsi untuk logout
+    // Fungsi untuk logout dengan konfirmasi
     function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
     }
-    </script>
+</script>
 </body>
 </html>
