@@ -269,7 +269,10 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
         'Agustus', 'September', 'Oktober', 'November', 'Desember'
     );
-
+    if (mysqli_num_rows($result_kegiatan) === 0) {
+        // Display the message if there's no data
+        echo '<tr><td colspan="7" style="text-align: center;">Tidak ada data kegiatan</td></tr>';
+    } else {
     while ($row_kegiatan = mysqli_fetch_assoc($result_kegiatan)) {
         // Output table rows
         echo "<tr>";
@@ -285,6 +288,7 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
             </td>";
         echo "</tr>";
     }
+}
     ?>
 </tbody>
 </table>
@@ -388,6 +392,12 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
         </div>
     </div>
 </body>
+<script>
+    function confirmDelete(nama_kegiatan) {
+        return confirm("Apakah Anda yakin ingin menghapus kegiatan '" + nama_kegiatan + "'?");
+    }
+</script>
+
 <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {

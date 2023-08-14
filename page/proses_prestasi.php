@@ -400,7 +400,8 @@ $conn->close();
 </form>
 
 <div class="content">
-    <table class="table">
+<?php if (count($prestasi_data) > 0) : ?>
+        <table class="table">
         <thead>
             <tr>
                 <th>No</th>
@@ -456,6 +457,9 @@ $conn->close();
 endforeach; ?>
 </tbody>
     </table>
+    <?php else : ?>
+        <p>Tidak ada data prestasi.</p>
+    <?php endif; ?>
 </div>
           <!-- Modal for Tambah Prestasi -->
           <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" role="dialog" aria-labelledby="tambahPrestasiModalLabel" aria-hidden="true">
