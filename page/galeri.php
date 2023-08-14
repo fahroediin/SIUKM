@@ -205,19 +205,23 @@ function getDataForImage($conn, $image_file) {
 					<a class="nav-link active" href="galeri.php">Galeri</a>
 				</li>
                 <li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-						Pilih UKM
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Racana</a>
-						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
-						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
-						<a class="dropdown-item" href="english.php">English Conversation Club</a>
-						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
-						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
-					</div>
-				</li>
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+					Pilih UKM
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<?php
+					$ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+					$ukmResult = mysqli_query($conn, $ukmQuery);
+
+					while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+						$id_ukm = $ukmRow['id_ukm'];
+						$nama_ukm = $ukmRow['nama_ukm'];
+						
+						echo "<a class='dropdown-item' href='halaman_ukm.php?id_ukm=$id_ukm'>$nama_ukm</a>";
+					}
+					?>
+				</div>
+			</li>
 			</ul>
 			<ul class="navbar-nav ml-auto">
 			<li class="nav-item">

@@ -427,19 +427,23 @@ button[type=reset]:hover {
         <a class="nav-link" href="galeri.php">Galeri</a>
       </li>
       <li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-						Pilih UKM
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Pramuka</a>
-						<a class="dropdown-item" href="mapala.php">Mapala</a>
-						<a class="dropdown-item" href="pertanian.php">Pertanian</a>
-						<a class="dropdown-item" href="english.php">Bahasa Inggris</a>
-						<a class="dropdown-item" href="penelitian.php">Penelitian</a>
-						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Keagamaan</a>
-					</div>
-				</li>
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+					Pilih UKM
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<?php
+					$ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+					$ukmResult = mysqli_query($conn, $ukmQuery);
+
+					while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+						$id_ukm = $ukmRow['id_ukm'];
+						$nama_ukm = $ukmRow['nama_ukm'];
+						
+						echo "<a class='dropdown-item' href='halaman_ukm.php?id_ukm=$id_ukm'>$nama_ukm</a>";
+					}
+					?>
+				</div>
+			</li>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">

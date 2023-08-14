@@ -1,57 +1,40 @@
 <?php
-// Memasukkan file db_connect.php
 require_once "db_connect.php";
-
-// Memulai session
 session_start();
 
-// Memeriksa apakah pengguna sudah login
 if (!isset($_SESSION['id_user'])) {
-    // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
 
-// memanggil file question
 require "questions.php";
 
-// inisiasi sesi jawaban
 if (!isset($_SESSION['jawaban'])) {
     $_SESSION['jawaban'] = array();
 }
 
-
-// Fungsi logout
 function logout() {
-    // Menghapus semua data session
     session_unset();
-    // Menghancurkan session
     session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
     header("Location: beranda.php");
     exit();
 }
 
-// Memeriksa apakah tombol logout diklik
 if (isset($_GET['logout'])) {
-    // Memanggil fungsi logout
     logout();
 }
 
-// Mendapatkan nama depan dan level dari session
 $nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 $id_calabar = $_SESSION['id_calabar'];
 
-// Mendapatkan nomor soal yang sedang aktif
-$no_soal = isset($_GET['question']) ? intval($_GET['question']) <= 1 ? 1 : intval($_GET['question']) : 1;
+$no_soal = isset($_GET['question']) ? max(1, intval($_GET['question'])) : 1; // Ensure positive question number
 
-// Mendapatkan total jumlah soal dari array soal;
 $totalQuestions = sizeof($questions);
 $totalDijawab = sizeof($_SESSION['jawaban']);
 
-$prev_no = $no_soal <= 1 ? 1 : $no_soal -1;
-$next_no = $no_soal >= $totalQuestions ? $totalQuestions : $no_soal +1;
+$prev_no = max(1, $no_soal - 1);
+$next_no = min($totalQuestions, $no_soal + 1);
 
 // Inisiasi jawaban;
 if(!isset($_SESSION['jawaban'][$no_soal])){
@@ -94,22 +77,24 @@ function determineCategory($nilaiTPA, $total){
 }
 
 // Fungsi untuk menyimpan nilai TPA ke database
-function saveTPAScore($id_calabar, $nilaiTPA)
-{
-    // Memasukkan file db_connect.php
-    require_once "db_connect.php";
+// Fungsi untuk menyimpan nilai TPA ke database
+function saveTPAScore($id_calabar, $nilaiTPA) {
+    global $conn; // Use the global $conn variable
 
-    // Menyimpan nilai TPA ke database berdasarkan id_calabar
-    $sql = "UPDATE tab_pacab SET nilai_tpa = $nilaiTPA WHERE id_calabar = $id_calabar";
+    $sql = "UPDATE tab_pacab SET nilai_tpa = ? WHERE id_calabar = ?";
+    $stmt = mysqli_prepare($conn, $sql);
 
-    if (mysqli_query($conn, $sql)) {
-        echo "Nilai TPA berhasil disimpan.";
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "ii", $nilaiTPA, $id_calabar);
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Nilai TPA berhasil disimpan.";
+        } else {
+            echo "Error: " . mysqli_stmt_error($stmt);
+        }
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        echo "Error: " . mysqli_error($conn);
     }
-
-    // Menutup koneksi database
-    mysqli_close($conn);
 }
 
 // Fungsi untuk menghitung nilai TPA berdasarkan jawaban
@@ -329,7 +314,7 @@ if (isset($_GET['submit'])) {
 </div>
 </div>
 </div>
-   
+<div id="question-content">
 <div class="card">
     <div class="card-header">
       <h4>Tes Potensi Akademik - SIUKM</h4>
@@ -356,15 +341,15 @@ if (isset($_GET['submit'])) {
                         foreach(['a','b','c','d','e'] as $choice){
                            $choiced = $_SESSION['jawaban'][$no_soal] == $choice ? true : false; 
                     ?>
-                    <label>
+                            <label>
                         <input 
                             type="radio" 
                             name="answer" 
                             value="<?= $choice; ?>"
-                            checked="<?= $choiced; ?>"
                         /> 
                         <?= $soal['options'][$choice]; ?>
                     </label>
+
                     <?php } ?>
                 </div>
             </div>
@@ -411,10 +396,10 @@ if (isset($_GET['submit'])) {
                             type="radio" 
                             name="answer" 
                             value="<?= $choice; ?>"
-                            checked="<?= $choiced; ?>"
                         /> 
                         <?= $soal['options'][$choice]; ?>
                     </label>
+
                     <?php } ?>
                 </div>
             </div>
@@ -429,7 +414,7 @@ if (isset($_GET['submit'])) {
             <?= $totalDijawab !== $totalQuestions ? 'disabled': '';?>
         >Submit</button>
 	</div>
-
+    </div>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <script>

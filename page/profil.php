@@ -5,11 +5,10 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-// Menonaktifkan pesan error
-error_reporting(0);
+
 
 // Mendapatkan nama depan dari session
-$nama_depan = $_SESSION["nama_depan"];
+$nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 
 // Inisialisasi variabel pesan error
@@ -27,13 +26,10 @@ if (mysqli_num_rows($result) > 0) {
         $ukm_data[] = $row;
     }
 }
-
-// Close the database connection
-
 $query_profil = "SELECT * FROM tab_profil";
 $result_profil = mysqli_query($conn, $query_profil);
 $row_profil = mysqli_fetch_assoc($result_profil);
-mysqli_close($conn);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -102,19 +98,23 @@ mysqli_close($conn);
 					<a class="nav-link" href="galeri.php">Galeri</a>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-						Pilih UKM
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="pramuka.php">Racana</a>
-						<a class="dropdown-item" href="mapala.php">Wanacetta</a>
-						<a class="dropdown-item" href="pertanian.php">Agro Green</a>
-						<a class="dropdown-item" href="english.php">English Conversation Club</a>
-						<a class="dropdown-item" href="penelitian.php">Mahasiswa Community Riset</a>
-						<a class="dropdown-item" href="kewirausahaan.php">Kewirausahaan</a>
-						<a class="dropdown-item" href="keagamaan.php">Human Social Religion</a>
-					</div>
-				</li>
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+					Pilih UKM
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<?php
+					$ukmQuery = "SELECT id_ukm, nama_ukm FROM tab_ukm";
+					$ukmResult = mysqli_query($conn, $ukmQuery);
+
+					while ($ukmRow = mysqli_fetch_assoc($ukmResult)) {
+						$id_ukm = $ukmRow['id_ukm'];
+						$nama_ukm = $ukmRow['nama_ukm'];
+						
+						echo "<a class='dropdown-item' href='halaman_ukm.php?id_ukm=$id_ukm'>$nama_ukm</a>";
+					}
+					?>
+				</div>
+			</li>
 			</ul>
 			<ul class="navbar-nav ml-auto">
       		<li class="nav-item">

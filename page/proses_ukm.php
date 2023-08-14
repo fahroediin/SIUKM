@@ -307,9 +307,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 <div class="content">
         <div class="header">
             <h2>Data UKM</h2>
-            <button type="button" class="btn btn-primary btn-sm btn-medium" onclick="openTambahUkmModal()">
+            <a href="#tambahUkmBaruModal" class="btn btn-primary" data-toggle="modal" class="btn btn-primary btn-sm btn-medium">
                 <i class="fas fa-plus"></i> Tambah UKM Baru
-            </button>
+</a>
         </div>
         <form class="form-inline mt-2 mt-md-0 float-right" method="get">
         <input class="form-control mr-sm-2" type="text" placeholder="Cari Nama UKM" name="search" aria-label="Search">
@@ -364,7 +364,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <p>Instagram: <?php echo $ukm['instagram']; ?></p>
                     <p>Facebook: <?php echo $ukm['facebook']; ?></p>
                     <p class="text-center">
-                    <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal" data-ukm-id="<?php echo $ukm['id_ukm']; ?>">Edit</a>
+                    <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal" data-ukm-id="<?php echo $ukm['id_ukm']; ?>" onclick="openEditModal(this)">Edit</a>
                     <a href="<?php echo $ukm['id_ukm']; ?>.php" class="btn btn-secondary" target="_blank">Lihat Halaman</a>
                     </p>
                 </div>
@@ -421,17 +421,85 @@ while ($row = mysqli_fetch_assoc($result)) {
         <?php } ?>
     <?php } ?>
 </div>
+<!-- Modal for Adding UKM Data -->
+<div class="modal fade" id="tambahUkmBaruModal" tabindex="-1" role="dialog" aria-labelledby="tambahUkmBaruModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tambahUkmBaruModalLabel">Tambah Data UKM Baru</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Your form for adding UKM data goes here -->
+                <form id="tambahUkmForm" method="post" enctype="multipart/form-data">
+                    <!-- Form fields for adding UKM data -->
+                    <div class="form-group">
+                        <label for="id_ukm">ID UKM:</label>
+                        <input type="text" class="form-control" id="id_ukm" name="id_ukm" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nama_ukm">Nama UKM:</label>
+                        <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sejarah">Sejarah:</label>
+                        <textarea class="form-control" id="sejarah" name="sejarah" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="visi">Visi:</label>
+                        <textarea class="form-control" id="visi" name="visi" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="facebook">Facebook:</label>
+                        <input type="text" class="form-control" id="facebook" name="facebook" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="instagram">Instagram:</label>
+                        <input type="text" class="form-control" id="instagram" name="instagram" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="logo_ukm">Logo:</label>
+                        <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sk">SK:</label>
+                        <input type="file" class="form-control-file" id="sk" name="sk" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="submitForm('tambahUkmForm')">Tambah</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Editing UKM Data -->
+<div class="modal fade" id="editUkmModal" tabindex="-1" role="dialog" aria-labelledby="editUkmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUkmModalLabel">Edit Data UKM</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Your form for editing UKM data goes here -->
+                <form id="editUkmForm" method="post" enctype="multipart/form-data">
+                    <!-- Form fields for editing UKM data -->
+                    <!-- ... (Add input fields for each data) ... -->
+                    <button type="button" class="btn btn-primary" onclick="submitForm('editUkmForm')">Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    // Function to open the "Tambah UKM Baru" modal
-function openTambahUkmModal() {
-    // Reset form fields when opening the modal
-    resetAllTextFields();
-    
-    // Show the modal
-    $('#tambahUkmBaruModal').modal('show');
-}
-
 // Function to submit the form inside the modal
 function submitForm() {
     // Show confirmation dialog
@@ -519,96 +587,8 @@ function toggleIdUkmField() {
                 sidebar.classList.toggle('collapsed');
             });
         });
-        // Fungsi untuk logout
-    function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
     </script>
-    <!-- Modal for adding new UKM -->
-    <div class="modal fade" id="tambahUkmBaruModal" tabindex="-1" role="dialog" aria-labelledby="tambahUkmBaruModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-            <div class="card">
-    <h2 style="text-align: center;">Data UKM</h2>
-    <form id="dataForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
-            <div class="form-group">
-            <label for="id_ukm_type">Pilih Tipe ID UKM:</label>
-            <select class="form-control" id="id_ukm_type" name="id_ukm_type" onchange="toggleIdUkmField()">
-                <option value="dropdown">Dropdown</option>
-                <option value="textfield">Text Field</option>
-            </select>
-        </div>
 
-        <div class="form-group" id="id_ukm_dropdown">
-    <label for="id_ukm_dropdown">ID UKM:</label>
-    <select class="form-control" id="id_ukm" name="id_ukm" onchange="updateFormData(this)">
-        <option value="" selected disabled>Pilih ID UKM</option>
-        <?php
-        // Membuat opsi combobox dari hasil query
-        foreach ($namaUKM as $id_ukm => $nama_ukm) {
-            echo "<option value='$id_ukm' data-nama-ukm='$nama_ukm'>$id_ukm - $nama_ukm</option>";
-        }
-        ?>
-    </select>
-</div>
-
-        <div class="form-group" id="id_ukm_textfield" style="display: none;">
-            <label for="id_ukm_textfield">ID UKM Baru:</label>
-            <input type="text" class="form-control" id="id_ukm_new" name="id_ukm_new">
-        </div>
-
-            <div class="form-group">
-                <label for="nama_ukm">Nama UKM:</label>
-                <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
-            </div>
-            <div class="form-group">
-                <label for="sejarah">Sejarah:</label>
-                <textarea class="form-control" placeholder="Isikan sejarah UKM" id="sejarah" name="sejarah" rows="5"></textarea>
-            </div>
-                    <div class="form-group">
-                <label for="logo_ukm">Logo UKM:</label>
-                <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm">
-                <!-- Add this img tag to display the logo preview -->
-                <img id="logo_ukm_preview" src="" alt="Logo UKM" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
-
-                <!-- Add the message for logo upload -->
-                <p class="mt-2" style="font-size: 12px; color: #777;">Upload logo UKM dengan resolusi 512x512 pixel.</p>
-            </div>
-            <div class="form-group">
-            <label for="instagram">Instagram:</label>
-            <input type="text" placeholder="Masukkan akun instagram ukm tanpa @" class="form-control" id="instagram" name="instagram" pattern="[a-zA-Z]+">
-        </div>
-        <div class="form-group">
-            <label for="facebook">Facebook:</label>
-            <input type="text" placeholder="Masukkan akun facebook ukm tanpa @" class="form-control" id="facebook" name="facebook" pattern="[a-zA-Z]+">
-        </div>
-
-            <div class="form-group">
-                <label for="visi">Visi:</label>
-                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="visi" name="visi" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="misi">Misi:</label>
-                <textarea class="form-control" placeholder="Sebaiknya buka dan tutup kalimat dengan tanda petik" id="misi" name="misi" rows="3"></textarea>
-            </div>
-            <div class="text-center"> <!-- Wrap the button in a div with the "text-center" class -->
-            <button type="submit" class="btn btn-primary btn-sm btn-medium"  onclick="showConfirmation(event)" name="submit">
-    <i class="fas fa-save"></i> Simpan
-</button>
-    </div>
-        </form>
-    </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {
