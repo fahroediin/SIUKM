@@ -29,9 +29,11 @@ $active_page = 'ukm';
 function generateLogoFilename($id_ukm, $extension) {
     return $id_ukm . "-logo." . $extension;
 }
-
+function sendError($message) {
+    echo '<script>showSnackbar("' . $message . '");</script>';
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id_ukm = $_POST["id_ukm"];
+    $id_ukm = str_pad(mt_rand(1, 999999999), 9, '0', STR_PAD_LEFT);
     $nama_ukm = $_POST["nama_ukm"];
     $sejarah = $_POST["sejarah"];
     $instagram = $_POST["instagram"];
@@ -49,14 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $logo_ukm_extension = strtolower(pathinfo($logo_ukm_name, PATHINFO_EXTENSION));
         
         if (!in_array($logo_ukm_extension, ['jpeg', 'jpg', 'png'])) {
-            echo "Sorry, only JPEG, JPG, and PNG files are allowed.";
+            sendError("Sorry, only JPEG, JPG, and PNG files are allowed.");
             exit();
         }
 
         $logo_ukm_filename = generateLogoFilename($id_ukm, $logo_ukm_extension);
 
         if (!move_uploaded_file($_FILES["logo_ukm"]["tmp_name"], $targetDir . $logo_ukm_filename)) {
-            echo "Sorry, there was an error uploading the logo file.";
+            sendError("Sorry, there was an error uploading the logo file.");
             exit();
         }
     }
@@ -76,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sk_extension = strtolower(pathinfo($sk_name, PATHINFO_EXTENSION));
 
     if ($sk_extension !== 'pdf') {
-        echo "Sorry, only PDF files are allowed for SK.";
+        sendError("Sorry, only PDF files are allowed for SK.");
         exit();
     }
 
@@ -87,6 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 }
+
     $sql = "INSERT INTO tab_ukm (id_ukm, nama_ukm, sejarah, logo_ukm, instagram, facebook, visi, misi, sk) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "sssssssss", $id_ukm, $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $sk_filename);
@@ -127,6 +130,18 @@ while ($row = mysqli_fetch_assoc($result)) {
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+    function showSnackbar(message) {
+        var snackbar = document.getElementById("snackbar");
+        snackbar.innerHTML = message;
+        snackbar.classList.add("show");
+        setTimeout(function() {
+            snackbar.classList.remove("show");
+            snackbar.innerHTML = "";
+        }, 3000); // Snackbar display duration (in milliseconds)
+    }
+    </script>
+
+    <script>
     // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm, sejarah, nama_ketua, nim_ketua, visi, dan misi
     function updateFormData(select) {
     var id_ukm = select.value;
@@ -163,6 +178,33 @@ while ($row = mysqli_fetch_assoc($result)) {
 </script>
 </head>
 <style>
+    #snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+#snackbar.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
        .sidebar {
         text-align: center; /* Center the contents horizontally */
     }
@@ -357,9 +399,30 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <p>Instagram: <?php echo $ukm['instagram']; ?></p>
                     <p>Facebook: <?php echo $ukm['facebook']; ?></p>
                     <p class="text-center">
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $index; ?>">Hapus</a>
                     <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal" data-ukm-id="<?php echo $ukm['id_ukm']; ?>" onclick="openEditModal(this)">Edit</a>
-                    <a href="<?php echo $ukm['id_ukm']; ?>.php" class="btn btn-secondary" target="_blank">Lihat Halaman</a>
+                    <a href="halaman_ukm.php?id_ukm=<?php echo $ukm['id_ukm']; ?>" class="btn btn-secondary" target="_blank">Lihat Halaman</a>
                     </p>
+                </div>
+            </div>
+        </div>
+         <!-- Delete Confirmation Modal -->
+         <div class="modal fade" id="deleteModal<?php echo $index; ?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel<?php echo $index; ?>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel<?php echo $index; ?>">Hapus UKM</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin menghapus UKM <?php echo $ukm['nama_ukm']; ?>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <a href="delete_ukm.php?id_ukm=<?php echo $ukm['id_ukm']; ?>" class="btn btn-danger">Hapus</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -426,10 +489,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
             <div class="modal-body">
                 <form id="tambahUkmForm" method="post" enctype="multipart/form-data" action="proses_ukm.php">
-                    <div class="form-group">
-                        <label for="id_ukm">ID UKM:</label>
-                        <input type="text" class="form-control" id="id_ukm" name="id_ukm" required>
-                    </div>
+                        <input type="hidden" class="form-control" id="id_ukm" name="id_ukm" required>
                     <div class="form-group">
                         <label for="nama_ukm">Nama UKM:</label>
                         <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
@@ -491,7 +551,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
 </div>
 
-
+<div id="snackbar"></div>
 <!-- Add the following script to show the alert after the page loads -->
 <script>
     // Wait for the page to load
