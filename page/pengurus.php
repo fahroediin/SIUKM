@@ -62,7 +62,7 @@ if ($result) {
         $pasfoto = "../assets/images/pasfoto/" . $pasfotoFilename;
     } else {
         // If pasfoto field is empty or not set, provide a default image path
-        $pasfoto = "../assets/images/default_profile_picture.png"; // Change this to your desired default image path
+        $pasfoto = "../assets/images/pasfoto/default_profile_picture.png"; // Change this to your desired default image path
     }
 } else {
     // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan

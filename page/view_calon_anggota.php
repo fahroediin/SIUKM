@@ -11,7 +11,7 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
-
+$sessionUserId = $_SESSION['id_user'];
 // Menandai halaman yang aktif
 $active_page = 'view_calon_anggota';
 
@@ -31,10 +31,6 @@ if (isset($_GET['logout'])) {
     // Memanggil fungsi logout
     logout();
 }
-
-// Menandai halaman yang aktif
-$active_page = 'view_calon_anggota';
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -158,13 +154,15 @@ $active_page = 'view_calon_anggota';
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
+                        <?php
                             // Mengambil data calabar dari database
-                            $query = "SELECT * FROM tab_pacab";
+                            $query = "SELECT * FROM tab_pacab WHERE id_ukm = '$sessionUserId'";
                             $result = mysqli_query($conn, $query);
 
-                            // Menampilkan data dalam tabel
-                            while ($row = mysqli_fetch_assoc($result)) {
+                            // Check if there are any rows returned
+                            if (mysqli_num_rows($result) > 0) {
+                                // Menampilkan data dalam tabel
+                                while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id_calabar'] . "</td>";
                                 echo "<td>" . $row['id_user'] . "</td>";
@@ -183,8 +181,13 @@ $active_page = 'view_calon_anggota';
                                 echo "<td>" . $row['status_cab'] . "</td>";
                                 echo "</td>";
                                 echo "</tr>";
+                                }
+                            } else {
+                                // Display a message when there are no applicants
+                                echo "<tr>";
+                                echo "<td colspan='13'>Belum ada pendaftar baru</td>";
+                                echo "</tr>";
                             }
-
                             // Menutup koneksi
                             mysqli_close($conn);
                             ?>

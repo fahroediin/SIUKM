@@ -566,12 +566,12 @@ button[type=reset]:hover {
                 <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
         <div class="form-group">
             <label for="pasfoto">*Pasfoto</label>
-            <input type="file" id="pasfoto" name="pasfoto" accept="image/*" onchange="showPreview(this, 'pasfotoPreview')">
+            <input type="file" id="pasfoto" name="pasfoto" accept="image/*" value="<?php echo $row['pasfoto']; ?>" onchange="showPreview(this, 'pasfotoPreview') required">
             <img id="pasfotoPreview" src="#" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px; display: none;">
         </div>
         <div class="form-group">
             <label for="foto_ktm">*Foto KTM</label>
-            <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*" onchange="showPreview(this, 'fotoKtmPreview')">
+            <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*" value="<?php echo $row['foto_ktm']; ?>" onchange="showPreview(this, 'fotoKtmPreview') required">
             <img id="fotoKtmPreview" src="#" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px; display: none;">
         </div>
         <div class="form-group">
@@ -692,6 +692,18 @@ function showPreview(input, previewId) {
         preview.style.display = "none";
     }
 }
+function showPreview(input, previewId) {
+    var preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 </script>
 
 
@@ -734,5 +746,4 @@ idUkmSelect.addEventListener("change", function() {
     namaUkmField.value = namaUkm; // Set the value of the hidden input field
 });
 </script>
-
 </html>

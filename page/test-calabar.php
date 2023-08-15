@@ -1,50 +1,36 @@
 <?php
 require_once "db_connect.php";
 session_start();
-
 if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
-
 require "questions.php";
-
 if (!isset($_SESSION['jawaban'])) {
     $_SESSION['jawaban'] = array();
 }
-
 function logout() {
     session_unset();
     session_destroy();
     header("Location: beranda.php");
     exit();
 }
-
 if (isset($_GET['logout'])) {
     logout();
 }
-
 $nama_lengkap = $_SESSION["nama_lengkap"];
 $level = $_SESSION["level"];
 $id_calabar = $_SESSION['id_calabar'];
-
 $no_soal = isset($_GET['question']) ? max(1, intval($_GET['question'])) : 1; // Ensure positive question number
-
 $totalQuestions = sizeof($questions);
 $totalDijawab = sizeof($_SESSION['jawaban']);
-
 $prev_no = max(1, $no_soal - 1);
 $next_no = min($totalQuestions, $no_soal + 1);
-
-// Inisiasi jawaban;
 if(!isset($_SESSION['jawaban'][$no_soal])){
     $_SESSION['jawaban'][$no_soal] = '';
 }
-
-// Ambil soal dari array berdasarkan nomor soal
 $no_soal_key = $no_soal -1;
 $soal = $questions[$no_soal_key];
-
 $isAnswered = isset($_GET['a']);
 $isQ = isset($_GET['q']);
 if($isAnswered && $isQ && in_array($_GET['a'], ['a','b','c','d','e'])){
@@ -56,9 +42,6 @@ if($isAnswered && $isQ && in_array($_GET['a'], ['a','b','c','d','e'])){
         }
     }
 }
-
-
-// Fungsi untuk menentukan kategori berdasarkan nilai TPA
 function determineCategory($nilaiTPA, $total){
     $totalSoal = $total;
     $persentaseBenar = ($nilaiTPA / $totalSoal) * 100;
@@ -75,15 +58,10 @@ function determineCategory($nilaiTPA, $total){
         return "Kategori Tidak Tersedia";
     }
 }
-
-// Fungsi untuk menyimpan nilai TPA ke database
-// Fungsi untuk menyimpan nilai TPA ke database
 function saveTPAScore($id_calabar, $nilaiTPA) {
     global $conn; // Use the global $conn variable
-
     $sql = "UPDATE tab_pacab SET nilai_tpa = ? WHERE id_calabar = ?";
     $stmt = mysqli_prepare($conn, $sql);
-
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "ii", $nilaiTPA, $id_calabar);
         if (mysqli_stmt_execute($stmt)) {
@@ -96,59 +74,33 @@ function saveTPAScore($id_calabar, $nilaiTPA) {
         echo "Error: " . mysqli_error($conn);
     }
 }
-
-// Fungsi untuk menghitung nilai TPA berdasarkan jawaban
 function calculateTPAScore($jawaban, $jumlah_soal, $semua_soal){
     $skorBenar = 1; // Skor untuk jawaban benar
     $skorSalah = 0; // Skor untuk jawaban salah
-
     $totalBenar = 0;
-
-    // Iterasi untuk setiap nomor soal
     for ($nomorSoal = 1; $nomorSoal <= $jumlah_soal; $nomorSoal++) {
-        // Ambil nilai jawaban yang dipilih oleh pengguna
         $jawabanPengguna = $jawaban[$nomorSoal];
         $kunciJawaban = $semua_soal[$nomorSoal]['correct_answer']; 
-
         if($jawabanPengguna == $kunciJawaban){
             $totalBenar = $totalBenar + 1;
         }
     }
-
     $totalSalah = $jumlah_soal - $totalBenar;
     $nilaiTPA = ($totalBenar * $skorBenar) + ($totalSalah * $skorSalah);
-
     return $nilaiTPA;
 }
-
-// Memeriksa apakah pengguna sudah mengisi jawaban TPA
 if (isset($_GET['submit'])) {
     if($totalQuestions !== $totalDijawab) return;
-
-    // Mendapatkan jawaban pengguna dari form
     $jawaban = $_SESSION['jawaban'];
-
-    // Menghitung nilai TPA
     $nilaiTPA = calculateTPAScore($jawaban, $totalQuestions, $questions);
-
-    // Menyimpan nilai TPA ke database
     saveTPAScore($id_calabar, $nilaiTPA);
-
-    // Menampilkan kategori berdasarkan nilai TPA
     $kategori = determineCategory($nilaiTPA, $totalQuestions);
-
-    // Memperbarui nilai_tpa dan kategori_tpa di sesi dengan nilai terbaru
     $_SESSION['nilai_tpa'] = $nilaiTPA;
     $_SESSION['kategori_tpa'] = $kategori;
-
-    // Reset sesi jawaban
     $_SESSION['jawaban'] = array();
-
-    // INI KEMANA
     header("Location: selesai_test.php");
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -159,58 +111,39 @@ if (isset($_GET['submit'])) {
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/test-calabar.css">
-	  <!-- Pustaka MathJax -->
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-      <!-- Pustaka KaTeX -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
-	
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    // Fungsi untuk mengupdate dan menyimpan jumlah refresh halaman dalam session
     function updateRefreshCount() {
-      // Cek apakah session storage tersedia
       if (typeof(Storage) !== "undefined") {
-        // Cek apakah sudah ada data refreshCount dalam session
         if (sessionStorage.refreshCount) {
-          // Jika sudah ada, tambahkan 1 ke jumlah refresh
           sessionStorage.refreshCount = Number(sessionStorage.refreshCount) + 1;
         } else {
-          // Jika belum ada, set jumlah refresh menjadi 0
           sessionStorage.refreshCount = 0;
         }
       } else {
-        // Session storage tidak tersedia
         console.log("Session storage is not supported.");
       }
     }
-
-    // Fungsi untuk mendapatkan dan menampilkan jumlah refresh halaman dari session
     function displayRefreshCount() {
       // Cek apakah session storage tersedia
       if (typeof(Storage) !== "undefined") {
-        // Cek apakah data refreshCount ada dalam session
         if (sessionStorage.refreshCount) {
-          // Dapatkan nilai refreshCount dari session
           var refreshCount = sessionStorage.refreshCount;
-
-          // Tampilkan nilai refreshCount di elemen HTML
           document.getElementById("refreshCount").textContent = refreshCount;
         } else {
-          // Jika data refreshCount tidak ada dalam session, tampilkan nilai default
           document.getElementById("refreshCount").textContent = "0";
         }
       } else {
-        // Session storage tidak tersedia
         console.log("Session storage is not supported.");
       }
     }
-
-    // Panggil fungsi updateRefreshCount saat halaman selesai dimuat
     window.onload = function() {
       updateRefreshCount();
       displayRefreshCount();
@@ -218,19 +151,14 @@ if (isset($_GET['submit'])) {
   </script>
 <script>
     var isTimerExpired = false; // Variabel untuk menandakan apakah timer telah selesai
-
-    // Fungsi untuk menghitung dan menampilkan timer
     function startTimer(duration, display) {
         var timer = duration, minutes, seconds;
         var timerInterval = setInterval(function () {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
-
             minutes = minutes < 10 ? "0" + minutes : minutes;
             seconds = seconds < 10 ? "0" + seconds : seconds;
-
             display.textContent = minutes + ":" + seconds;
-
             if (--timer < 0) {
                 clearInterval(timerInterval);
                 isTimerExpired = true; // Timer telah selesai
@@ -238,65 +166,45 @@ if (isset($_GET['submit'])) {
             }
         }, 1000);
     }
-
-    // Panggil fungsi startTimer saat halaman dimuat
     window.onload = function () {
         var duration = 60 * 30; // 60 dikalikan dengan mau berapa menit
         var display = document.querySelector('.timer-container');
         startTimer(duration, display);
     };
-
     function enableSubmitButton() {
         var submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = false;
     }
-
 </script>
 <script>
-
-    var currentQuestion = 1; // Nomor soal saat ini
-
+    var currentQuestion = 1; 
     function nextQuestion() {
-        // Menampilkan nomor soal berikutnya
         if (currentQuestion < 4) {
             currentQuestion++;
             showQuestion(currentQuestion);
         }
     }
-
     function previousQuestion() {
-        // Menampilkan nomor soal sebelumnya
         if (currentQuestion > 1) {
             currentQuestion--;
             showQuestion(currentQuestion);
         }
     }
-
     function showQuestion(questionNumber) {
-        // Menampilkan pertanyaan sesuai nomor soal
         var questions = document.getElementsByClassName("question");
         var questionButtons = document.getElementsByClassName("question-button");
         var soalNomor = document.getElementById("soal-nomor");
-
-        // Menyembunyikan semua pertanyaan
         for (var i = 0; i < questions.length; i++) {
             questions[i].style.display = "none";
         }
-
-        // Mengubah kelas tombol aktif
         for (var j = 0; j < questionButtons.length; j++) {
             questionButtons[j].classList.remove("active");
         }
-        
-        // Menampilkan pertanyaan yang dipilih
         questions[questionNumber - 1].style.display = "block";
         questionButtons[questionNumber - 1].classList.add("active");
-
-        // Mengubah label "Soal Nomor" dengan nomor soal saat ini
         soalNomor.textContent = "Soal Nomor: " + questionNumber;
     }
 </script>
-
 </head>
 <body>
 <div class="navbar">
@@ -305,12 +213,11 @@ if (isset($_GET['submit'])) {
             <h3>Selamat datang, <?php echo $nama_lengkap; ?></h3>
         </div>
 		<div class="logout-container">
-		<a href="?logout=true" class="logout-button">
+		<a href="#" class="logout-button" id="logout-btn" onclick="logout()">
 			<span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
 			Logout
 			</a>
 		</div>
-
 </div>
 </div>
 </div>
@@ -332,7 +239,6 @@ if (isset($_GET['submit'])) {
         <?php
             if($soal['type'] == 'a'){
         ?>
-
             <div class="question active">
                 <h5>Soal <?= $no_soal; ?></h5>
                 <p><?= $soal['prompt']; ?></p>
@@ -349,13 +255,10 @@ if (isset($_GET['submit'])) {
                         /> 
                         <?= $soal['options'][$choice]; ?>
                     </label>
-
                     <?php } ?>
                 </div>
             </div>
         <?php };?>
-  
-
         <?php
             if($soal['type'] == 'b'){
         ?>
@@ -371,7 +274,6 @@ if (isset($_GET['submit'])) {
                             }
                         ?>
 						</tr>
-
                         <?php
                             foreach($soal['table_content'] as $table_content_child){
                         ?>
@@ -399,7 +301,6 @@ if (isset($_GET['submit'])) {
                         /> 
                         <?= $soal['options'][$choice]; ?>
                     </label>
-
                     <?php } ?>
                 </div>
             </div>
@@ -425,17 +326,13 @@ if (isset($_GET['submit'])) {
         
         window.location.href = `test-calabar.php?q=${q}&a=${a}&question=${to}';`
     }
-
     function finish(answered,total){
         if(answered != total) return showSnackbar('Harap menyelesaikan seluruh pertanyaan!')
-
         showSnackbar('Terima kasih telah mengerjakan tes potensi akademik')
         setTimeout(function () {
             window.location.href = 'test-calabar.php?submit=1';
         }, 3500);
     }
-    
-
     function showSnackbar(msg) {
         var snackbar = document.getElementById('snackbar');
         snackbar.textContent = msg;
@@ -444,8 +341,26 @@ if (isset($_GET['submit'])) {
             snackbar.classList.remove('show');
         }, 3000);
     }
-
 </script>
-
+<script>
+    // Fungsi untuk logout dengan konfirmasi
+    function logout() {
+        // Tampilkan dialog konfirmasi menggunakan SweetAlert
+        Swal.fire({
+            title: 'Tes Potensi Akademik belum selesai dikerjakan, yakin ingin keluar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik "Ya", maka lakukan proses logout
+                window.location.href = "?logout=true";
+            }
+        });
+    }
+</script>
 </body>
-</html>
+</html>         

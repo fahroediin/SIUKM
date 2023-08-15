@@ -40,19 +40,21 @@ if (isset($_GET['logout'])) {
 // Menandai halaman yang aktif
 $active_page = 'proses_dau_pengurus';
 
-// Construct the initial query to get data from the database
-$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung FROM tab_dau";
+$sessionUserId = $_SESSION['id_user']; // Replace this with the actual way you retrieve the id_user from the session
+
+// Construct the query to get data from the database based on the session's id_user
+$query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung
+          FROM tab_dau
+          WHERE id_user = $sessionUserId";
 
 // Check if a search term is provided
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $searchTerm = mysqli_real_escape_string($conn, $_GET['search']);
-    $query .= " WHERE id_anggota LIKE '%$searchTerm%' OR id_user LIKE '%$searchTerm%' OR nama_lengkap LIKE '%$searchTerm%'";
+    $query .= " AND (id_anggota LIKE '%$searchTerm%' OR id_user LIKE '%$searchTerm%' OR nama_lengkap LIKE '%$searchTerm%')";
 }
 
 // Execute the query
 $result = mysqli_query($conn, $query);
-
-
 
 // Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -102,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_query($conn, $sql)) {
         echo "Berhasil menambahkan anggota";
         // Redirect ke halaman data anggota setelah penyimpanan berhasil
-        header("Location: proses_dau.php");
+        header("Location: proses_dau_pengurus.php");
         exit();
     } else {
         // Jika terjadi kesalahan saat menyimpan data
@@ -282,7 +284,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <form class="form-inline mt-2 mt-md-0 float-right" method="get">
     <input class="form-control mr-sm-2" type="text" placeholder="Cari id anggota/id user/nama" name="search" aria-label="Search">
     <button type="submit" class="btn btn-outline-primary">Search</button>
-    <a href="proses_dau.php" class="btn btn-outline-secondary ml-2">
+    <a href="proses_dau_pengurus.php" class="btn btn-outline-secondary ml-2">
         <i class="fas fa-sync-alt"></i>
     </a>
     </div>
