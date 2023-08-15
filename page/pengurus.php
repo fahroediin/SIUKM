@@ -285,28 +285,30 @@ if ($resultPacabSnapshotCount) {
                                 <div class="profile-details">
                                     <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
                                     <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
-                                    <p><span class="label">Nomor Telepon:</span> <span class="value"><?php echo $no_hp; ?></span></p>
+                                    <p><span class="label">Nomor HP:</span> <span class="value"><?php echo $no_hp; ?></span></p>
                                 </div>
                                 <!-- Tombol Ganti Password -->
-                                <a href="ganti_password_kemahasiswaan.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>
+                                <a href="ganti_password_pengurus.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>
                                 <!-- Tombol Update Data Diri -->
-                                <a href="update_kemahasiswaan.php" class="btn btn-primary mt-2"><i class="fas fa-user-edit"></i> Update Data Diri</a>
+                                <a href="update_pengurus.php" class="btn btn-primary mt-2"><i class="fas fa-user-edit"></i> Update Data</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-4"> 
+                <div class="row row-in">
                     <div class="card shadow">
-                        <h4 class="mb-3">Jumlah Pendaftar Baru</h4>
+                        <h4 class="mb-4">Jumlah Pendaftar Baru</h4>
                         <p>Menunggu diterima oleh pengurus</p>
-                        <p class="font-weight-bold" style="font-size: 50px;"><?php echo $pacabSnapshotCount; ?></p>
+                        <p class="font-weight-bold" style="font-size: 50px; text-align: center;"><?php echo $pacabSnapshotCount; ?></p>
                     </div>
-
+                    </div>
+                    <br>
                 <div class="col-md-12">
                 <div class="card shadow">
                     <h4 class="mb-4">Total Anggota UKM</h4>
-                    <p class="font-weight-bold" style="font-size: 50px;"><?php echo $memberSnapshotCount; ?></p>
+                    <p class="font-weight-bold" style="font-size: 50px; text-align: center;"><?php echo $memberSnapshotCount; ?></p>
                 </div>
                 </div>
             </div>
