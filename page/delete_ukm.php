@@ -35,9 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["id_ukm"])) {
 
         mysqli_stmt_close($deleteStmt);
         mysqli_close($conn);
-
-        header("Location: proses_ukm.php?success=1");
+        header("Location: proses_ukm.php?deleteSuccess=true");
         exit();
+
     } else {
         echo "Error deleting data: " . mysqli_error($conn);
     }

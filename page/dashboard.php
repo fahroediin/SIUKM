@@ -100,7 +100,18 @@ if ($result) {
     echo "Error: " . mysqli_error($conn);
 }
 
+// Query to count data in tab_pacab based on id_user
+$queryPacabCount = "SELECT COUNT(*) AS pacab_count FROM tab_pacab WHERE id_user = '$userId'";
+$resultPacabCount = mysqli_query($conn, $queryPacabCount);
 
+$pacabCount = 0; // Default value if the query doesn't yield results
+if ($resultPacabCount) {
+    $pacabData = mysqli_fetch_assoc($resultPacabCount);
+    $pacabCount = $pacabData['pacab_count'];
+} else {
+    // Handle query error as needed
+    echo "Error: " . mysqli_error($conn);
+}
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
 $userId = $_SESSION['id_user'];
 $query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
@@ -359,8 +370,15 @@ if ($resultIdUkm) {
                     <div class="card shadow">
                         <h4 class="mb-3">Jumlah UKM yang diikuti</h4>
                         <p class="font-weight-bold" style="font-size: 50px;"><?php echo $totalSnapshot; ?></p>
+                        <?php
+                        if ($pacabCount > 0) {
+                            echo '<p>Menunggu diproses oleh pengurus: ' . $pacabCount . '</p>';
+                        } else {
+                            echo '<p>Tidak ada data yang perlu diproses saat ini.</p>';
+                        }
+                        ?>
                     </div>
-
+            
                     <!-- Content for UKM yang diikuti -->
                     <div class="card shadow mt-4 scrollable-content">
                         <h4 class="mb-3">Daftar UKM yang diikuti</h4>

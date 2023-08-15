@@ -96,8 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     
     if (mysqli_stmt_execute($stmt)) {
-        header("Location: proses_ukm.php?success=1");
+        header("Location: proses_ukm.php?success=1&showSnackbar=true"); // Add &showSnackbar=true
         exit();
+    
     } else {
         echo "Error saving data: " . mysqli_error($conn);
     }
@@ -129,18 +130,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    function showSnackbar(message) {
-        var snackbar = document.getElementById("snackbar");
-        snackbar.innerHTML = message;
-        snackbar.classList.add("show");
-        setTimeout(function() {
-            snackbar.classList.remove("show");
-            snackbar.innerHTML = "";
-        }, 3000); // Snackbar display duration (in milliseconds)
-    }
-    </script>
-
     <script>
     // Mendefinisikan fungsi JavaScript untuk memperbarui field nama_ukm, sejarah, nama_ketua, nim_ketua, visi, dan misi
     function updateFormData(select) {
@@ -540,27 +529,46 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Your form for editing UKM data goes here -->
-                <form id="editUkmForm" method="post" enctype="multipart/form-data">
-                    <!-- Form fields for editing UKM data -->
-                    <!-- ... (Add input fields for each data) ... -->
-                    <button type="button" class="btn btn-primary">Simpan Perubahan</button>
+                <form id="editUkmForm" method="post" enctype="multipart/form-data" action="proses_edit_ukm.php">
+                    <input type="hidden" class="form-control" id="id_ukm_edit" name="id_ukm_edit" required>
+                    <div class="form-group">
+                        <label for="nama_ukm_edit">Nama UKM:</label>
+                        <input type="text" class="form-control" id="nama_ukm_edit" name="nama_ukm_edit" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sejarah_edit">Sejarah:</label>
+                        <textarea class="form-control" id="sejarah_edit" name="sejarah_edit" rows="4" required></textarea>
+                    </div>
+                    <!-- ... (Other input fields for editing) ... -->
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+
 <div id="snackbar"></div>
-<!-- Add the following script to show the alert after the page loads -->
 <script>
+        // Wait for the page to load
+        window.addEventListener('DOMContentLoaded', (event) => {
+        // Check if the URL contains a deleteSuccess query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('deleteSuccess')) {
+            // Show the success message for data deletion
+            showSnackbar('Data UKM berhasil dihapus');
+        }
+    });
     // Wait for the page to load
     window.addEventListener('DOMContentLoaded', (event) => {
         // Check if the URL contains a success query parameter
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('success')) {
-            // Show the success message
-            showSnackbar('Data berhasil disimpan');
+            // Check if the showSnackbar parameter is present and set to "true"
+            if (urlParams.has('showSnackbar') && urlParams.get('showSnackbar') === 'true') {
+                // Show the success message
+                showSnackbar('UKM baru berhasil ditambahkan');
+            }
         }
     });
 
@@ -576,6 +584,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         }, 3000);
     }
 </script>
+
 
 <script>
     function resetAllTextFields() {

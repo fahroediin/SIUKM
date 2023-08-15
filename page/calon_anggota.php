@@ -195,19 +195,14 @@ $active_page = 'calon_anggota';
                                 echo "<td>" . $row['nilai_tpa'] . "</td>";
                                 echo "<td>" . $row['status_cab'] . "</td>";
                                 echo "<td>";
-                                // Tombol "Update" untuk menampilkan pilihan "Lolos" dan "Tidak Lolos"
-                                echo "<button class='btn btn-primary' onclick='showUpdateOptions(" . $row['id_calabar'] . ")'>Update</button>";
-                                // Kotak pilihan untuk "Lolos" dan "Tidak Lolos" (sembunyikan awalnya)
-                                echo "<div id='update_options_" . $row['id_calabar'] . "' style='display:none;'>";
-                                echo "<button class='btn btn-success' onclick='updateNilaiTPA(" . $row['id_calabar'] . ", \"Lolos\")'>Lolos</button>";
-                                echo "<button class='btn btn-danger' onclick='updateNilaiTPA(" . $row['id_calabar'] . ", \"Tidak Lolos\")'>Tidak Lolos</button>";
-                                echo "</div>";
-                             
-                                // Tombol "Delete"
-                                echo "<td>";
-                                echo "<button class='btn btn-danger' onclick='deleteData(" . $row['id_calabar'] . ")'>Delete</button>";
+                                echo "<select id='status_calabar_" . $row['id_calabar'] . "'>";
+                                echo "<option value='Diterima'>Diterima</option>";
+                                echo "<option value='Tidak Diterima'>Tidak Diterima</option>";
+                                echo "</select>";
                                 echo "</td>";
-                                echo "</tr>";
+                                echo "<td>";
+                                echo "<button class='btn btn-primary' onclick='updateStatus(" . $row['id_calabar'] . ")'>Update</button>";
+                                echo "</td>";               
                             }
 
                             // Menutup koneksi
@@ -225,22 +220,18 @@ $active_page = 'calon_anggota';
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
 
-     // Function to show the alert and update nilai_tpa
-     function updateNilaiTPA(id, status) {
-        var updateOptions = document.getElementById('update_options_' + id);
-        updateOptions.style.display = 'none'; // Hide the update options after choosing
+     // Function to update the status using AJAX
+     function updateStatus(id_calabar) {
+        const selectedStatus = document.getElementById('status_calabar_' + id_calabar).value;
 
-        // Show the alert with the status
-        alert('Calon Anggota dengan ID ' + id + ' dinyatakan ' + status);
-
-        // Perform the AJAX request to update nilai_tpa using update_nilai_tpa.php
+        // Perform the AJAX request to update status
         $.ajax({
-            url: 'update_nilai_tpa.php', // Update this with the correct file path
+            url: 'update_status.php',
             type: 'POST',
-            data: { id: id, status: status },
+            data: { id_calabar: id_calabar, status: selectedStatus },
             success: function(response) {
-                // Refresh the page after successful update
-                location.reload();
+                alert('Status updated successfully.');
+                location.reload(); // Refresh the page
             },
             error: function(xhr, status, error) {
                 console.error(xhr.responseText);
@@ -270,7 +261,7 @@ $active_page = 'calon_anggota';
 <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
+ <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {
         // Tampilkan dialog konfirmasi menggunakan SweetAlert
