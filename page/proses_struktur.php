@@ -67,27 +67,6 @@ if (isset($_POST['submit'])) {
     $nim = $_POST['nim'];
     $id_anggota = $_POST['id_anggota'];
 
-    // Check if the selected id_jabatan already exists for the chosen id_ukm
-    if ($id_jabatan !== '6' && isJabatanExists($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota)) {
-        // Show a confirmation message to the user asking whether they want to update or not
-        $confirmation = confirm("Jabatan Sudah ada. Apakah Anda ingin memperbarui data?");
-        if ($confirmation) {
-            // If the user confirms, proceed with the update
-            if (updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota)) {
-                // Redirect to the page after successful update
-                header("Location: proses_struktur.php");
-                exit();
-            } else {
-                // If there's an error during update
-                echo "Error updating data";
-                exit();
-            }
-        } else {
-            // If the user cancels, reset the form fields and prevent form submission
-            echo '<script>resetFormFields();</script>';
-            exit();
-        }
-    } else {
         // Insert the data into the database
         $sql = "INSERT INTO tab_strukm (id_ukm, id_jabatan, nama_lengkap, nim, id_anggota) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
@@ -99,7 +78,6 @@ if (isset($_POST['submit'])) {
             exit();
         }
     }
-}
 
 ?>
 
@@ -434,7 +412,7 @@ idAnggotaSelect.addEventListener("change", function() {
         document.getElementById('nim').value = '';
     }
 </script>
-<script>
+ <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {
         // Tampilkan dialog konfirmasi menggunakan SweetAlert

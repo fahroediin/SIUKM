@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssss", $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $deskripsi, $jenis, $tgl);
 
     if ($stmt->execute()) {
-        header("Location: proses_kegiatan.php?success=1");
+        header("Location: view_kegiatan.php?success=1");
         exit();
     } else {
         echo "Sorry, there was an error uploading your file.";

@@ -22,15 +22,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_user_error = "";
     $password_error = "";
 
-    if (mysqli_num_rows($id_user_result) === 0) {
-        $id_user_error = "ID user tidak terdaftar.";
-    } else {
-        // Fetch the user's data
-        $row = mysqli_fetch_assoc($id_user_result);
-
-        if ($password !== $row["password"]) {
-            $password_error = "Password salah.";
-        } else {
+	if (mysqli_num_rows($id_user_result) === 0) {
+		$id_user_error = "ID user tidak terdaftar.";
+	} else {
+		$row = mysqli_fetch_assoc($id_user_result);
+	
+		if ($password !== $row["password"]) {
+			$password_error = "Password salah.";
+		} else {
             // Jika sesuai, arahkan ke halaman beranda atau halaman lain yang diinginkan
             $_SESSION["id_user"] = $row["id_user"];
             $_SESSION["nama_lengkap"] = $row["nama_lengkap"];
@@ -328,23 +327,23 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 		<div class="container-form">
 		<div class="form-group">
-		<label for="id_user">ID User</label>
-		<input type="text" class="form-control" placeholder="Masukan NIM anda" id="id_user" name="id_user" maxlength="10" required>
-		<div class="invalid-feedback" id="usernameError"></div>
+    <label for="id_user">ID User</label>
+    <input type="text" class="form-control <?php if (!empty($id_user_error)) echo 'is-invalid'; ?>" placeholder="Masukan NIM anda" id="id_user" name="id_user" maxlength="10" required>
+   		 <div class="invalid-feedback"><?php echo $id_user_error; ?></div>
 		</div>
+		<br>
 		<div class="form-group">
-			<label for="password">Password</label>
-			<div class="password-input">
-				<input type="password" class="form-control" placeholder="Masukan password ada" id="password" name="password" maxlength="30" required>
-				<i class="fas fa-eye" id="passwordToggle"></i>
-			</div>
-			<div class="invalid-feedback" id="passwordError"></div>
+    <label for="password">Password</label>
+    <div class="password-input">
+        <input type="password" class="form-control <?php if (!empty($password_error)) echo 'is-invalid'; ?>" placeholder="Masukan password ada" id="password" name="password" maxlength="30" required>
+        <i class="fas fa-eye" id="passwordToggle"></i>
+    		<div class="invalid-feedback"><?php echo $password_error; ?></div>
 		</div>
-
 		<p class="forgot-password-link">Lupa Password? <a href="forgot_password.php">Reset Password</a></p>
-			<div class="button-group">
+		</div>
+		<div class="button-group">	
 			<div>
-				<button class="button-login" type="submit">LOGIN</button>
+			<button class="button-login" type="submit">LOGIN</button>
 			</div>
 			<div>
 			<button class="button-batal" type="button" onclick="goToBeranda()">BATAL</button>
@@ -356,6 +355,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 <p>Tidak punya akun? <a href="register.php"><i class="fas fa-user-plus"></i> Daftar</a></p>
 </div>
 </div>
+
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

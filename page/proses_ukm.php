@@ -1,113 +1,106 @@
 <?php
-// Memasukkan file db_connect.php
 require_once "db_connect.php";
-
-// Memulai session
 session_start();
 
-// Memeriksa apakah pengguna sudah login
+// Check user authentication and roles
 if (!isset($_SESSION['id_user'])) {
-    // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
 
-// Memeriksa level pengguna
 if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
-    // Jika level adalah "3" atau "2", redirect ke halaman beranda.php
     header("Location: beranda.php");
     exit();
 }
 
-// Fungsi logout
 function logout() {
-    // Menghapus semua data session
     session_unset();
-    // Menghancurkan session
     session_destroy();
-    // Mengarahkan pengguna ke beranda.php setelah logout
     header("Location: beranda.php");
     exit();
 }
 
-// Memeriksa apakah tombol logout diklik
 if (isset($_GET['logout'])) {
-    // Memanggil fungsi logout
     logout();
 }
 
-// Menandai halaman yang aktif
 $active_page = 'ukm';
 
-// Function to generate logo filename based on id_ukm and extension
-function generateLogoFilename($id_ukm, $extension)
-{
-    // Concatenate the id_ukm with the "-logo" suffix and the extension
-    $logoFilename = $id_ukm . "-logo." . $extension;
-    return $logoFilename;
+function generateLogoFilename($id_ukm, $extension) {
+    return $id_ukm . "-logo." . $extension;
 }
 
-// Memeriksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Mengambil nilai-nilai dari form
-    $id_ukm_type = $_POST["id_ukm_type"];
+    $id_ukm = $_POST["id_ukm"];
     $nama_ukm = $_POST["nama_ukm"];
     $sejarah = $_POST["sejarah"];
     $instagram = $_POST["instagram"];
     $facebook = $_POST["facebook"];
     $visi = $_POST["visi"];
     $misi = $_POST["misi"];
-    $sk = $_POST["sk"];
+    $sk = $_FILES["sk"]["name"];
 
+    $targetDir = "../assets/images/logoukm/";
 
-    if ($id_ukm_type === "dropdown") {
-        $id_ukm = $_POST["id_ukm"];
-    } else {
-        $id_ukm = $_POST["id_ukm_new"];
-    }
-
-    // Check if a logo file is uploaded
-    if ($_FILES["logo_ukm"]["name"] != "") {
-        // Define the target directory for the logo file
-        $targetDir = "../assets/images/logoukm/";
-
-        // Get the original filename and extension
+    // Handle logo file upload
+    $logo_ukm_filename = "";
+    if ($_FILES["logo_ukm"]["error"] === UPLOAD_ERR_OK) {
         $logo_ukm_name = $_FILES["logo_ukm"]["name"];
         $logo_ukm_extension = strtolower(pathinfo($logo_ukm_name, PATHINFO_EXTENSION));
-
-        // Check if the file format is allowed
+        
         if (!in_array($logo_ukm_extension, ['jpeg', 'jpg', 'png'])) {
             echo "Sorry, only JPEG, JPG, and PNG files are allowed.";
             exit();
         }
 
-        // Generate the logo filename based on id_ukm and the validated extension
         $logo_ukm_filename = generateLogoFilename($id_ukm, $logo_ukm_extension);
 
-        // Move the uploaded logo file to the target directory
         if (!move_uploaded_file($_FILES["logo_ukm"]["tmp_name"], $targetDir . $logo_ukm_filename)) {
-            // Handle the error condition, for example:
             echo "Sorry, there was an error uploading the logo file.";
             exit();
         }
-    } else {
-        // If no logo file is uploaded, use the existing logo filename
-        $logo_ukm_filename = $_POST["existing_logo"];
     }
 
-    // SQL query to update data in tab_ukm table
-    $sql = "UPDATE tab_ukm SET nama_ukm=?, sejarah=?, logo_ukm=?, instagram=?, facebook=?, visi=?, misi=?, sk=? WHERE id_ukm=?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ssssssssi", $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $sk, $id_ukm);
-    $result = mysqli_stmt_execute($stmt);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    function generateSKFilename($id_ukm, $extension) {
+        return $id_ukm . "-sk." . $extension;
+    }
+    
+    // Handle SK file upload
+    $targetDirSK = "../assets/images/sk/";
+    $sk_filename = "";
+    if ($_FILES["sk"]["error"] === UPLOAD_ERR_OK) {
+    $sk_name = $_FILES["sk"]["name"];
+    $sk_extension = strtolower(pathinfo($sk_name, PATHINFO_EXTENSION));
 
-    if ($result) {
+    if ($sk_extension !== 'pdf') {
+        echo "Sorry, only PDF files are allowed for SK.";
+        exit();
+    }
+
+    $sk_filename = generateSKFilename($id_ukm, $sk_extension);
+
+    if (!move_uploaded_file($_FILES["sk"]["tmp_name"], $targetDirSK . $sk_filename)) {
+        echo "Sorry, there was an error uploading the SK file.";
+        exit();
+    }
+}
+    $sql = "INSERT INTO tab_ukm (id_ukm, nama_ukm, sejarah, logo_ukm, instagram, facebook, visi, misi, sk) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "sssssssss", $id_ukm, $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $sk_filename);
+
+    
+    if (mysqli_stmt_execute($stmt)) {
         header("Location: proses_ukm.php?success=1");
         exit();
     } else {
-        echo "Error: " . mysqli_error($conn);
-        exit();
+        echo "Error saving data: " . mysqli_error($conn);
     }
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 }
 
 $query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi, sk FROM tab_ukm";
@@ -432,19 +425,15 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Your form for adding UKM data goes here -->
-                <form id="tambahUkmForm" method="post" enctype="multipart/form-data">
-                    <!-- Form fields for adding UKM data -->
+                <form id="tambahUkmForm" method="post" enctype="multipart/form-data" action="proses_ukm.php">
                     <div class="form-group">
                         <label for="id_ukm">ID UKM:</label>
                         <input type="text" class="form-control" id="id_ukm" name="id_ukm" required>
                     </div>
-
                     <div class="form-group">
                         <label for="nama_ukm">Nama UKM:</label>
                         <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" required>
                     </div>
-
                     <div class="form-group">
                         <label for="sejarah">Sejarah:</label>
                         <textarea class="form-control" id="sejarah" name="sejarah" rows="4" required></textarea>
@@ -453,7 +442,10 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <label for="visi">Visi:</label>
                         <textarea class="form-control" id="visi" name="visi" rows="4" required></textarea>
                     </div>
-
+                    <div class="form-group">
+                        <label for="misi">Misi:</label>
+                        <textarea class="form-control" id="misi" name="misi" rows="4" required></textarea>
+                    </div>
                     <div class="form-group">
                         <label for="facebook">Facebook:</label>
                         <input type="text" class="form-control" id="facebook" name="facebook" required>
@@ -464,13 +456,13 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </div>
                     <div class="form-group">
                         <label for="logo_ukm">Logo:</label>
-                        <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm" required>
+                        <input type="file" class="form-control-file" id="logo_ukm" name="logo_ukm" accept="image/*" required>
                     </div>
                     <div class="form-group">
                         <label for="sk">SK:</label>
-                        <input type="file" class="form-control-file" id="sk" name="sk" required>
+                        <input type="file" class="form-control-file" id="sk" name="sk" accept=".pdf" required>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="submitForm('tambahUkmForm')">Tambah</button>
+                    <button type="submit" class="btn btn-primary">Tambah</button>
                 </form>
             </div>
         </div>
@@ -492,37 +484,13 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <form id="editUkmForm" method="post" enctype="multipart/form-data">
                     <!-- Form fields for editing UKM data -->
                     <!-- ... (Add input fields for each data) ... -->
-                    <button type="button" class="btn btn-primary" onclick="submitForm('editUkmForm')">Simpan Perubahan</button>
+                    <button type="button" class="btn btn-primary">Simpan Perubahan</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-// Function to submit the form inside the modal
-function submitForm() {
-    // Show confirmation dialog
-    var confirmation = confirm("Apakah Anda yakin ingin menyimpan data?");
-    
-    if (confirmation) {
-        // Submit the form inside the modal
-        document.getElementById("dataForm").submit();
-    }
-}
-
-  function showConfirmation(event) {
-    event.preventDefault(); // Menghentikan pengiriman form secara langsung
-
-    // Menampilkan konfirmasi dengan fungsi confirm()
-    var confirmation = confirm("Apakah Anda yakin ingin menyimpan data?");
-
-    if (confirmation) {
-      // Mengirim form jika pengguna menekan tombol "OK"
-      document.getElementById("dataForm").submit();
-    }
-  }
-</script>
 
 <!-- Add the following script to show the alert after the page loads -->
 <script>
@@ -559,36 +527,7 @@ function submitForm() {
     document.getElementById("misi").value = "";
     document.getElementById("id_ukm_new").value = "";
 }
-
-function toggleIdUkmField() {
-    var idUkmType = document.getElementById("id_ukm_type").value;
-    var idUkmDropdown = document.getElementById("id_ukm_dropdown");
-    var idUkmTextfield = document.getElementById("id_ukm_textfield");
-
-    if (idUkmType === "dropdown") {
-        idUkmDropdown.style.display = "block";
-        idUkmTextfield.style.display = "none";
-    } else {
-        idUkmDropdown.style.display = "none";
-        idUkmTextfield.style.display = "block";
-        resetAllTextFields(); // Call the function to reset all text fields
-    }
-}
-
 </script>
-
-
-  <!-- Script untuk mengatur perubahan lebar sidebar -->
-  <script>
-        const sidebar = document.querySelector('.sidebar');
-        document.addEventListener('DOMContentLoaded', function() {
-            // Menambahkan event listener pada tombol collapse
-            document.querySelector('#collapse-button').addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-            });
-        });
-    </script>
-
 <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {

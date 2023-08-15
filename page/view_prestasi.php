@@ -156,37 +156,41 @@ $conn->close();
 <div class="content">
     <h2>Data Prestasi</h2>
     <table class="table">
-        <thead>
-            <tr>
-                <th>ID Prestasi</th>
-                <th>Nama Prestasi</th>
-                <th>Penyelenggara</th>
-                <th>Tanggal Prestasi</th>
-                <th>ID UKM</th>
-                <th>Nama UKM</th>
-            </tr>
-        </thead>
-        <tbody>
-    <?php
-    // Define Indonesian month names
-    $indonesianMonths = array(
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-        'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    );
-
-    foreach ($prestasi_data as $prestasi) :
-    ?>
+    <thead>
         <tr>
-            <td><?php echo $prestasi['id_prestasi']; ?></td>
-            <td><?php echo $prestasi['nama_prestasi']; ?></td>
-            <td><?php echo $prestasi['penyelenggara']; ?></td>
-            <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
-            <td><?php echo $prestasi['id_ukm']; ?></td>
-            <td><?php echo $prestasi['nama_ukm']; ?></td>
+            <th>ID Prestasi</th>
+            <th>Nama Prestasi</th>
+            <th>Penyelenggara</th>
+            <th>Tanggal Prestasi</th>
+            <th>ID UKM</th>
+            <th>Nama UKM</th>
         </tr>
-    <?php endforeach; ?>
-</tbody>
-    </table>
+    </thead>
+    <tbody>
+        <?php
+        // Define Indonesian month names
+        $indonesianMonths = array(
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+            'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        );
+
+        if (empty($prestasi_data)) {
+            echo '<tr><td colspan="6">Belum ada prestasi</td></tr>';
+        } else {
+            foreach ($prestasi_data as $prestasi) :
+        ?>
+                <tr>
+                    <td><?php echo $prestasi['id_prestasi']; ?></td>
+                    <td><?php echo $prestasi['nama_prestasi']; ?></td>
+                    <td><?php echo $prestasi['penyelenggara']; ?></td>
+                    <td><?php echo date('d', strtotime($prestasi['tgl_prestasi'])); ?> <?php echo $indonesianMonths[intval(date('m', strtotime($prestasi['tgl_prestasi']))) - 1]; ?> <?php echo date('Y', strtotime($prestasi['tgl_prestasi'])); ?></td>
+                    <td><?php echo $prestasi['id_ukm']; ?></td>
+                    <td><?php echo $prestasi['nama_ukm']; ?></td>
+                </tr>
+        <?php endforeach;
+        } ?>
+    </tbody>
+</table>
     <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {

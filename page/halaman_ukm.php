@@ -8,7 +8,7 @@ $error = '';
 
 $id_ukm = $_GET['id_ukm'];
 
-$query = "SELECT * FROM tab_strukm";
+$query = "SELECT * FROM tab_strukm WHERE id_ukm = '$id_ukm'";
 $result = mysqli_query($conn, $query);
 
 if (!$result) {
@@ -37,8 +37,8 @@ if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
   $logo_src = $defaultLogo;
 }
 
-$query = "SELECT visi, misi, sejarah, nama_ukm FROM tab_ukm WHERE id_ukm = '$id_ukm'";
-$infoResult = mysqli_query($conn, $query);
+$queryInfo = "SELECT visi, misi, sejarah, nama_ukm FROM tab_ukm WHERE id_ukm = '$id_ukm'";
+$infoResult = mysqli_query($conn, $queryInfo);
 
 // Memeriksa apakah query berhasil dieksekusi
 if (!$infoResult) {
@@ -51,7 +51,7 @@ $row = mysqli_fetch_assoc($infoResult);
 $visi = $row['visi'];
 $misi = $row['misi'];
 $sejarah = $row['sejarah'];
-$nama_ukm = $row['nama_ukm'];
+$nama_ukmNav = $row['nama_ukm'];
 
 // Menghitung jumlah anggota pada setiap jabatan berdasarkan id_ukm
 $jabatan_count = array();
@@ -140,7 +140,7 @@ $facebook = "https://www.facebook.com/" . $facebook;
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php echo $nama_ukm; ?></title>
+	<title><?php echo $nama_ukmNav; ?></title>
   <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -374,12 +374,12 @@ p {
 					if ($_SESSION['level'] == "3") {
 						// Jika level 3, arahkan ke halaman dashboard.php
 						echo '<a class="nav-link btn btn-signin" href="dashboard.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
-					} elseif ($_SESSION['level'] == "1" || $_SESSION['level'] == "Admin") {
+					} elseif ($_SESSION['level'] == "1") {
 						// Jika level 1 atau admin, arahkan ke halaman admin.php
-						echo '<a class="nav-link btn btn-signin" href="pengurus.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					} elseif ($_SESSION['level'] == "2") {
 						// Jika level 2, arahkan ke halaman kemahasiswaan.php
-						echo '<a class="nav-link btn btn-signin" href="admin.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
+						echo '<a class="nav-link btn btn-signin" href="pengurus.php"><p class="nav-greeting">Hi! ' . $_SESSION['nama_lengkap'] . '</p></a>';
 					}
         }
 			?>
@@ -390,7 +390,7 @@ p {
 </nav>
 
 	<div class="container">
-  <h1><?php echo $nama_ukm; ?></h1>
+  <h1><?php echo $nama_ukmNav; ?></h1>
         <div class="ukm-info">
         <div class="ukm-logo">
             <img src="<?php echo $logo_src; ?>" alt="Logo UKM" class="ukm-logo">
@@ -466,9 +466,9 @@ p {
         <button id="lihat-sk-button" class="sk-button" title="Tekan tombol untuk melihat SK UKM">
             <i class="fas fa-file-alt"></i>
         </button>
-    <p><?php echo $nama_ukm; ?></p>
+    <p><?php echo $nama_ukmNav; ?></p>
     <?php
-    $id_ukm_target = '$id_ukm';
+    $id_ukm_target = $id_ukm;
 
     echo "<table>";
     foreach ($jabatan as $id_jabatan => $nama_jabatan) {
