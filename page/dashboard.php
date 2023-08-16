@@ -377,8 +377,7 @@ if ($resultIdUkm) {
                             echo '<p>Tidak ada data yang perlu diproses saat ini.</p>';
                         }
                         ?>
-                    </div>
-            
+                    </div>          
                     <!-- Content for UKM yang diikuti -->
                     <div class="card shadow mt-4 scrollable-content">
                         <h4 class="mb-3">Daftar UKM yang diikuti</h4>

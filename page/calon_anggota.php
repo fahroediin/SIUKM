@@ -144,8 +144,6 @@ $active_page = 'calon_anggota';
             }
         });
     }
-
-    // Call the function to apply the border to the buttons
     wrapButtonsWithBorder();
 </script>
                     <div class="content">
@@ -155,7 +153,7 @@ $active_page = 'calon_anggota';
                             <tr>
                                 <th>ID Calabar</th>
                                 <th>ID User</th>
-                                <th>Nama</th>
+                                <th>Nama Lengkap</th>
                                 <th>Prodi</th>
                                 <th>ID UKM</th>
                                 <th>Nama UKM</th>

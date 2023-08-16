@@ -168,6 +168,7 @@ if ($result_logo && mysqli_num_rows($result_logo) > 0) {
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-siukm.png">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 
 /* Style untuk label */
@@ -564,16 +565,24 @@ button[type=reset]:hover {
                     </select>
                 </div>
                 <input type="hidden" id="nama_ukm" name="nama_ukm" class="form-control">
-        <div class="form-group">
-            <label for="pasfoto">*Pasfoto</label>
-            <input type="file" id="pasfoto" name="pasfoto" accept="image/*" value="<?php echo $row['pasfoto']; ?>" onchange="showPreview(this, 'pasfotoPreview') required">
-            <img id="pasfotoPreview" src="#" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px; display: none;">
-        </div>
-        <div class="form-group">
-            <label for="foto_ktm">*Foto KTM</label>
-            <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*" value="<?php echo $row['foto_ktm']; ?>" onchange="showPreview(this, 'fotoKtmPreview') required">
-            <img id="fotoKtmPreview" src="#" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px; display: none;">
-        </div>
+                <div class="form-group">
+          <label for="pasfoto">*Pasfoto</label>
+          <input type="file" id="pasfoto" name="pasfoto" accept="image/*" onchange="showPreview(this, 'pasfotoPreview');" <?php if ($row['pasfoto']) echo "required"; ?>>
+          <?php if ($row['pasfoto']): ?>
+              <img id="pasfotoPreview" src="<?php echo $row['pasfoto']; ?>" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px;">
+          <?php else: ?>
+              <img id="pasfotoPreview" src="#" alt="Pasfoto Preview" style="max-width: 100px; max-height: 100px; display: none;">
+          <?php endif; ?>
+      </div>
+      <div class="form-group">
+          <label for="foto_ktm">*Foto KTM</label>
+          <input type="file" id="foto_ktm" name="foto_ktm" accept="image/*" onchange="showPreview(this, 'fotoKtmPreview');" <?php if ($row['foto_ktm']) echo "required"; ?>>
+          <?php if ($row['foto_ktm']): ?>
+              <img id="fotoKtmPreview" src="<?php echo $row['foto_ktm']; ?>" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px;">
+          <?php else: ?>
+              <img id="fotoKtmPreview" src="#" alt="Foto KTM Preview" style="max-width: 100px; max-height: 100px; display: none;">
+          <?php endif; ?>
+      </div>
         <div class="form-group">
       <label for="alasan">*Alasan Bergabung</label>
       <textarea id="alasan" name="alasan" placeholder="Masukkan alasan Anda bergabung minimal 50 karakter dan maksimal 250 karakter" required minlength="50" maxlength="250"></textarea>
@@ -684,26 +693,14 @@ function showPreview(input, previewId) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function(e) {
-            preview.style.display = "block";
             preview.src = e.target.result;
+            preview.style.display = "block";
         };
         reader.readAsDataURL(input.files[0]);
     } else {
         preview.style.display = "none";
     }
 }
-function showPreview(input, previewId) {
-    var preview = document.getElementById(previewId);
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.style.display = "block";
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
 </script>
 
 

@@ -150,22 +150,23 @@ if (isset($_GET['submit'])) {
     }
   </script>
 <script>
-    var isTimerExpired = false; // Variabel untuk menandakan apakah timer telah selesai
-    function startTimer(duration, display) {
-        var timer = duration, minutes, seconds;
-        var timerInterval = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            display.textContent = minutes + ":" + seconds;
-            if (--timer < 0) {
-                clearInterval(timerInterval);
-                isTimerExpired = true; // Timer telah selesai
-                enableSubmitButton();
-            }
-        }, 1000);
-    }
+       var isTimerExpired = false;
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    var timerInterval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        display.textContent = minutes + ":" + seconds;
+        if (--timer < 0) {
+            clearInterval(timerInterval);
+            isTimerExpired = true;
+            enableSubmitButton();
+        }
+    }, 1000);
+}
     window.onload = function () {
         var duration = 60 * 30; // 60 dikalikan dengan mau berapa menit
         var display = document.querySelector('.timer-container');
