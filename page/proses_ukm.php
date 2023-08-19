@@ -94,27 +94,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "sssssssss", $id_ukm, $nama_ukm, $sejarah, $logo_ukm_filename, $instagram, $facebook, $visi, $misi, $sk_filename);
 
-    
-    if (mysqli_stmt_execute($stmt)) {
-        header("Location: proses_ukm.php?success=1&showSnackbar=true"); // Add &showSnackbar=true
-        exit();
-    
-    } else {
-        echo "Error saving data: " . mysqli_error($conn);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: proses_ukm.php?success=1&showSnackbar=true"); // Add &showSnackbar=true
+            exit();
+        
+        } else {
+            echo "Error saving data: " . mysqli_error($conn);
+        }
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
     }
+    $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+    $query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi, sk FROM tab_ukm";
+    
+    if (!empty($searchTerm)) {
+        $searchTerm = mysqli_real_escape_string($conn, $searchTerm);
+        $query .= " WHERE nama_ukm LIKE '%$searchTerm%'";
+    }
+    
+    $result = mysqli_query($conn, $query);
+    
 
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
-}
-
-$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi, sk FROM tab_ukm";
-$result = mysqli_query($conn, $query);
-
-$ukmData = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    $ukmData[] = $row;
-}
-?>
+    $ukmData = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $ukmData[] = $row;
+    }
+    ?>
 
 <!DOCTYPE html>
 <html>
@@ -336,7 +343,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 </a>
         </div>
         <form class="form-inline mt-2 mt-md-0 float-right" method="get">
-        <input class="form-control mr-sm-2" type="text" placeholder="Cari Nama UKM" name="search" aria-label="Search">
+        <input class="form-control mr-sm-2" type="text" placeholder="Cari Nama UKM" name="search" aria-label="Search" value="<?php echo $searchTerm; ?>">
         <button type="submit" class="btn btn-outline-primary">Search</button>
     <a href="proses_ukm.php" class="btn btn-outline-secondary ml-2">
   <i class="fas fa-sync-alt"></i>
@@ -391,7 +398,8 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $index; ?>">Hapus</a>
                     <a href="#" class="btn btn-primary btn-edit-ukm" data-ukm-id="<?php echo $ukm['id_ukm']; ?>" data-toggle="modal" data-target="#editUkmModal" onclick="openEditModal(this)">Edit</a>
                     <a href="halaman_ukm.php?id_ukm=<?php echo $ukm['id_ukm']; ?>" class="btn btn-secondary" target="_blank">Lihat Halaman</a>
-                    </p>
+                    <a href="#" class="btn btn-info" data-toggle="modal" data-target="#skModal<?php echo $index; ?>">Lihat SK</a> <!-- Tombol untuk melihat SK -->
+                </p>
                 </div>
             </div>
         </div>
@@ -461,6 +469,26 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="skModal<?php echo $index; ?>" tabindex="-1" role="dialog" aria-labelledby="skModalLabel<?php echo $index; ?>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="skModalLabel<?php echo $index; ?>">SK - <?php echo $ukm['nama_ukm']; ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <?php $sk_filename = $ukm['sk']; ?>
+                    <?php if (!empty($sk_filename)) { ?>
+                        <a href="../assets/images/sk/<?php echo $sk_filename; ?>" target="_blank">Lihat SK</a>
+                    <?php } else { ?>
+                        <p>Belum ada SK yang diunggah untuk UKM ini.</p>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
         <?php if (($index + 1) % 2 === 0) { ?>
             </div><div class="row">
         <?php } ?>
@@ -563,6 +591,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <div class="form-group">
                         <label for="sk_edit">SK:</label>
                         <input type="file" class="form-control-file" id="sk_edit" name="sk_edit" accept=".pdf">
+                        <div id="sk_preview_container"></div>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </form>
@@ -570,9 +599,45 @@ while ($row = mysqli_fetch_assoc($result)) {
         </div>
     </div>
 </div>
-
-
 <div id="snackbar"></div>
+<script>
+    // Wait for the page to load
+    window.addEventListener('DOMContentLoaded', (event) => {
+        // Add an event listener to the SK input field
+        const logoInput = document.getElementById('logo_edit');
+        const logoPreview = document.getElementById('logo_edit_preview');
+        logoInput.addEventListener('change', function() {
+    // Clear the previous logo preview
+    logoPreview.src = '';
+        // Check if a logo file was selected
+        if (logoInput.files && logoInput.files[0]) {
+        const logoFile = logoInput.files[0];
+        logoPreview.src = URL.createObjectURL(logoFile);
+    }
+});
+        const skInput = document.getElementById('sk_edit');
+        const skPreviewContainer = document.getElementById('sk_preview_container');
+        skInput.addEventListener('change', function() {
+            // Clear the previous preview
+            skPreviewContainer.innerHTML = '';
+
+            // Check if a file was selected
+            if (skInput.files && skInput.files[0]) {
+                const skFile = skInput.files[0];
+
+                // Create a PDF viewer object
+                const pdfViewer = document.createElement('iframe');
+                pdfViewer.setAttribute('src', URL.createObjectURL(skFile));
+                pdfViewer.setAttribute('width', '100%');
+                pdfViewer.setAttribute('height', '400px');
+
+                // Append the PDF viewer to the preview container
+                skPreviewContainer.appendChild(pdfViewer);
+            }
+        });
+    });
+</script>
+
 <script>
         // Wait for the page to load
         window.addEventListener('DOMContentLoaded', (event) => {
@@ -664,8 +729,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-
 <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {
