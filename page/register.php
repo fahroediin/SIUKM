@@ -160,7 +160,7 @@ if ($result_bg && mysqli_num_rows($result_bg) > 0) {
     <h1>Register</h1>
     <div>
     <label for="id_user">*ID User (NIM)</label>
-    <input type="text" class="form-control" id="id_user" maxlength="10" name="id_user" required>
+    <input type="text" class="form-control" id="id_user" placeholder="Masukan NIM anda" maxlength="10" name="id_user" required>
     <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
 </div>
 <script>
@@ -183,14 +183,14 @@ document.getElementById("id_user").addEventListener("input", function(event) {
 <div class="form-group">
     <label for="password">*Password:</label>
     <div class="password-input">
-        <input type="password" class="form-control" id="password" name="password" required>
+        <input type="password" class="form-control" placeholder="Password kombinasi huruf angka" id="password" name="password" required>
         <i class="fas fa-eye" id="passwordToggle1"></i>
     </div>
 </div>
 <div class="form-group">
     <label for="konfirmasi_password">*Konfirmasi Password</label>
     <div class="password-input">
-        <input type="password" class="form-control" id="konfirmasi_password" name="confirmPassword" required>
+        <input type="password" class="form-control" placeholder="Ulangi password" id="konfirmasi_password" name="confirmPassword" required>
         <i class="fas fa-eye" id="passwordToggle2"></i>
         <div class="invalid-feedback" id="passwordMismatchFeedback">
             Password tidak sesuai.

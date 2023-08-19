@@ -389,7 +389,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <p>Facebook: <?php echo $ukm['facebook']; ?></p>
                     <p class="text-center">
                     <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $index; ?>">Hapus</a>
-                    <a href="#editUkmModal" class="btn btn-primary" data-toggle="modal" data-ukm-id="<?php echo $ukm['id_ukm']; ?>" onclick="openEditModal(this)">Edit</a>
+                    <a href="#" class="btn btn-primary btn-edit-ukm" data-ukm-id="<?php echo $ukm['id_ukm']; ?>" data-toggle="modal" data-target="#editUkmModal" onclick="openEditModal(this)">Edit</a>
                     <a href="halaman_ukm.php?id_ukm=<?php echo $ukm['id_ukm']; ?>" class="btn btn-secondary" target="_blank">Lihat Halaman</a>
                     </p>
                 </div>
@@ -539,7 +539,31 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <label for="sejarah_edit">Sejarah:</label>
                         <textarea class="form-control" id="sejarah_edit" name="sejarah_edit" rows="4" required></textarea>
                     </div>
-                    <!-- ... (Other input fields for editing) ... -->
+                    <div class="form-group">
+                        <label for="visi_edit">Visi:</label>
+                        <textarea class="form-control" id="visi_edit" name="visi_edit" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="misi_edit">Misi:</label>
+                        <textarea class="form-control" id="misi_edit" name="misi_edit" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="instagram_edit">Instagram:</label>
+                        <input type="text" class="form-control" id="instagram_edit" name="instagram_edit" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="facebook_edit">Facebook:</label>
+                        <input type="text" class="form-control" id="facebook_edit" name="facebook_edit" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="logo_edit">Logo:</label>
+                        <img id="logo_edit_preview" src="" alt="Logo Preview" style="max-width: 100px; max-height: 100px;">
+                        <input type="file" class="form-control-file" id="logo_edit" name="logo_edit">
+                    </div>
+                    <div class="form-group">
+                        <label for="sk_edit">SK:</label>
+                        <input type="file" class="form-control-file" id="sk_edit" name="sk_edit" accept=".pdf">
+                    </div>
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </form>
             </div>
@@ -571,7 +595,6 @@ while ($row = mysqli_fetch_assoc($result)) {
             }
         }
     });
-
     // Function to show the snackbar with a message
     function showSnackbar(message) {
         const snackbar = document.getElementById('snackbar');
@@ -585,6 +608,26 @@ while ($row = mysqli_fetch_assoc($result)) {
     }
 </script>
 
+<script>
+function openEditModal(button) {
+    const id_ukm = button.getAttribute("data-ukm-id");
+    const ukmData = <?php echo json_encode($ukmData); ?>;
+    
+    const ukm = ukmData.find(item => item.id_ukm === id_ukm);
+    
+    if (ukm) {
+        document.getElementById("id_ukm_edit").value = ukm.id_ukm;
+        document.getElementById("nama_ukm_edit").value = ukm.nama_ukm;
+        document.getElementById("sejarah_edit").value = ukm.sejarah;
+        document.getElementById("visi_edit").value = ukm.visi;
+        document.getElementById("misi_edit").value = ukm.misi;
+        document.getElementById("logo_edit_preview").src = "../assets/images/logoukm/" + ukm.logo_ukm;
+        document.getElementById("instagram_edit").value = ukm.instagram;
+        document.getElementById("facebook_edit").value = ukm.facebook;
+        document.getElementById("sk_edit").value = ukm.sk;
+    }
+}
+</script>
 
 <script>
     function resetAllTextFields() {
@@ -597,6 +640,32 @@ while ($row = mysqli_fetch_assoc($result)) {
     document.getElementById("id_ukm_new").value = "";
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editButtons = document.querySelectorAll('.btn-edit-ukm');
+    const editForm = document.getElementById('editUkmForm');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            openEditModal(button);
+
+            if (ukm) {
+                editForm.querySelector('#id_ukm_edit').value = ukm.id_ukm;
+                editForm.querySelector('#nama_ukm_edit').value = ukm.nama_ukm;
+                editForm.querySelector('#sejarah_edit').value = ukm.sejarah;
+                editForm.querySelector('#visi_edit').value = ukm.visi;
+                editForm.querySelector('#misi_edit').value = ukm.misi;
+                editForm.querySelector('#logo_edit').value = ukm.logo;
+                editForm.querySelector('#instagram_edit').value = ukm.instagram;
+                editForm.querySelector('#facebook_edit').value = ukm.facebook;
+                editForm.querySelector('#sk_edit').value = ukm.sk;
+            }
+        });
+    });
+});
+</script>
+
+
 <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {

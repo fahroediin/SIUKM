@@ -78,20 +78,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate a unique id_laporan
     $id_laporan = generateUniqueId();
 
-    // Check if a file was uploaded
-    if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
-        $file_name = $_FILES['file']['name'];
-        $file_tmp = $_FILES['file']['tmp_name'];
-        $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+// Check if a file was uploaded
+if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+    $file_name = $_FILES['file']['name'];
+    $file_tmp = $_FILES['file']['tmp_name'];
+    $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
 
-        // Generate a unique filename
-        $unique_filename = $id_laporan . '_' . $jenis . '_' . $nama_ukm . '.' . $file_extension;
+    // Generate a unique filename
+    $unique_filename = $id_laporan . '_' . $jenis . '_' . $nama_ukm . '.' . $file_extension;
 
-        // Destination directory for uploaded files
-        $destination_directory = '../assets/images/lpj/';
+    // Destination directory for uploaded files
+    $destination_directory = '../assets/images/sk/';  // Change this to the desired directory
 
-        // Move the uploaded file to the destination directory
-        if (move_uploaded_file($file_tmp, $destination_directory . $unique_filename)) {
+    // Move the uploaded file to the destination directory
+    if (move_uploaded_file($file_tmp, $destination_directory . $unique_filename)) {
         $sql = "INSERT INTO tab_lpj (id_laporan, jenis, id_ukm, nama_ukm, tgl_laporan, file_lpj, laporan_bulan_tahun, daftar_hadir, foto_bimbingan, foto_nonrutin, saran) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sssssssssss", $id_laporan, $jenis, $id_ukm, $nama_ukm, $tgl_laporan, $unique_filename, $laporan_bulan_tahun, $daftar_hadir, $foto_bimbingan, $foto_nonrutin, $saran);
@@ -99,13 +99,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
             header("Location: proses_lpj.php?success=1");
             exit();
-            } else {
-                echo "Sorry, there was an error uploading your file.";
-                exit();
-            }
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+            exit();
         }
     }
 }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -208,6 +209,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     justify-content: space-between;
     /* Penyesuaian padding atau margin sesuai kebutuhan */
 }
+#file-preview-label {
+    display: none; /* Hide the label by default */
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#file-preview-container a {
+    color: #007bff;
+    text-decoration: underline;
+    margin-top: 5px;
+}
+.preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+}
    </style>
  <!-- Sidebar -->
  <div class="sidebar">
@@ -269,6 +286,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <th>Nama UKM</th>
                 <th>Tanggal Laporan</th>
                 <th>File</th>
+                <th>Daftar Hadir</th>
+                <th>Foto Bimbingan</th>
+                <th>Foto Non-rutin</th>
             </tr>
         </thead>
 
@@ -303,6 +323,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '<td>' . $lpjRow['nama_ukm'] . '</td>';
         echo '<td>' . formatTanggalIndonesia($lpjRow['tgl_laporan']) . '</td>';
         echo '<td><a href="view_lpj.php?file=' . $lpjRow['file_lpj'] . '">Download</a></td>';
+        echo '<td>' . $lpjRow['daftar_hadir'] . '</td>';
+        echo '<td>' . $lpjRow['foto_bimbingan'] . '</td>';
+        echo '<td>' . $lpjRow['foto_nonrutin'] . '</td>';
         echo '</tr>';                
     }
     ?>
@@ -323,7 +346,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="modal-body">
             <div class="row justify-content-center">
             <div class="card">
-                <h2 style="text-align: center;">UNGGAH LPJ</h2>
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                     enctype="multipart/form-data" class="form">
                     <input type="hidden" name="action" value="add">
@@ -362,6 +384,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?php if(isset($row_lpj['file']) && !empty($row_lpj['file'])): ?>
                         <p>Existing File: <a href="../assets/lpj/<?php echo $row_lpj['file']; ?>" target="_blank"><?php echo $row_lpj['file']; ?></a></p>
                     <?php endif; ?>
+                     <div id="file-preview-container"></div>
                 </div>
                 <div class="form-group">
     <label for="laporan_bulan_tahun">Laporan Bulan/Tahun</label>
@@ -402,17 +425,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="form-group">
     <label for="daftar_hadir">Daftar Hadir</label>
-    <input type="file" id="daftar_hadir" name="daftar_hadir" class="form-control">
+    <input type="file" id="daftar_hadir" name="daftar_hadir" class="form-control-file" onchange="previewImage('daftar_hadir', 'daftar-hadir-preview-container')">
+    <div id="daftar-hadir-preview-container"></div>
 </div>
 <div class="form-group">
     <label for="foto_bimbingan">Foto Bimbingan</label>
-    <input type="file" id="foto_bimbingan" name="foto_bimbingan" class="form-control">
+    <input type="file" id="foto_bimbingan" name="foto_bimbingan" class="form-control-file" onchange="previewImage('foto_bimbingan', 'foto-bimbingan-preview-container')">
+    <div id="foto-bimbingan-preview-container"></div>
 </div>
 <div class="form-group">
     <label for="foto_nonrutin">Foto Nonrutin</label>
-    <input type="file" id="foto_nonrutin" name="foto_nonrutin" class="form-control">
+    <input type="file" id="foto_nonrutin" name="foto_nonrutin" class="form-control-file" onchange="previewImage('foto_nonrutin', 'foto-nonrutin-preview-container')">
+    <div id="foto-nonrutin-preview-container"></div>
 </div>
-
 <div class="form-group">
     <label for="saran">Saran</label>
     <textarea id="saran" name="saran" class="form-control"></textarea>
@@ -422,15 +447,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary">Simpan</button>
-            </div>
         </div>
     </div>
 </div>
-       
 <script>
+function previewImage(inputId, previewContainerId) {
+    const input = document.getElementById(inputId);
+    const previewContainer = document.getElementById(previewContainerId);
+    
+    while (previewContainer.firstChild) {
+        previewContainer.removeChild(previewContainer.firstChild);
+    }
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const image = document.createElement('img');
+            image.setAttribute('src', event.target.result);
+            image.setAttribute('class', 'preview-image');
+            previewContainer.appendChild(image);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>       
+<script>
+function updateFilePreview(inputElement) {
+    const previewContainer = document.getElementById('file-preview-container');
+    const previewLabel = document.getElementById('file-preview-label');
+
+    // Clear previous preview
+    previewContainer.innerHTML = '';
+
+    if (inputElement.files && inputElement.files[0]) {
+        const file = inputElement.files[0];
+        const filePreviewLink = document.createElement('a');
+        filePreviewLink.href = URL.createObjectURL(file);
+        filePreviewLink.target = '_blank';
+        filePreviewLink.textContent = 'Preview File';
+
+        // Append the link to the preview container
+        previewContainer.appendChild(filePreviewLink);
+        previewLabel.style.display = 'block'; // Display the preview label
+    } else {
+        previewLabel.style.display = 'none'; // Hide the preview label if no file selected
+    }
+}
+
+// Attach the updateFilePreview function to the file input change event
+document.getElementById('file').addEventListener('change', function() {
+    updateFilePreview(this);
+});
+
     // Function to open the Lapor LPJ modal
     function openLaporModal() {
         $('#laporModal').modal('show');
