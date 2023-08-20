@@ -54,48 +54,37 @@ if (isset($_POST['submit'])) {
    // Generate ID Prestasi
 $id_prestasi = generateIdPrestasi($id_ukm, $nama_prestasi, $penyelenggara, $tgl_prestasi);
 
-// Check if the certificate file is uploaded
-if (isset($_FILES['sertifikat'])) {
+ // Check if the certificate file is uploaded
+ if (isset($_FILES['sertifikat']) && $_FILES['sertifikat']['error'] === UPLOAD_ERR_OK) {
     $targetDir = '../assets/images/sertifikat/';
-    $uploadOk = 1;
     $imageFileType = strtolower(pathinfo($_FILES['sertifikat']['name'], PATHINFO_EXTENSION));
-    
+
     // Generate the certificate file name
     $certificateFilename = "sertifikat" . $id_ukm . "_" . $nama_prestasi . "." . $imageFileType;
     $targetFile = $targetDir . $certificateFilename;
-    
-        // Check if image file is a actual image or fake image
-        $check = getimagesize($_FILES['sertifikat']['tmp_name']);
-        if ($check !== false) {
-            $uploadOk = 1;
-        } else {
-            echo "File is not an image.";
-            $uploadOk = 0;
-        }
-    
-        // Check file size
-        if ($_FILES['sertifikat']['size'] > 500000) {
-            echo "Sorry, your file is too large.";
-            $uploadOk = 0;
-        }
-    
-        // Allow certain file formats
-        if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
-            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-            $uploadOk = 0;
-        }
-    
-        if ($uploadOk == 0) {
-            echo "Sorry, your file was not uploaded.";
-        } else {
-            if (move_uploaded_file($_FILES['sertifikat']['tmp_name'], $targetFile)) {
-                $sertifikatFilename = $certificateFilename;
-                echo "The file $sertifikatFilename has been uploaded.";
-            } else {
-                echo "Sorry, there was an error uploading your file.";
-            }
-        }
+
+    // Check file size
+    if ($_FILES['sertifikat']['size'] > 5000000) {
+        echo "Sorry, your file is too large.";
+        exit();
     }
+
+    // Allow certain file formats
+    $allowedFormats = array('jpg', 'jpeg', 'png', 'gif');
+    if (!in_array($imageFileType, $allowedFormats)) {
+        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        exit();
+    }
+
+    if (move_uploaded_file($_FILES['sertifikat']['tmp_name'], $targetFile)) {
+        $sertifikatFilename = $certificateFilename;
+        // Insert sertifikatFilename into the database query
+        $sql = "INSERT INTO tab_prestasi (id_prestasi, nama_prestasi, penyelenggara, tingkat, tgl_prestasi, id_ukm, nama_ukm, sertifikat) VALUES ('$id_prestasi', '$nama_prestasi', '$penyelenggara', '$tingkat', '$tgl_prestasi', '$id_ukm', '$nama_ukm', '$sertifikatFilename')";
+        // ... (Bagian kode setelahnya)
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+    }
+}
     $sertifikatFilename = isset($sertifikatFilename) ? $sertifikatFilename : ''; // Initialize with empty string if not set
 
     // Memeriksa apakah ID Prestasi sudah ada di database
@@ -472,7 +461,7 @@ endforeach; ?>
             </div>
             <div class="modal-body">
             <h2 style="text-align: center;">Tambah Prestasi</h2>
-    <form method="post" action="proses_prestasi.php" enctype="multipart/form-data">
+            <form method="post" action="proses_prestasi.php" enctype="multipart/form-data">
               <!-- Menambahkan input field hidden untuk id_prestasi -->
               <input type="hidden" name="id_prestasi" value="<?php echo $prestasi['id_prestasi']; ?>">
               <div class="form-group">
