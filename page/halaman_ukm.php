@@ -146,6 +146,7 @@ $facebook = "https://www.facebook.com/" . $row['facebook'];
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -462,9 +463,11 @@ p {
     <div class="container">
         <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
         <div class="ukm-button-grid">
-          <button class="sk-button" title="Lihat SK">
-                <i class="fas fa-file-alt"></i>
-            </button>
+        <button class="btn btn-primary sk-button" data-toggle="modal" data-target="#pdfModal" data-sk-filename="<?php echo $sk_filename; ?>">
+    <i class="fas fa-file-alt"></i>
+</button>
+
+
             <p><?php echo $nama_ukmNav; ?></p>
             <?php
 
@@ -477,8 +480,7 @@ p {
                     foreach ($struktur[$id_jabatan][$id_ukm_target] as $data) {
                         $nim = $data['nim'];
                         $nama_lengkap = $data['nama_lengkap'];
-                        echo "<tr sk-url='../assets/images/sk/" . $row['sk'] . "'>";
-                        echo "<tr><td>$nama_lengkap</td><td>$nim</td></tr>";
+                        echo "<tr><td>$nim</td><td>$nama_lengkap</td></tr>";
                     }
                 }
             }
@@ -489,33 +491,35 @@ p {
 </div>
 </div>
 </div>
-<!-- Modal for displaying sk image -->
-<div class="modal fade" id="skModal" tabindex="-1" role="dialog" aria-labelledby="skModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="skModalLabel">Sertifikat Prestasi</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <img id="skImage" src="" alt="sk" style="max-width: 100%;">
-      </div>
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">SK - Surat Keputusan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <embed src="" type="application/pdf" width="100%" height="600">
+            </div>
+        </div>
     </div>
-  </div>
 </div>
+
 
 <script>
 $(document).ready(function() {
-    // Handle click event on the sk link
     $(".sk-button").click(function() {
-        var skUrl = $(this).closest("tr").data("sk-url");
-        $("#skImage").attr("src", skUrl);
-        $("#skModal").modal("show");
+        var skFilename = $(this).data("sk-filename"); // Get the SK filename from data attribute
+        var skPdfUrl = "../assets/images/sk/" + skFilename; // Construct the URL for the PDF
+        
+        // Set the PDF URL to the embed src attribute
+        $("#pdfModal embed").attr("src", skPdfUrl);
     });
 });
 </script>
+
 
 
     <footer>SIUKM @2023 | Visit our <a href="https://stmikkomputama.ac.id/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">

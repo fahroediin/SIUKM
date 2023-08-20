@@ -377,7 +377,8 @@ $result_galeri = mysqli_query($conn, $query_galeri);
         </tr>
     </thead>
     <tbody>
-            <?php
+    <?php
+            if (mysqli_num_rows($result_galeri) > 0) {
                     // Define Indonesian month names
             $indonesianMonths = array(
                 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
@@ -400,9 +401,14 @@ $result_galeri = mysqli_query($conn, $query_galeri);
                     </td>";
                 echo "</tr>";
             }
-            ?>
-        </tbody>
+        } else {
+            // Display a message when there is no gallery data
+            echo '<tr><td colspan="9" style="text-align: center;">Tidak ada data galeri yang ditemukan</td></tr>';
+        }
+        ?>
+    </tbody>
 </table>
+</div>
 
 <script>
     function confirmDelete(namaKegiatan) {

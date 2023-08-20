@@ -431,13 +431,14 @@ function logout() {
                     <option value="">------------Pilih ID User------------</option>
                     <?php
                     // Fetch data from the tab_user table and populate the dropdown options
-                    $userQuery = "SELECT id_user FROM tab_user"; // Select only the id_user column
+                    $userQuery = "SELECT id_user, nama_lengkap FROM tab_user"; // Select only the id_user column
                     $userResult = mysqli_query($conn, $userQuery);
 
                     while ($userRow = mysqli_fetch_assoc($userResult)) {
                         // Use a regular expression to check if the id_user contains only digits (numbers)
                         if (preg_match('/^\d+$/', $userRow['id_user'])) {
-                            echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . '</option>';
+                            echo '<option value="' . $userRow['id_user'] . '">' . $userRow['id_user'] . ' - ' . $userRow['nama_lengkap'] . '</option>
+                            ';
                         }
                     }
                     ?>

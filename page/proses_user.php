@@ -103,7 +103,10 @@ if (isset($_POST['submit'])) {
 
    // Memeriksa apakah form tambah user telah di-submit
 if (isset($_POST['submit'])) {
-    // Mengambil data dari form
+ // Check if the id_user is already registered
+ if (isIdUserRegistered($id_user, $conn)) {
+    $error_message = "ID User telah terdaftar";
+} else {
     $id_user = $_POST['id_user'];
     $password = $_POST['password'];
     $nama_lengkap = $_POST['nama_lengkap'];
@@ -112,7 +115,17 @@ if (isset($_POST['submit'])) {
     $level = $_POST['level'];
     $prodi = $_POST['prodi']; 
     $semester = $_POST['semester']; 
-
+ // Check if the id_user is already registered
+    if (isIdUserRegistered($id_user, $conn)) {
+        $error_message = "ID User telah terdaftar";
+    } else {
+        $password = $_POST['password'];
+        $nama_lengkap = $_POST['nama_lengkap'];
+        $email = $_POST['email'];
+        $no_hp = $_POST['no_hp'];
+        $level = $_POST['level'];
+        $prodi = $_POST['prodi']; 
+        $semester = $_POST['semester']; 
     // Handle file uploads for pasfoto and foto_ktm
     $pasfoto_filename = ""; // Variable to store pasfoto file name
     $foto_ktm_filename = ""; // Variable to store foto_ktm file name
@@ -156,6 +169,8 @@ if ($result) {
             // Handle the error if insertion fails
         }
     }
+}
+}
 }
 }
 }
@@ -529,13 +544,14 @@ for (var i = 0; i < deleteButtons.length; i++) {
         <!-- Place your form here -->
         <h2 style="text-align: center;">Tambah Pengguna</h2>
         <form method="POST" action="proses_user.php" onsubmit="return validateForm();" enctype="multipart/form-data">
-            <div class="form-group">
-            <div class="form-group">
+        <div class="form-group">
     <label for="id_user">*ID User:</label>
     <input type="text" class="form-control" placeholder="ID User menggunakan NIM/NIDN" id="id_user" maxlength="10" name="id_user" required>
     <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
+    <?php if(isset($error_message)): ?>
+    <small class="text-danger"><?php echo $error_message; ?></small>
+    <?php endif; ?>
 </div>
-
 <script>
     document.getElementById("id_user").addEventListener("input", function(event) {
         let input = event.target.value;

@@ -389,7 +389,6 @@ $conn->close();
 </form>
 
 <div class="content">
-<?php if (count($prestasi_data) > 0) : ?>
         <table class="table">
         <thead>
             <tr>
@@ -411,8 +410,9 @@ $conn->close();
         'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
         'Agustus', 'September', 'Oktober', 'November', 'Desember'
     );
-    $counter = 1;
-    foreach ($prestasi_data as $prestasi) :
+    if (count($prestasi_data) > 0) {
+        $counter = 1;
+        foreach ($prestasi_data as $prestasi) {
     ?>
         <tr>
         <td><?php echo $counter; ?></td>
@@ -440,15 +440,15 @@ $conn->close();
                 </form>
             </td>
         </tr>
-        
-    <?php 
-       $counter++;
-endforeach; ?>
-</tbody>
-    </table>
-    <?php else : ?>
-        <p>Tidak ada data prestasi.</p>
-    <?php endif; ?>
+        <?php
+            $counter++;
+        }
+    } else {
+        echo '<tr><td colspan="9" style="text-align: center;">Tidak ada data prestasi</td></tr>';
+    }
+    ?>
+    </tbody>
+</table>
 </div>
           <!-- Modal for Tambah Prestasi -->
           <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" role="dialog" aria-labelledby="tambahPrestasiModalLabel" aria-hidden="true">

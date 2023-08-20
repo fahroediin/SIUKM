@@ -260,9 +260,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 </div>
 
 <div class="content">
-     <!-- Table to display LPJ data -->
+    <?php
+    // Fetch data from the tab_lpj table
+    $lpjQuery = "SELECT * FROM tab_lpj";
+    $lpjResult = mysqli_query($conn, $lpjQuery);
+    ?>
+    <!-- Table to display LPJ data -->
     <table class="table">
-            <thead>
+        <thead>
             <tr>
                 <th>ID Laporan</th>
                 <th>Jenis</th>
@@ -270,6 +275,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 <th>Tanggal Laporan</th>
                 <th>Saran</th>
                 <th>File</th>
+                <th>Aksi</th>
             </tr>
         </thead>
 
@@ -295,8 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     
         return $day . ' ' . $bulan[$month] . ' ' . $year;
     }
-    
-
+    if (mysqli_num_rows($lpjResult) > 0) {
     while ($lpjRow = mysqli_fetch_assoc($lpjResult)) {
         echo '<tr>';
         echo '<td>' . $lpjRow['id_laporan'] . '</td>';
@@ -305,12 +310,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         echo '<td>' . formatTanggalIndonesia($lpjRow['tgl_laporan']) . '</td>';
         echo '<td>' . $lpjRow['saran'] . '</td>';
         echo '<td><a href="../assets/images/lpj/' . $lpjRow['file_lpj'] . '" target="_blank">Download LPJ</a></td>';
+        echo '<td><button class="btn btn-danger delete-lpj" data-id="' . $lpjRow['id_laporan'] . '">Delete</button></td>';
         echo '</tr>';                
     }
-    ?>
+} else {
+    // Display a message when there are no LPJ records
+    echo '<tr><td colspan="7" style="text-align: center;">Tidak ada data LPJ</td></tr>';
+}
+?>
 </tbody>
-
-    </table>
+</table>
 </div>
 <!-- Modal for Lapor LPJ -->
 <div class="modal fade" id="laporModal" tabindex="-1" role="dialog" aria-labelledby="laporModalLabel" aria-hidden="true">
@@ -452,7 +461,40 @@ function previewImage(inputId, previewContainerId) {
         reader.readAsDataURL(input.files[0]);
     }
 }
-</script>       
+</script>    
+<script>
+    $(document).ready(function () {
+        // Handle click event of Delete buttons
+        $('.delete-lpj').click(function () {
+            const lpjId = $(this).data('id');
+            
+            // Show confirmation dialog
+            Swal.fire({
+                title: 'Are you sure you want to delete this LPJ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request to delete the LPJ
+                    $.ajax({
+                        url: 'delete_lpj.php', // Create this PHP file to handle deletion
+                        type: 'POST',
+                        data: { lpjId: lpjId },
+                        success: function (response) {
+                            // Reload the page after successful deletion
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 <script>
 function updateFilePreview(inputElement) {
     const previewContainer = document.getElementById('file-preview-container');

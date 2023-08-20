@@ -328,13 +328,14 @@ if (isset($_POST['submit'])) {
                 <option value="">Pilih ID Anggota</option>
                 <?php
                 // Query to get data from tab_dau
-                $sql_anggota = "SELECT id_anggota FROM tab_dau";
+                $sql_anggota = "SELECT id_anggota, nama_lengkap FROM tab_dau";
                 $result_anggota = $conn->query($sql_anggota);
 
                 // Display options for each row of data
                 while ($row_anggota = $result_anggota->fetch_assoc()) {
                     $id_anggota = $row_anggota['id_anggota'];
-                    echo "<option value='$id_anggota'>$id_anggota</option>";
+                    echo "<option value='$id_anggota'>$id_anggota - {$row_anggota['nama_lengkap']}</option>
+                    ";
                 }
                 ?>
             </select>
