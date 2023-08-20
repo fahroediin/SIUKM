@@ -31,6 +31,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Connection failed: " . mysqli_connect_error());
     }
 
+    // Handle Logo file upload
+    $targetDirLogo = "../assets/images/logoukm/";
+    $logo_filename = "";
+
+    if ($_FILES["logo_edit"]["error"] === UPLOAD_ERR_OK) {
+        $logo_name = $_FILES["logo_edit"]["name"];
+        $logo_extension = strtolower(pathinfo($logo_name, PATHINFO_EXTENSION));
+        $logo_filename = generateLogoFilename($id_ukm, $logo_extension);
+        $logo_path = $targetDirLogo . $logo_filename;
+
+        if (!move_uploaded_file($_FILES["logo_edit"]["tmp_name"], $logo_path)) {
+            sendError("Sorry, there was an error uploading the logo file.");
+        }
+    }
+
     // Handle SK file upload
     $targetDirSK = "../assets/images/sk/";
     $sk_filename = "";
@@ -57,9 +72,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Update database
-    $sql = "UPDATE tab_ukm SET nama_ukm=?, sejarah=?, instagram=?, facebook=?, visi=?, misi=?, sk=? WHERE id_ukm=?";
+    $sql = "UPDATE tab_ukm SET nama_ukm=?, sejarah=?, instagram=?, facebook=?, visi=?, misi=?, sk=?, logo_ukm=? WHERE id_ukm=?";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ssssssss", $nama_ukm, $sejarah, $instagram, $facebook, $visi, $misi, $sk_filename, $id_ukm);
+    mysqli_stmt_bind_param($stmt, "sssssssss", $nama_ukm, $sejarah, $instagram, $facebook, $visi, $misi, $sk_filename, $logo_filename, $id_ukm);
 
     if (mysqli_stmt_execute($stmt)) {
         header("Location: proses_ukm.php?editSuccess=true&showSnackbar=true");
@@ -77,5 +92,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 function generateSKFilename($id_ukm, $extension) {
     return $id_ukm . "-sk." . $extension;
+}
+
+function generateLogoFilename($id_ukm, $extension) {
+    return $id_ukm . "-logo." . $extension;
 }
 ?>
