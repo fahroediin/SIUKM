@@ -355,7 +355,7 @@ if (isset($_POST['update'])) {
 </div>
 
 <div class="form-group">
-    <label for="foto_ktm">Foto Identitas:</label>
+    <label for="foto_ktm">Foto Identitas/KTM:</label>
     <input type="file" class="form-control-file" id="foto_ktm" name="foto_ktm">
     <img id="fotoKtmPreview" src="<?php echo "../assets/images/ktm/" . $row['foto_ktm']; ?>" alt="Foto Identitas Preview" width="100">
 </div>

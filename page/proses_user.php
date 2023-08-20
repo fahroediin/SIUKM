@@ -133,21 +133,30 @@ if (isset($_POST['submit'])) {
         move_uploaded_file($foto_ktm_tmp_name, "../assets/images/ktm/" . $foto_ktm_filename);
     }
 
-    // Menyimpan data ke database
+  // Menyimpan data ke database
 $sql = "INSERT INTO tab_user (id_user, password, nama_lengkap, email, no_hp, level, prodi, semester, pasfoto, foto_ktm)
 VALUES ('$id_user', '$password', '$nama_lengkap', '$email', '$no_hp', '$level', '$prodi', '$semester', '$pasfoto_filename', '$foto_ktm_filename')";
 
+$result = $conn->query($sql);
 
-    $result = $conn->query($sql);
+if ($result) {
+    // Check the selected value of the "level" dropdown
+    if ($_POST['level'] == "2") {
+        // Additional data for tab_admin
+        $admin_id_user = $id_user;
+        $admin_nama_lengkap = $nama_lengkap;
+        $admin_password = $password;
 
-    if ($result) {
-        // Redirect ke halaman daftar user setelah penyimpanan berhasil
-        header("Location: proses_user.php");
-        exit();
-    } else {
-        // Jika terjadi kesalahan saat menyimpan user
-        exit();
+        // Insert data into tab_admin
+        $admin_sql = "INSERT INTO tab_admin (id_user, nama_lengkap, password) 
+                      VALUES ('$admin_id_user', '$admin_nama_lengkap', '$admin_password')";
+        $admin_result = $conn->query($admin_sql);
+
+        if (!$admin_result) {
+            // Handle the error if insertion fails
+        }
     }
+}
 }
 }
 ?>
@@ -506,12 +515,6 @@ for (var i = 0; i < deleteButtons.length; i++) {
     deleteUser(userId);
   });
 }
-
-// Fungsi untuk logout
-function logout() {
-        // Redirect ke halaman logout
-        window.location.href = "?logout=true";
-    }
 </script>
 <!-- Add a modal structure at the end of the body tag -->
 <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
@@ -555,7 +558,6 @@ function logout() {
         }
     });
 </script>
-
 
   <div class="form-group">
     <label for="password">*Password:</label>

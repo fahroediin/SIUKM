@@ -1,17 +1,18 @@
 <?php
-// Memasukkan file db_connect.php
 require_once "db_connect.php";
 
 session_start();
-
 $error = '';
 
 $id_ukm = $_GET['id_ukm'];
 
-$query = "SELECT * FROM tab_strukm WHERE id_ukm = '$id_ukm'";
-$result = mysqli_query($conn, $query);
+$queryStrukm = "SELECT * FROM tab_strukm WHERE id_ukm = ?";
+$stmt = mysqli_prepare($conn, $queryStrukm);
+mysqli_stmt_bind_param($stmt, "i", $id_ukm);
+mysqli_stmt_execute($stmt);
+$resultStrukm = mysqli_stmt_get_result($stmt);
 
-if (!$result) {
+if (!$resultStrukm) {
     echo "Error: " . mysqli_error($conn);
     exit();
 }
@@ -19,94 +20,81 @@ if (!$result) {
 $logoDirectory = '../assets/images/logoukm/';
 $defaultLogo = $logoDirectory . 'logo-default.png';
 
-$query = "SELECT logo_ukm FROM tab_ukm WHERE id_ukm = '$id_ukm'";
-$logoResult = mysqli_query($conn, $query);
+$query = "SELECT logo_ukm FROM tab_ukm WHERE id_ukm = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "i", $id_ukm);
+mysqli_stmt_execute($stmt);
+$logoResult = mysqli_stmt_get_result($stmt);
 
 if (!$logoResult) {
-
-  echo "Error: " . mysqli_error($conn);
-  exit();
+    echo "Error: " . mysqli_error($conn);
+    exit();
 }
-// Get the logo URL
+
 $row = mysqli_fetch_assoc($logoResult);
 $logo_ukm = $row['logo_ukm'];
 
 if (!empty($logo_ukm) && file_exists($logoDirectory . $logo_ukm)) {
-  $logo_src = $logoDirectory . $logo_ukm;
+    $logo_src = $logoDirectory . $logo_ukm;
 } else {
-  $logo_src = $defaultLogo;
+    $logo_src = $defaultLogo;
 }
 
-$queryInfo = "SELECT visi, misi, sejarah, nama_ukm FROM tab_ukm WHERE id_ukm = '$id_ukm'";
-$infoResult = mysqli_query($conn, $queryInfo);
+$queryInfo = "SELECT visi, misi, sejarah, nama_ukm FROM tab_ukm WHERE id_ukm = ?";
+$stmt = mysqli_prepare($conn, $queryInfo);
+mysqli_stmt_bind_param($stmt, "i", $id_ukm);
+mysqli_stmt_execute($stmt);
+$infoResult = mysqli_stmt_get_result($stmt);
 
-// Memeriksa apakah query berhasil dieksekusi
 if (!$infoResult) {
-    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
     exit();
 }
-// Mengambil visi dan misi dari hasil query
+
 $row = mysqli_fetch_assoc($infoResult);
 $visi = $row['visi'];
 $misi = $row['misi'];
 $sejarah = $row['sejarah'];
 $nama_ukmNav = $row['nama_ukm'];
 
-// Menghitung jumlah anggota pada setiap jabatan berdasarkan id_ukm
-$jabatan_count = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    $id_ukm = $row['id_ukm'];
-    $id_jabatan = $row['id_jabatan'];
-
-    if (!isset($jabatan_count[$id_ukm])) {
-        $jabatan_count[$id_ukm] = array();
-    }
-
-    if (!isset($jabatan_count[$id_ukm][$id_jabatan])) {
-        $jabatan_count[$id_ukm][$id_jabatan] = 0;
-    }
-
-    $jabatan_count[$id_ukm][$id_jabatan]++;
-}
-
-// Reset pointer hasil query
-mysqli_data_seek($result, 0);
-
-// Inisialisasi array jabatan
+// Define your jabatan (positions)
 $jabatan = array(
-    0 => "Pembimbing",
-    1 => "Ketua",
-    2 => "Wakil Ketua",
-    3 => "Sekretaris",
-    4 => "Bendahara",
-    5 => "Koordinator",
-    6 => "Anggota"
+  0 => "Pembimbing",
+  1 => "Ketua",
+  2 => "Wakil Ketua",
+  3 => "Sekretaris",
+  4 => "Bendahara",
+  5 => "Koordinator",
+  6 => "Anggota"
 );
 
-// Membuat array kosong untuk setiap jabatan berdasarkan id_ukm
+// Initialize the struktur array
 $struktur = array();
 foreach ($jabatan as $id_jabatan => $nama_jabatan) {
     $struktur[$id_jabatan] = array();
 }
 
-// Mengisi array struktur dengan data dari tabel tab_strukm
-while ($row = mysqli_fetch_assoc($result)) {
+// Populate the struktur array with data from tab_strukm
+while ($row = mysqli_fetch_assoc($resultStrukm)) {
     $id_ukm = $row['id_ukm'];
     $id_jabatan = $row['id_jabatan'];
     $nim = $row['nim'];
     $nama_lengkap = $row['nama_lengkap'];
-
-    // Menambahkan data ke array struktur berdasarkan id_ukm dan id_jabatan
+    // Check if the array key exists and is an array
+    if (!isset($struktur[$id_jabatan][$id_ukm])) {
+        $struktur[$id_jabatan][$id_ukm] = array();
+    }
+    // Push data into the nested array
     $struktur[$id_jabatan][$id_ukm][] = array("nim" => $nim, "nama_lengkap" => $nama_lengkap);
 }
-// Query to get kegiatan data for the "pramuka" UKM
-$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = '$id_ukm'";
-$kegiatanResult = mysqli_query($conn, $query);
 
-// Memeriksa apakah query berhasil dieksekusi
+$query = "SELECT nama_kegiatan, tgl FROM tab_kegiatan WHERE id_ukm = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "i", $id_ukm);
+mysqli_stmt_execute($stmt);
+$kegiatanResult = mysqli_stmt_get_result($stmt);
+
 if (!$kegiatanResult) {
-    // Jika query gagal, Anda dapat menambahkan penanganan kesalahan sesuai kebutuhan
     echo "Error: " . mysqli_error($conn);
     exit();
 }
@@ -117,24 +105,24 @@ while ($row = mysqli_fetch_assoc($kegiatanResult)) {
 }
 
 $indonesianMonths = array(
-  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-  'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+    'Agustus', 'September', 'Oktober', 'November', 'Desember'
 );
 
-// Function to format date in Indonesian format
 function formatDateIndonesia($date) {
-  global $indonesianMonths;
-  return date('d', strtotime($date)) . " " . $indonesianMonths[intval(date('m', strtotime($date))) - 1] . " " . date('Y', strtotime($date));
+    global $indonesianMonths;
+    return date('d', strtotime($date)) . " " . $indonesianMonths[intval(date('m', strtotime($date))) - 1] . " " . date('Y', strtotime($date));
 }
-$query = "SELECT instagram, facebook FROM tab_ukm WHERE id_ukm = '$id_ukm'";
-$socialMediaResult = mysqli_query($conn, $query);
+
+$query = "SELECT instagram, facebook FROM tab_ukm WHERE id_ukm = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "i", $id_ukm);
+mysqli_stmt_execute($stmt);
+$socialMediaResult = mysqli_stmt_get_result($stmt);
 
 $row = mysqli_fetch_assoc($socialMediaResult);
-$instagram = $row['instagram'];
-$facebook = $row['facebook'];
-
-$instagram = "https://www.instagram.com/" . $instagram;
-$facebook = "https://www.facebook.com/" . $facebook;
+$instagram = "https://www.instagram.com/" . $row['instagram'];
+$facebook = "https://www.facebook.com/" . $row['facebook'];
 ?>
 
 <!DOCTYPE html>
@@ -468,27 +456,23 @@ p {
         </button>
     <p><?php echo $nama_ukmNav; ?></p>
     <?php
+
     $id_ukm_target = $id_ukm;
 
     echo "<table>";
-    foreach ($jabatan as $id_jabatan => $nama_jabatan) {
-        echo "<tr><th colspan='2' class='table-heading'>$nama_jabatan</th></tr>";
-        foreach ($struktur[$id_jabatan] as $id_ukm => $anggota) {
-            if ($id_ukm === $id_ukm_target) {
-                foreach ($anggota as $data) {
-                    $nim = $data['nim'];
-                    $nama_lengkap = $data['nama_lengkap'];
-                    echo "<tr><td>$nama_lengkap</td><td>$nim</td></tr>";
-                }
-            }
+// Loop through the struktur array
+foreach ($jabatan as $id_jabatan => $nama_jabatan) {
+  if (isset($struktur[$id_jabatan][$id_ukm_target]) && is_array($struktur[$id_jabatan][$id_ukm_target])) {
+      foreach ($struktur[$id_jabatan][$id_ukm_target] as $data) {
+            $nim = $data['nim'];
+            $nama_lengkap = $data['nama_lengkap'];
+            echo "<tr><td>$nama_lengkap</td><td>$nim</td></tr>";
         }
     }
+  }
     echo "</table>";
     ?>
 </div>
-
-
-
 </div>
 	</div>
 	</div>

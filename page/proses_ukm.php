@@ -352,6 +352,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </form>
 
 <div class="row">
+<?php if (empty($ukmData)) { ?>
+        <div class="col-md-12">
+            <p class="text-center">Tidak ada data UKM yang ditemukan.</p>
+        </div>
+    <?php } else { ?>
     <?php foreach ($ukmData as $index => $ukm) { ?>
         <div class="col-md-6">
             <div class="card ukm-card">
@@ -491,6 +496,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
         <?php if (($index + 1) % 2 === 0) { ?>
             </div><div class="row">
+            <?php } ?>
         <?php } ?>
     <?php } ?>
 </div>
@@ -647,7 +653,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Show the success message for data deletion
             showSnackbar('Data UKM berhasil dihapus');
         }
-    });
+        if (urlParams.has('editSuccess') && urlParams.get('editSuccess') === 'true') {
+                // Check if the showSnackbar parameter is present and set to "true"
+                if (urlParams.has('showSnackbar') && urlParams.get('showSnackbar') === 'true') {
+                    // Show the success message
+                    showSnackbar('Data UKM berhasil diedit');
+                }
+            }
+        });
     // Wait for the page to load
     window.addEventListener('DOMContentLoaded', (event) => {
         // Check if the URL contains a success query parameter

@@ -62,7 +62,7 @@ function updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_an
 
 if (isset($_POST['submit'])) {
     $id_ukm = $_POST['id_ukm'];
-    $id_jabatan = $_POST['id_jabatan'];
+    $id_jabatan = $_POST['id_jabatan'] . $id_ukm . $_POST['id_anggota'];
     $nama_lengkap = $_POST['nama_lengkap'];
     $nim = $_POST['nim'];
     $id_anggota = $_POST['id_anggota'];
@@ -218,6 +218,7 @@ if (isset($_POST['submit'])) {
                     <th>Jabatan</th>
                     <th>Nama Lengkap</th>
                     <th>NIM/NIDN</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -246,9 +247,12 @@ if (isset($_POST['submit'])) {
                         $result_ukm_name = $stmt_ukm_name->get_result();
                         $ukm_name = $result_ukm_name->fetch_assoc()['id_ukm'];
 
-                        // Mengonversi id_jabatan menjadi teks jabatan
+                                        // Extract the first digit from id_jabatan
+                        $first_digit = substr($id_jabatan, 0, 1);
+
+                        // Map the first digit to the corresponding jabatan text
                         $jabatan = "";
-                        switch ($id_jabatan) {
+                        switch ($first_digit) {
                             case 0:
                                 $jabatan = "Pembimbing";
                                 break;
@@ -281,6 +285,7 @@ if (isset($_POST['submit'])) {
                         echo "<td>$jabatan</td>";
                         echo "<td>$nama_lengkap</td>";
                         echo "<td>$nim</td>";
+                        echo "<td><button class='btn btn-danger' onclick='deleteRow(\"$id_jabatan\")'>Hapus</button></td>"; // Add delete button
                         echo "</tr>";
                     }
                 }
@@ -306,8 +311,8 @@ if (isset($_POST['submit'])) {
                 </select>
             </div>
             <div class="form-group">
-                <label for="id_jabatan">ID Jabatan:</label>
-                <select class="form-control" id="id_jabatan" name="id_jabatan" required>
+            <label for="id_jabatan">ID Jabatan:</label>
+            <select class="form-control" id="id_jabatan" name="id_jabatan" required>
                     <option value="6">Anggota</option>
                     <option value="5">Koordinator</option>
                     <option value="4">Bendahara</option>
@@ -346,6 +351,25 @@ if (isset($_POST['submit'])) {
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function deleteRow(id_jabatan) {
+    Swal.fire({
+        title: 'Apakah Anda yakin ingin menghapus data ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Tidak'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Perform the deletion process
+            window.location.href = `delete_struktur.php?id_jabatan=${id_jabatan}`; // Replace with the appropriate URL
+        }
+    });
+}
+</script>
+
 <script>
 const idAnggotaSelect = document.getElementById("id_anggota_dropdown");
 const namaLengkapField = document.getElementById("nama_lengkap");

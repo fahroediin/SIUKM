@@ -35,76 +35,59 @@ if ($_SESSION['level'] == "3" || $_SESSION['level'] == "2") {
     header("Location: beranda.php");
     exit();
 }
-
-// Initialize variables
-$id_laporan = $jenis = $id_ukm = $nama_ukm = $tgl_laporan = $file_name = "";
+// Directory to save LPJ files
+$lpjFileDirectory = '../assets/images/lpj/';
 function generateUniqueId() {
-    global $conn, $tgl_laporan, $id_ukm, $jenis;
-    
-    do {
-        $random_digits = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate 6 random digits
-        $new_id_laporan = $tgl_laporan . $random_digits . $jenis;
-        
-        // Check if the generated id_laporan already exists in tab_lpj
-        $check_query = "SELECT COUNT(*) as count FROM tab_lpj WHERE id_laporan = ?";
-        $stmt = $conn->prepare($check_query);
-        $stmt->bind_param("s", $new_id_laporan);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $existing_count = $row['count'];
-    } while ($existing_count > 0); // Keep generating until a unique id_laporan is found
-    
-    return $new_id_laporan;
+    $year = date('Y');
+    $randomNumber = mt_rand(100000, 999999);
+    return $year . $randomNumber;
 }
 
+// Process form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'add') {
+    // Sanitize and validate form inputs
+    $jenis = mysqli_real_escape_string($conn, $_POST['jenis']);
+    $id_ukm = mysqli_real_escape_string($conn, $_POST['id_ukm']);
+    $nama_ukm = mysqli_real_escape_string($conn, $_POST['nama_ukm']);
+    $tgl_laporan = mysqli_real_escape_string($conn, $_POST['tgl_laporan']);
+    $laporan_bulan = mysqli_real_escape_string($conn, $_POST['laporan_bulan']);
+    $laporan_tahun = mysqli_real_escape_string($conn, $_POST['laporan_tahun']);
+    $saran = mysqli_real_escape_string($conn, $_POST['saran']);
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $jenis = $_POST['jenis'];
-    $id_ukm = $_POST['id_ukm'];
-    $nama_ukm = $_POST['nama_ukm'];
-    $tgl_laporan = $_POST['tgl_laporan'];
-    $selectedMonth = $_POST['laporan_bulan'];
-    $selectedYear = $_POST['laporan_tahun'];
-    $laporan_bulan_tahun = $selectedYear . '-' . str_pad($selectedMonth, 2, '0', STR_PAD_LEFT); // Format: YYYY-MM
-    $daftar_hadir = $_POST['daftar_hadir'];
-    $foto_bimbingan = $_POST['foto_bimbingan'];
-    $foto_nonrutin = $_POST['foto_nonrutin'];
-    $saran = $_POST['saran'];
-    $tanggal = date("d F Y", strtotime($tgl_laporan));
-
-
-    // Generate a unique id_laporan
+    // Generate id_laporan
     $id_laporan = generateUniqueId();
 
-// Check if a file was uploaded
-if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
-    $file_name = $_FILES['file']['name'];
-    $file_tmp = $_FILES['file']['tmp_name'];
-    $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+    // Directory to save LPJ files
+    $lpjFileDirectory = '../assets/images/lpj/';
 
-    // Generate a unique filename
-    $unique_filename = $id_laporan . '_' . $jenis . '_' . $nama_ukm . '.' . $file_extension;
+    // Process file upload
+    if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
+        $tempFilePath = $_FILES['file']['tmp_name'];
+        $originalFileName = $_FILES['file']['name'];
 
-    // Destination directory for uploaded files
-    $destination_directory = '../assets/images/sk/';  // Change this to the desired directory
+        // Generate a unique file name
+        $newFileName = 'lpj' . $nama_ukm . $id_laporan . '.' . pathinfo($originalFileName, PATHINFO_EXTENSION);
 
-    // Move the uploaded file to the destination directory
-    if (move_uploaded_file($file_tmp, $destination_directory . $unique_filename)) {
-        $sql = "INSERT INTO tab_lpj (id_laporan, jenis, id_ukm, nama_ukm, tgl_laporan, file_lpj, laporan_bulan_tahun, daftar_hadir, foto_bimbingan, foto_nonrutin, saran) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssssss", $id_laporan, $jenis, $id_ukm, $nama_ukm, $tgl_laporan, $unique_filename, $laporan_bulan_tahun, $daftar_hadir, $foto_bimbingan, $foto_nonrutin, $saran);
+        // Move uploaded file to the desired directory
+        move_uploaded_file($tempFilePath, $lpjFileDirectory . $newFileName);
 
-        if ($stmt->execute()) {
-            header("Location: proses_lpj.php?success=1");
-            exit();
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-            exit();
-        }
+        // Save the file name to the database
+        $file_lpj = $newFileName;
     }
-}
+
+    // Insert data into the database
+    $insertQuery = "INSERT INTO tab_lpj (id_laporan, jenis, id_ukm, nama_ukm, tgl_laporan, file_lpj, laporan_bulan_tahun, saran)
+                    VALUES ('$id_laporan', '$jenis', '$id_ukm', '$nama_ukm', '$tgl_laporan', '$file_lpj', '$laporan_bulan-$laporan_tahun', '$saran')";
+    
+    if (mysqli_query($conn, $insertQuery)) {
+        // Redirect to the page after successful insertion
+        header("Location: proses_lpj.php");
+        exit();
+    } else {
+        // Handle insertion error
+        // You can display an error message or log the error for debugging
+        echo "Error: " . mysqli_error($conn);
+    }
 }
 
 ?>
@@ -286,9 +269,6 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
                 <th>Nama UKM</th>
                 <th>Tanggal Laporan</th>
                 <th>File</th>
-                <th>Daftar Hadir</th>
-                <th>Foto Bimbingan</th>
-                <th>Foto Non-rutin</th>
             </tr>
         </thead>
 
@@ -323,9 +303,6 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
         echo '<td>' . $lpjRow['nama_ukm'] . '</td>';
         echo '<td>' . formatTanggalIndonesia($lpjRow['tgl_laporan']) . '</td>';
         echo '<td><a href="view_lpj.php?file=' . $lpjRow['file_lpj'] . '">Download</a></td>';
-        echo '<td>' . $lpjRow['daftar_hadir'] . '</td>';
-        echo '<td>' . $lpjRow['foto_bimbingan'] . '</td>';
-        echo '<td>' . $lpjRow['foto_nonrutin'] . '</td>';
         echo '</tr>';                
     }
     ?>
@@ -421,22 +398,6 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
             </select>
         </div>
     </div>
-</div>
-
-<div class="form-group">
-    <label for="daftar_hadir">Daftar Hadir</label>
-    <input type="file" id="daftar_hadir" name="daftar_hadir" class="form-control-file" onchange="previewImage('daftar_hadir', 'daftar-hadir-preview-container')">
-    <div id="daftar-hadir-preview-container"></div>
-</div>
-<div class="form-group">
-    <label for="foto_bimbingan">Foto Bimbingan</label>
-    <input type="file" id="foto_bimbingan" name="foto_bimbingan" class="form-control-file" onchange="previewImage('foto_bimbingan', 'foto-bimbingan-preview-container')">
-    <div id="foto-bimbingan-preview-container"></div>
-</div>
-<div class="form-group">
-    <label for="foto_nonrutin">Foto Nonrutin</label>
-    <input type="file" id="foto_nonrutin" name="foto_nonrutin" class="form-control-file" onchange="previewImage('foto_nonrutin', 'foto-nonrutin-preview-container')">
-    <div id="foto-nonrutin-preview-container"></div>
 </div>
 <div class="form-group">
     <label for="saran">Saran</label>
