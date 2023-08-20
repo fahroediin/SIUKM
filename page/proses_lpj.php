@@ -268,6 +268,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 <th>Jenis</th>
                 <th>Nama UKM</th>
                 <th>Tanggal Laporan</th>
+                <th>Saran</th>
                 <th>File</th>
             </tr>
         </thead>
@@ -302,7 +303,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         echo '<td>' . $lpjRow['jenis'] . '</td>';
         echo '<td>' . $lpjRow['nama_ukm'] . '</td>';
         echo '<td>' . formatTanggalIndonesia($lpjRow['tgl_laporan']) . '</td>';
-        echo '<td><a href="view_lpj.php?file=' . $lpjRow['file_lpj'] . '">Download</a></td>';
+        echo '<td>' . $lpjRow['saran'] . '</td>';
+        echo '<td><a href="../assets/images/lpj/' . $lpjRow['file_lpj'] . '" target="_blank">Download LPJ</a></td>';
         echo '</tr>';                
     }
     ?>
@@ -364,53 +366,70 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                      <div id="file-preview-container"></div>
                 </div>
                 <div class="form-group">
-    <label for="laporan_bulan_tahun">Laporan Bulan/Tahun</label>
-    <div class="row">
-        <div class="col-md-6">
-            <select id="laporan_bulan" name="laporan_bulan" class="form-control">
-                <option value="">Pilih Bulan</option>
-                <?php
-                // Generate options for months
-                $months = array(
-                    1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                );
+                <label for="laporan_bulan_tahun">Laporan Bulan/Tahun</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <select id="laporan_bulan" name="laporan_bulan" class="form-control">
+                            <option value="">Pilih Bulan</option>
+                            <?php
+                            // Generate options for months
+                            $months = array(
+                                1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                            );
 
-                foreach ($months as $monthNumber => $monthName) {
-                    echo '<option value="' . $monthNumber . '">' . $monthName . '</option>';
-                }
-                ?>
-            </select>
-        </div>
-        <div class="col-md-6">
-            <select id="laporan_tahun" name="laporan_tahun" class="form-control">
-                <option value="">Pilih Tahun</option>
-                <?php
-                // Generate options for years (you can customize the range)
-                $currentYear = date('Y');
-                $startYear = $currentYear - 10; // Example: Show options from 10 years ago
-                $endYear = $currentYear + 10;   // Example: Show options up to 10 years in the future
+                            foreach ($months as $monthNumber => $monthName) {
+                                echo '<option value="' . $monthNumber . '">' . $monthName . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="laporan_tahun" name="laporan_tahun" class="form-control">
+                            <option value="">Pilih Tahun</option>
+                            <?php
+                            // Generate options for years (you can customize the range)
+                            $currentYear = date('Y');
+                            $startYear = $currentYear - 10; // Example: Show options from 10 years ago
+                            $endYear = $currentYear + 10;   // Example: Show options up to 10 years in the future
 
-                for ($year = $startYear; $year <= $endYear; $year++) {
-                    echo '<option value="' . $year . '">' . $year . '</option>';
-                }
-                ?>
-            </select>
-        </div>
-    </div>
-</div>
-<div class="form-group">
-    <label for="saran">Saran</label>
-    <textarea id="saran" name="saran" class="form-control"></textarea>
-</div>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-                </form>
+                            for ($year = $startYear; $year <= $endYear; $year++) {
+                                echo '<option value="' . $year . '">' . $year . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="saran">Saran</label>
+                <textarea id="saran" name="saran" class="form-control"></textarea>
+            </div>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal for displaying the certificate PDF -->
+<div class="modal fade" id="lpjModal" tabindex="-1" role="dialog" aria-labelledby="lpjModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lpjModalLabel">Certificate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id="lpjViewer" width="100%" height="500" frameborder="0"></iframe>
             </div>
         </div>
     </div>
-        </div>
-    </div>
 </div>
+
 <script>
 function previewImage(inputId, previewContainerId) {
     const input = document.getElementById(inputId);
@@ -466,6 +485,22 @@ document.getElementById('file').addEventListener('change', function() {
     function openLaporModal() {
         $('#laporModal').modal('show');
     }
+</script>
+<script>
+$(document).ready(function () {
+    // Handle click event of "View LPJ" buttons
+    $('.view-lpj').click(function () {
+        const pdfPath = $(this).data('pdf');
+        const pdfUrl = '../assets/images/lpj/' + pdfPath; // Update the path as needed
+        const iframe = $('#lpjViewer');
+
+        // Set the PDF URL in the iframe
+        iframe.attr('src', 'https://docs.google.com/gview?url=' + encodeURIComponent(pdfUrl) + '&embedded=true');
+
+        // Show the modal
+        $('#lpjModal').modal('show');
+    });
+});
 </script>
 
 <script>

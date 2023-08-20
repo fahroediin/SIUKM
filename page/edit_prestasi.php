@@ -81,6 +81,20 @@ if (isset($_POST['update'])) {
     $sql = "UPDATE tab_prestasi SET nama_prestasi = ?, penyelenggara = ?, tgl_prestasi = ?, id_ukm = ?, nama_ukm = ? WHERE id_prestasi = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssss", $nama_prestasi, $penyelenggara, $tgl_prestasi, $id_ukm, $nama_ukm, $id_prestasi);
+    // Check if a certificate file was uploaded
+        if (isset($_FILES['certificateFile']) && $_FILES['certificateFile']['error'] === UPLOAD_ERR_OK) {
+            $certificateFileName = $_FILES['certificateFile']['name'];
+            $certificateFilePath = "../assets/images/sertifikat/" . $certificateFileName;
+            
+            // Move the uploaded file to the desired directory
+            if (move_uploaded_file($_FILES['certificateFile']['tmp_name'], $certificateFilePath)) {
+                // Update the certificate image path in the database
+                $sql = "UPDATE tab_prestasi SET certificate_image = ? WHERE id_prestasi = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ss", $certificateFilePath, $id_prestasi);
+                $stmt->execute();
+            }
+        }
     if ($stmt->execute()) {
         // Redirect back to the user list after update
         header("Location: proses_prestasi.php");
@@ -289,6 +303,10 @@ function logout() {
             <div class="form-group">
                 <label for="nama_ukm">Nama UKM:</label>
                 <input type="text" class="form-control" id="nama_ukm" name="nama_ukm" value="<?php echo $prestasi['nama_ukm']; ?>" readonly>
+            </div>
+            <div class="form-group">
+                <label for="certificateFile">Upload Sertifikat:</label>
+                <input type="file" class="form-control-file" id="certificateFile" name="certificateFile">
             </div>
             <button type="submit" class="btn btn-primary" name="update">Update</button>
         </form>
