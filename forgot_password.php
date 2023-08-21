@@ -1,7 +1,11 @@
 <?php
 require_once "db_connect.php";
 
-// Function to generate a random token
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php'; // Include PHPMailer autoloader
+
 function generateToken($length = 32)
 {
     return bin2hex(random_bytes($length));
@@ -31,33 +35,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($query);
         $stmt->bind_param("sssi", $token, $id_user, $email, $expiry_timestamp);
         $stmt->execute();
-        
+
         // Clean up expired tokens
         $cleanup_query = "DELETE FROM password_reset_tokens WHERE expiry_timestamp < ?";
         $cleanup_stmt = $conn->prepare($cleanup_query);
         $cleanup_stmt->bind_param("i", time());
         $cleanup_stmt->execute();
-        
 
-        // Send email to the user with the password reset link
+        // Send email to the user with the password reset link using PHPMailer
         $reset_link = "http://localhost/SIUKMSTMIK/page/forgot_password.php?token=" . $token;
-        $to = 'fahroediinj@gmail.com';
-        $subject = "Password Reset Link - SIUKM STMIK Komputama Majenang";
-        $message = "Hello,\n\nYou have requested to reset your password. Click the link below to reset your password:\n\n{$reset_link}\n\nIf you didn't request this, please ignore this email.\n\nBest regards,\nThe SIUKM Team";
-        $headers = "From: fahroediinj@gmail.com"; // Replace with your email address
 
-        // Use the mail() function to send the email
-        if (mail($email, $subject, $message, $headers)) {
-            // Email sent successfully
-            // Redirect to a success page or show a success message
+        try {
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            // Configure SMTP settings
+            $mail->Host = 'smtp.example.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'your_email@example.com';
+            $mail->Password = 'your_email_password';
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+
+            $mail->setFrom('your_email@example.com', 'Your Name');
+            $mail->addAddress($email);
+            $mail->Subject = "Password Reset Link - SIUKM STMIK Komputama Majenang";
+            $mail->Body = "Hello,\n\nYou have requested to reset your password. Click the link below to reset your password:\n\n{$reset_link}\n\nIf you didn't request this, please ignore this email.\n\nBest regards,\nThe SIUKM Team";
+
+            $mail->send();
             header("Location: forgot_password_success.php");
             exit();
-        } else {
-            // Email sending failed
-            echo "Failed to send email. Check your mail configuration.";
+        } catch (Exception $e) {
+            echo "Failed to send email. Error: {$mail->ErrorInfo}";
         }
     } else {
-        // User not found or incorrect email, show an error message with JavaScript
+        // User not found or incorrect email
         echo '<script type="text/javascript">';
         echo 'alert("Username tidak terdaftar atau email tidak benar, ulangi.");';
         echo '</script>';
@@ -140,7 +151,7 @@ body {
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="beranda.php">Beranda</a>
+                <a class="nav-link" href="index.php">Beranda</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="profil.php">Profil</a>

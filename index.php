@@ -23,7 +23,7 @@ $carousel_images = array();
 $carousel_dir = "./assets/images/carousel/";
 if ($handle = opendir($carousel_dir)) {
     while (false !== ($entry = readdir($handle))) {
-        if ($entry != "." && $entry != "") {
+        if ($entry != "." && $entry != "..") {
             $carousel_images[] = $entry;
         }
     }

@@ -173,9 +173,8 @@ $active_page = 'calon_anggota';
                             // Mengambil data calabar dari database
                             $query = "SELECT * FROM tab_pacab";
                             $result = mysqli_query($conn, $query);
-
-                            // Menampilkan data dalam tabel
-                            while ($row = mysqli_fetch_assoc($result)) {
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id_calabar'] . "</td>";
                                 echo "<td>" . $row['id_user'] . "</td>";
@@ -203,9 +202,14 @@ $active_page = 'calon_anggota';
                                 echo "</td>";               
                             }
 
-                            // Menutup koneksi
-                            mysqli_close($conn);
-                            ?>
+                        } else {
+                            // Jika tidak ada data, tampilkan pesan dalam baris tabel khusus
+                            echo '<tr><td colspan="15" class="text-center">Tidak ada data yang tersedia.</td></tr>';
+                        }
+                
+                        // Menutup koneksi
+                        mysqli_close($conn);
+                        ?>
                         </tbody>
                     </table>
                 </div>

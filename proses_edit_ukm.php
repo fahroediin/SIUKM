@@ -44,6 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!move_uploaded_file($_FILES["logo_edit"]["tmp_name"], $logo_path)) {
             sendError("Sorry, there was an error uploading the logo file.");
         }
+    } else {
+        // If no new logo file is uploaded, keep the existing logo filename
+        $logo_filename = $_POST["existing_logo_filename"];
     }
 
     // Handle SK file upload
@@ -61,14 +64,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sk_filename = generateSKFilename($id_ukm, $sk_extension);
         $sk_path = $targetDirSK . $sk_filename;
 
-        // Remove existing SK file if exists
-        if (file_exists($sk_path)) {
-            unlink($sk_path);
-        }
-
         if (!move_uploaded_file($_FILES["sk_edit"]["tmp_name"], $sk_path)) {
             sendError("Sorry, there was an error uploading the SK file.");
         }
+    } else {
+        // If no new SK file is uploaded, keep the existing SK filename
+        $sk_filename = $_POST["existing_sk_filename"];
     }
 
     // Update database

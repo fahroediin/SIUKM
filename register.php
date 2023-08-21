@@ -158,25 +158,42 @@ if ($result_bg && mysqli_num_rows($result_bg) > 0) {
 <div class="container">   
 <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <h1>Register</h1>
-    <div>
+<div class="form-group">
     <label for="id_user">*ID User (NIM)</label>
     <input type="text" class="form-control" id="id_user" placeholder="Masukan NIM anda" maxlength="10" name="id_user" required>
     <div class="invalid-feedback" id="id-user-error" style="color: red;"></div>
+    <div class="invalid-feedback" id="id-user-exists" style="color: red; display: none;">ID User telah terdaftar.</div>
 </div>
+
 <script>
-document.getElementById("id_user").addEventListener("input", function(event) {
+document.getElementById("id_user").addEventListener("input", async function(event) {
     let input = event.target.value;
     input = input.replace(/\D/g, ''); // Menghapus karakter non-angka
     input = input.slice(0, 10); // Membatasi panjang maksimal menjadi 10 karakter
     event.target.value = input;
 
     let errorElement = document.getElementById("id-user-error");
+    let existsElement = document.getElementById("id-user-exists");
+
     if (input.length < 9 || input.length > 10 || !/^[0-9]+$/.test(input)) {
         errorElement.textContent = "ID User harus NIM dengan panjang minimal 9 dan maksimal 10 digit angka!";
+        existsElement.style.display = "none";
         event.target.classList.add("is-invalid"); // Tambahkan class is-invalid untuk merahkan input
     } else {
-        errorElement.textContent = "";
-        event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+        errorElement.textContent = ""; // Clear the error message
+        existsElement.style.display = "none";
+
+        // Check if the ID User already exists
+        const response = await fetch("check_id_user.php?id_user=" + input);
+        const data = await response.json();
+
+        if (data.exists) {
+            existsElement.style.display = "block";
+            event.target.classList.add("is-invalid");
+        } else {
+            existsElement.style.display = "none";
+            event.target.classList.remove("is-invalid"); // Hapus class is-invalid jika valid
+        }
     }
 });
 </script>
