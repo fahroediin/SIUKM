@@ -5,13 +5,17 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Check if id_admin is sent through the form submission
+if (isset($_POST['id_admin'])) {
+    $id_admin = $_POST['id_admin'];
+}
 // Memeriksa apakah pengguna sudah login
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['id_admin'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
-$sessionUserId = $_SESSION['id_user'];
+$id_ukm = $_SESSION['id_ukm'];
 // Menandai halaman yang aktif
 $active_page = 'view_calon_anggota';
 
@@ -85,15 +89,16 @@ if (isset($_GET['logout'])) {
   <img src="./assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
     <h2><i>Calon Anggota</i></h2>
-    <a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'pengurus') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
-    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_dau_pengurus') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="view_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_lpj') echo 'active'; ?>">Unggah LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -129,8 +134,6 @@ if (isset($_GET['logout'])) {
             }
         });
     }
-
-    // Call the function to apply the border to the buttons
     wrapButtonsWithBorder();
 </script>
                     <div class="content">
@@ -140,7 +143,7 @@ if (isset($_GET['logout'])) {
                             <tr>
                                 <th>ID Calabar</th>
                                 <th>ID User</th>
-                                <th>Nama</th>
+                                <th>Nama Lengkap</th>
                                 <th>Prodi</th>
                                 <th>ID UKM</th>
                                 <th>Nama UKM</th>
@@ -151,17 +154,16 @@ if (isset($_GET['logout'])) {
                                 <th>Alasan</th>
                                 <th>Nilai TPA</th>
                                 <th>Status</th>
+                                <th>Diterima/Tidak</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        <?php
+                                               <tbody>
+                            <?php
                             // Mengambil data calabar dari database
-                            $query = "SELECT * FROM tab_pacab WHERE id_ukm = '$sessionUserId'";
+                            $query = "SELECT * FROM tab_pacab";
                             $result = mysqli_query($conn, $query);
-
-                            // Check if there are any rows returned
                             if (mysqli_num_rows($result) > 0) {
-                                // Menampilkan data dalam tabel
                                 while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id_calabar'] . "</td>";
@@ -179,25 +181,79 @@ if (isset($_GET['logout'])) {
                                 echo "<td>" . $row['alasan'] . "</td>";
                                 echo "<td>" . $row['nilai_tpa'] . "</td>";
                                 echo "<td>" . $row['status_cab'] . "</td>";
+                                echo "<td>";
+                                echo "<select id='status_calabar_" . $row['id_calabar'] . "'>";
+                                echo "<option value='Diterima'>Diterima</option>";
+                                echo "<option value='Tidak Diterima'>Tidak Diterima</option>";
+                                echo "</select>";
                                 echo "</td>";
-                                echo "</tr>";
-                                }
-                            } else {
-                                // Display a message when there are no applicants
-                                echo "<tr>";
-                                echo "<td colspan='13'>Belum ada pendaftar baru</td>";
-                                echo "</tr>";
+                                echo "<td>";
+                                echo "<button class='btn btn-primary' onclick='updateStatus(" . $row['id_calabar'] . ")'>Update</button>";
+                                echo "</td>";               
                             }
-                            // Menutup koneksi
-                            mysqli_close($conn);
-                            ?>
+
+                        } else {
+                            // Jika tidak ada data, tampilkan pesan dalam baris tabel khusus
+                            echo '<tr><td colspan="15" class="text-center">Tidak ada data pendaftar anggota baru.</td></tr>';
+                        }
+                
+                        // Menutup koneksi
+                        mysqli_close($conn);
+                        ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <script>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+     // Function to update the status using AJAX
+     function updateStatus(id_calabar) {
+        const selectedStatus = document.getElementById('status_calabar_' + id_calabar).value;
+
+        // Perform the AJAX request to update status
+        $.ajax({
+            url: 'update_status.php',
+            type: 'POST',
+            data: { id_calabar: id_calabar, status: selectedStatus },
+            success: function(response) {
+                alert('Status updated successfully.');
+                location.reload(); // Refresh the page
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    // Fungsi untuk menghapus data calabar
+    function deleteData(id) {
+        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+            // Buat AJAX request untuk menghapus data calabar berdasarkan ID
+            $.ajax({
+                url: 'delete_calabar.php', // Ganti dengan file PHP yang menghapus data calabar berdasarkan ID
+                type: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    // Refresh halaman setelah data berhasil dihapus
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    }
+</script>
+<script src="script.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ <script>
     // Fungsi untuk logout dengan konfirmasi
     function logout() {
         // Tampilkan dialog konfirmasi menggunakan SweetAlert

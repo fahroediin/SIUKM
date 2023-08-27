@@ -11,7 +11,21 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit();
 }
+function logout() {
+    // Menghapus semua data session
+    session_unset();
+    // Menghancurkan session
+    session_destroy();
+    // Mengarahkan pengguna ke index.php setelah logout
+    header("Location: index.php");
+    exit();
+}
 
+// Memeriksa apakah tombol logout diklik
+if (isset($_GET['logout'])) {
+    // Memanggil fungsi logout
+    logout();
+}
 // Menandai halaman yang aktif
 $active_page = 'proses_beranda';
 

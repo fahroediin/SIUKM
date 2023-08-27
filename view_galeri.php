@@ -5,20 +5,17 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Check if id_admin is sent through the form submission
+if (isset($_POST['id_admin'])) {
+    $id_admin = $_POST['id_admin'];
+}
 // Memeriksa apakah pengguna sudah login
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['id_admin'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
-
-// Memeriksa level pengguna
-if ($_SESSION['level'] == "3") {
-    // Jika level adalah "3" atau "2", redirect ke halaman index.php
-    header("Location: index.php");
-    exit();
-}
-
+$id_ukm = $_SESSION['id_ukm'];
 // Fungsi logout
 function logout() {
     // Menghapus semua data session
@@ -171,13 +168,13 @@ $query_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
 $result_ukm = mysqli_query($conn, $query_ukm);
 
 // Mendapatkan data ID kegiatan dan nama kegiatan dari tabel tab_kegiatan
-$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan FROM tab_kegiatan";
+$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan FROM tab_kegiatan WHERE id_ukm = '$id_ukm'";
 $result_kegiatan = mysqli_query($conn, $query_kegiatan);
 
 // Fetch data from the tab_galeri table with search filter
 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
-$query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, jenis, deskripsi, foto_kegiatan, tgl FROM tab_galeri";
+$query_galeri = "SELECT id_foto, id_kegiatan, id_ukm, nama_ukm, nama_kegiatan, jenis, deskripsi, foto_kegiatan, tgl FROM tab_galeri WHERE id_ukm = '$id_ukm'";
 
 if (!empty($searchTerm)) {
     $query_galeri .= " WHERE id_foto LIKE '%$searchTerm%' OR id_kegiatan LIKE '%$searchTerm%' OR nama_ukm LIKE '%$searchTerm%'";
@@ -308,15 +305,16 @@ $result_galeri = mysqli_query($conn, $query_galeri);
   <img src="./assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
     <h2><i>Galeri</i></h2>
-    <a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+ <a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'pengurus') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
-    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_dau_pengurus') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="view_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_lpj') echo 'active'; ?>">Unggah LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>

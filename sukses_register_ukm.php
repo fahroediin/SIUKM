@@ -160,7 +160,7 @@ if(isset($_SESSION['id_calabar'])) {
             </div>
     <table>
         <tr>
-            <td>ID Calon Anggota</td>
+            <td>ID Pendaftaran</td>
             <td> <?php echo $id_calabar; ?></td>
         </tr>
         <tr>

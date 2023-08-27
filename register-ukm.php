@@ -416,7 +416,7 @@ button[type=reset]:hover {
   <div class="collapse navbar-collapse" id="collapsibleNavbar">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="beranda.php">Beranda</a>
+        <a class="nav-link" href="index.php">Beranda</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="profil.php">Profil</a>

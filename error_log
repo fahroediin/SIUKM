@@ -1,0 +1,485 @@
+[21-Aug-2023 00:47:32 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 00:54:27 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 00:56:18 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 00:56:24 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 00:57:10 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 00:58:36 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukmdb'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 00:59:48 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukmdb'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:01:05 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukmdb'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:01:27 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:01:28 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:01:29 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:01:59 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:02:01 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:02:01 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:02:50 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'siukm'@'localhost' (using password: YES) in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 01:04:48 Asia/Jakarta] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'siur5746_siukm'@'localhost' to database 'dbsiukm' in /home/siur5746/public_html/db_connect.php on line 9
+[21-Aug-2023 12:17:51 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_dau.php:103) in /home/siur5746/public_html/proses_dau.php on line 105
+[21-Aug-2023 12:44:14 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_dau.php:103) in /home/siur5746/public_html/proses_dau.php on line 105
+[21-Aug-2023 12:54:35 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_dau.php:103) in /home/siur5746/public_html/proses_dau.php on line 105
+[21-Aug-2023 12:56:09 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_dau.php:103) in /home/siur5746/public_html/proses_dau.php on line 105
+[21-Aug-2023 16:27:18 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:68) in /home/siur5746/public_html/test-calabar.php on line 101
+[21-Aug-2023 22:20:17 Asia/Jakarta] PHP Warning:  mail() has been disabled for security reasons in /home/siur5746/public_html/forgot_password.php on line 50
+[21-Aug-2023 22:25:11 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:84) in /home/siur5746/public_html/test-calabar.php on line 102
+[21-Aug-2023 22:29:48 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:68) in /home/siur5746/public_html/test-calabar.php on line 101
+[21-Aug-2023 22:35:14 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:68) in /home/siur5746/public_html/test-calabar.php on line 101
+[21-Aug-2023 23:08:06 Asia/Jakarta] PHP Warning:  mail() has been disabled for security reasons in /home/siur5746/public_html/forgot_password.php on line 50
+[21-Aug-2023 23:40:59 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_user.php:84) in /home/siur5746/public_html/proses_user.php on line 86
+[22-Aug-2023 02:22:43 Asia/Jakarta] PHP Warning:  Use of undefined constant _GET - assumed '_GET' (this will throw an Error in a future version of PHP) in /home/siur5746/public_html/view_galeri.php on line 21
+[22-Aug-2023 02:22:43 Asia/Jakarta] PHP Warning:  Illegal string offset 'id_ukm' in /home/siur5746/public_html/view_galeri.php on line 21
+[22-Aug-2023 02:22:43 Asia/Jakarta] PHP Warning:  Use of undefined constant _GET - assumed '_GET' (this will throw an Error in a future version of PHP) in /home/siur5746/public_html/view_galeri.php on line 21
+[22-Aug-2023 02:22:43 Asia/Jakarta] PHP Warning:  Illegal string offset 'id_ukm' in /home/siur5746/public_html/view_galeri.php on line 21
+[22-Aug-2023 02:28:46 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:46 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:46 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:46 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:49 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:49 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:49 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:49 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:50 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:50 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:50 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:50 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:28:51 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 393
+[22-Aug-2023 02:29:52 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:29:52 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:29:52 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:29:52 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:30:24 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:30:24 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:30:24 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:30:24 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:30:26 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:30:26 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:30:26 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:30:26 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:31:31 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:31:31 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:31:32 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:31:32 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:31:33 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:31:33 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:31:33 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:31:33 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:31:34 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:31:34 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:31:34 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 386
+[22-Aug-2023 02:31:34 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 389
+[22-Aug-2023 02:34:44 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:44 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:44 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:44 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:45 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:45 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:45 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:45 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:46 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:47 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:47 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:47 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:47 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:48 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:48 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:48 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:48 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:48 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:48 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:49 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:49 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:54 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:54 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:54 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:54 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:55 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:55 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:55 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:55 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:55 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:55 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:56 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:56 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:56 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:56 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:34:56 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:34:56 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:15 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:15 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:15 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:15 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:17 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:17 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:17 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:17 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:18 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:20 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:21 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:22 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:22 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:39 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:39 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:39 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:39 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:40 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:40 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:40 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:40 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:47 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:47 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:47 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:47 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:53 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:53 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:53 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:53 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:54 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:54 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 02:35:54 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 387
+[22-Aug-2023 02:35:54 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_galeri.php on line 390
+[22-Aug-2023 03:23:38 Asia/Jakarta] PHP Warning:  mail() has been disabled for security reasons in /home/siur5746/public_html/forgot_password.php on line 50
+[22-Aug-2023 03:24:53 Asia/Jakarta] PHP Warning:  mail() has been disabled for security reasons in /home/siur5746/public_html/forgot_password.php on line 50
+[22-Aug-2023 03:27:19 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:19 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:19 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:23 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:23 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:23 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:24 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:24 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:24 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:25 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:25 Asia/Jakarta] PHP Warning:  require(vendor/autoload.php): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:27:25 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/forgot_password.php on line 6
+[22-Aug-2023 03:34:34 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:34 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:36 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:36 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:36 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:36 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:37 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:37 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:37 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:37 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:37 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:37 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:40 Asia/Jakarta] PHP Warning:  require_once(/home/siur5746/public_html/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 03:34:40 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/siur5746/public_html/vendor/composer/autoload_real.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/siur5746/public_html/vendor/autoload.php on line 23
+[22-Aug-2023 04:12:09 Asia/Jakarta] PHP Parse error:  syntax error, unexpected ':' in /home/siur5746/public_html/forgot_password.php on line 2
+[22-Aug-2023 05:15:25 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:15:58 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:17:02 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:19:45 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:29:58 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:30:25 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:30:52 Asia/Jakarta] PHP Notice:  Only variables should be passed by reference in /home/siur5746/public_html/forgot_password.php on line 51
+[22-Aug-2023 05:33:07 Asia/Jakarta] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home/siur5746/public_html/forgot_password.php on line 86
+[22-Aug-2023 05:33:52 Asia/Jakarta] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home/siur5746/public_html/forgot_password.php on line 86
+[22-Aug-2023 05:34:47 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function generateToken() in /home/siur5746/public_html/forgot_password.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/siur5746/public_html/forgot_password.php on line 52
+[22-Aug-2023 05:35:02 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function generateToken() in /home/siur5746/public_html/forgot_password.php:52
+Stack trace:
+#0 {main}
+  thrown in /home/siur5746/public_html/forgot_password.php on line 52
+[22-Aug-2023 05:36:21 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function generateToken() in /home/siur5746/public_html/forgot_password.php:57
+Stack trace:
+#0 {main}
+  thrown in /home/siur5746/public_html/forgot_password.php on line 57
+[22-Aug-2023 05:37:32 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function generateToken() in /home/siur5746/public_html/forgot_password.php:57
+Stack trace:
+#0 {main}
+  thrown in /home/siur5746/public_html/forgot_password.php on line 57
+[22-Aug-2023 05:38:59 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '453e4101adca540...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 05:41:09 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '03f94f723fd60d1...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 05:44:07 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not connect to SMTP host. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2233
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '414df1ed4f30def...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2233
+[22-Aug-2023 05:54:22 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not connect to SMTP host. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2233
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '542c72e7af8b882...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2233
+[22-Aug-2023 05:55:00 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not connect to SMTP host. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2233
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', 'bbcd692fa56aee0...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2233
+[22-Aug-2023 05:55:48 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', 'ac6a5b5e170955c...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:16 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Warning:  file_put_contents(/path/to/debug.log): failed to open stream: No such file or directory in /home/siur5746/public_html/forgot_password.php on line 46
+[22-Aug-2023 05:56:17 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(50): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(79): sendPasswordResetEmail('siukm.komputama...', '3a7bb1886ef02e3...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 05:56:45 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '677d0e7695a2626...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 05:57:02 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', 'eac18880b755ce9...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 05:59:28 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '1593769d4be9214...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:08:10 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '51718f309f615f1...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:09:29 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', 'dbf2fd9547b0ab5...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:12:02 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', '8d729f7ae2b66c1...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:12:31 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('fahroediinj@gma...', 'eddcc4a51cf7e66...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:14:36 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('fahroediinj@gma...', 'e4ee01c15bc382c...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:16:50 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('fahroediinj@gma...', '47fe4f25941165e...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:17:27 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', 'd5b998a15a8e7e6...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:21:27 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('fahroediinj@gma...', '9e71162098bcf02...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 06:22:28 Asia/Jakarta] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not authenticate. in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php:2212
+Stack trace:
+#0 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(2019): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1678): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Tue, 22 A...', 'Hello,\r\n\r\nYou h...')
+#2 /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php(1516): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/siur5746/public_html/forgot_password.php(46): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/siur5746/public_html/forgot_password.php(75): sendPasswordResetEmail('siukm.komputama...', 'ef4c716bdc6abe2...')
+#5 {main}
+  thrown in /home/siur5746/public_html/vendor/PHPMailer/src/PHPMailer.php on line 2212
+[22-Aug-2023 07:10:48 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 316
+[22-Aug-2023 07:40:03 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 313
+[22-Aug-2023 07:40:04 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 313
+[22-Aug-2023 07:40:07 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 313
+[22-Aug-2023 07:41:02 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:04 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:05 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:28 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:31 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:32 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:33 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:33 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:34 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:41:37 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/proses_dau_pengurus.php on line 314
+[22-Aug-2023 07:47:27 Asia/Jakarta] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home/siur5746/public_html/proses_struktur_pengurus.php on line 281
+[22-Aug-2023 07:56:18 Asia/Jakarta] PHP Warning:  mysqli_stmt::bind_param(): Number of variables doesn't match number of parameters in prepared statement in /home/siur5746/public_html/proses_struktur_pengurus.php on line 224
+[22-Aug-2023 08:18:50 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function logout() in /home/siur5746/public_html/view_prestasi.php:25
+Stack trace:
+#0 {main}
+  thrown in /home/siur5746/public_html/view_prestasi.php on line 25
+[22-Aug-2023 09:41:40 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 271
+[22-Aug-2023 09:41:40 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 275
+[22-Aug-2023 09:41:40 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 271
+[22-Aug-2023 09:41:40 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 275
+[22-Aug-2023 09:41:41 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 271
+[22-Aug-2023 09:41:41 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 275
+[22-Aug-2023 09:41:49 Asia/Jakarta] PHP Warning:  mysqli_num_rows() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 271
+[22-Aug-2023 09:41:49 Asia/Jakarta] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /home/siur5746/public_html/view_kegiatan.php on line 275
+[23-Aug-2023 15:35:39 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 655
+[23-Aug-2023 15:35:42 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 655
+[23-Aug-2023 15:35:45 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 655
+[23-Aug-2023 15:41:18 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_prestasi.php:105) in /home/siur5746/public_html/proses_prestasi.php on line 115
+[23-Aug-2023 15:43:58 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/proses_prestasi.php:105) in /home/siur5746/public_html/proses_prestasi.php on line 115
+[23-Aug-2023 15:46:41 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 656
+[23-Aug-2023 15:46:43 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 656
+[23-Aug-2023 15:46:45 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 656
+[23-Aug-2023 15:46:46 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 656
+[23-Aug-2023 15:46:48 Asia/Jakarta] PHP Parse error:  syntax error, unexpected end of file in /home/siur5746/public_html/proses_galeri.php on line 656
+[26-Aug-2023 09:15:13 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:70) in /home/siur5746/public_html/test-calabar.php on line 105
+[26-Aug-2023 11:28:31 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:70) in /home/siur5746/public_html/test-calabar.php on line 71
+[26-Aug-2023 11:56:41 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:70) in /home/siur5746/public_html/test-calabar.php on line 71
+[26-Aug-2023 12:03:50 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 67
+[26-Aug-2023 12:16:19 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 66
+[26-Aug-2023 12:16:19 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:88) in /home/siur5746/public_html/test-calabar.php on line 89
+[26-Aug-2023 12:16:19 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:88) in /home/siur5746/public_html/test-calabar.php on line 39
+[26-Aug-2023 12:24:22 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 68
+[26-Aug-2023 12:24:22 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:90) in /home/siur5746/public_html/test-calabar.php on line 91
+[26-Aug-2023 12:24:22 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/siur5746/public_html/test-calabar.php:90) in /home/siur5746/public_html/test-calabar.php on line 41
+[26-Aug-2023 12:40:51 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 68
+[26-Aug-2023 13:07:41 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 76
+[26-Aug-2023 13:34:45 Asia/Jakarta] PHP Notice:  Undefined index: program_studi in /home/siur5746/public_html/update_status.php on line 44
+[26-Aug-2023 13:34:45 Asia/Jakarta] PHP Notice:  Undefined index: program_studi in /home/siur5746/public_html/update_status.php on line 44
+[26-Aug-2023 13:42:07 Asia/Jakarta] PHP Notice:  Undefined index: program_studi in /home/siur5746/public_html/update_status.php on line 44
+[26-Aug-2023 13:42:07 Asia/Jakarta] PHP Notice:  Undefined index: program_studi in /home/siur5746/public_html/update_status.php on line 44
+[26-Aug-2023 13:50:08 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 76
+[26-Aug-2023 13:50:36 Asia/Jakarta] PHP Notice:  Undefined index: program_studi in /home/siur5746/public_html/update_status.php on line 44
+[26-Aug-2023 13:50:36 Asia/Jakarta] PHP Notice:  Undefined index: program_studi in /home/siur5746/public_html/update_status.php on line 44
+[26-Aug-2023 14:05:37 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 76
+[27-Aug-2023 08:27:20 Asia/Jakarta] PHP Warning:  Division by zero in /home/siur5746/public_html/test-calabar.php on line 76

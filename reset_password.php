@@ -1,66 +1,48 @@
 <?php
 require_once "db_connect.php";
-session_start();
 
-if (isset($_POST['change_password'])) {
-    $id_user = $_SESSION['reset_id_user'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["token"])) {
+    $token = $_GET["token"];
 
-    // Validasi input
-    if (empty($password) || empty($confirm_password)) {
-        $_SESSION['error_message'] = "Password dan konfirmasi password harus diisi.";
-        header("Location: change_password.php");
-        exit;
-    } elseif ($password !== $confirm_password) {
-        $_SESSION['error_message'] = "Password dan konfirmasi password tidak cocok.";
-        header("Location: change_password.php");
-        exit;
+    // Validate token and retrieve user information
+    $query = "SELECT id_user, email FROM password_reset_tokens WHERE token = ? AND expiry_timestamp > ?";
+    $expiry_timestamp = time();
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("si", $token, $expiry_timestamp);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        $id_user = $row["id_user"];
+        $email = $row["email"];
+
+        // Display reset password form
+        ?>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Reset Password - SIUKM STMIK Komputama Majenang</title>
+            <!-- Include your CSS and JS files here -->
+        </head>
+        <body>
+            <h2>Reset Password</h2>
+            <form action="process_reset_password.php" method="POST">
+                <input type="hidden" name="id_user" value="<?php echo $id_user; ?>">
+                <input type="hidden" name="token" value="<?php echo $token; ?>">
+                <label for="password">New Password:</label>
+                <input type="password" name="password" required>
+                <label for="confirm_password">Confirm New Password:</label>
+                <input type="password" name="confirm_password" required>
+                <button type="submit">Reset Password</button>
+            </form>
+        </body>
+        </html>
+        <?php
+    } else {
+        echo "Invalid token or token has expired.";
     }
-
-    // Enkripsi password sebelum menyimpan ke database (gunakan metode yang sesuai dengan aplikasi Anda)
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-    // Update password baru ke dalam database
-    $query = "UPDATE tab_user SET password = ? WHERE id_user = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "ss", $hashed_password, $id_user);
-    mysqli_stmt_execute($stmt);
-
-    // Hapus token dari database setelah password berhasil diubah
-    $query = "DELETE FROM reset_password_tokens WHERE id_user = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $id_user);
-    mysqli_stmt_execute($stmt);
-
-    $_SESSION['success_message'] = "Password Anda telah berhasil diubah.";
-    header("Location: login.php"); // Ganti login.php dengan halaman login atau halaman index setelah password berhasil diubah
-    exit;
+} else {
+    echo "Invalid request.";
 }
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ganti Password - SIUKM STMIK Komputama Majenang</title>
-    <!-- Sisipkan link CSS dan script JS yang diperlukan -->
-</head>
-<body>
-<div class="container">
-    <div class="card">
-        <h2>Ganti Password</h2>
-        <form action="" method="POST">
-            <div class="form-group">
-                <label for="password">Password Baru:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Konfirmasi Password Baru:</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-            </div>
-            <button type="submit" class="btn btn-primary" name="change_password">Ganti Password</button>
-        </form>
-    </div>
-</div>
-</body>
-</html>

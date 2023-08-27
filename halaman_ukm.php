@@ -463,20 +463,17 @@ p {
     <div class="container">
         <h2 class="h2-struktur">Struktur Organisasi UKM</h2>
         <div class="ukm-button-grid">
-        <button class="btn btn-primary sk-button" data-toggle="modal" data-target="#pdfModal" data-sk-filename="<?php echo $sk_filename; ?>">
-    <i class="fas fa-file-alt"></i>
-</button>
-
-
+            <button class="btn btn-primary sk-button" data-toggle="modal" data-target="#pdfModal" data-sk-filename="<?php echo $sk_filename; ?>">
+                <i class="fas fa-file-alt"></i>
+            </button>
             <p><?php echo $nama_ukmNav; ?></p>
             <?php
-
             $id_ukm_target = $_GET['id_ukm'];
 
             echo "<table>";
             foreach ($jabatan as $id_jabatan => $nama_jabatan) {
-              echo "<tr><td colspan='3' class='position' style='text-align: center; font-weight: bold;'>$nama_jabatan</td></tr>";
-                if (isset($struktur[$id_jabatan][$id_ukm_target]) && is_array($struktur[$id_jabatan][$id_ukm_target])) {
+                if (isset($struktur[$id_jabatan][$id_ukm_target]) && is_array($struktur[$id_jabatan][$id_ukm_target]) && count($struktur[$id_jabatan][$id_ukm_target]) > 0) {
+                    echo "<tr><td colspan='3' class='position' style='text-align: center; font-weight: bold;'>$nama_jabatan</td></tr>";
                     foreach ($struktur[$id_jabatan][$id_ukm_target] as $data) {
                         $nim = $data['nim'];
                         $nama_lengkap = $data['nama_lengkap'];
@@ -488,8 +485,6 @@ p {
             ?>
         </div>
     </div>
-</div>
-</div>
 </div>
 <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-dialog">
@@ -506,8 +501,8 @@ p {
         </div>
     </div>
 </div>
-
-
+</div>
+</div>
 <script>
 $(document).ready(function() {
     $(".sk-button").click(function() {

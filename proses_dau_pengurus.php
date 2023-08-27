@@ -5,20 +5,17 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Check if id_admin is sent through the form submission
+if (isset($_POST['id_admin'])) {
+    $id_admin = $_POST['id_admin'];
+}
 // Memeriksa apakah pengguna sudah login
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['id_admin'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
-
-// Memeriksa level pengguna
-if ($_SESSION['level'] == "3") {
-    // Jika level adalah "3" atau "2", redirect ke halaman index.php
-    header("Location: index.php");
-    exit();
-}
-
+$id_ukm = $_SESSION['id_ukm'];
 // Fungsi logout
 function logout() {
     // Menghapus semua data session
@@ -45,7 +42,7 @@ $sessionUserId = $_SESSION['id_user']; // Replace this with the actual way you r
 // Construct the query to get data from the database based on the session's id_user
 $query = "SELECT id_anggota, id_user, nama_lengkap, no_hp, email, prodi, semester, pasfoto, foto_ktm, id_ukm, nama_ukm, sjk_bergabung
           FROM tab_dau
-          WHERE id_user = $sessionUserId";
+          WHERE id_ukm = '$id_ukm'";
 
 // Check if a search term is provided
 if (isset($_GET['search']) && !empty($_GET['search'])) {
@@ -242,7 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <img src="./assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Anggota UKM</i></h2>
-<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'pengurus') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
     <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_dau_pengurus') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
@@ -251,6 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="view_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_lpj') echo 'active'; ?>">Unggah LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>

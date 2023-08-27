@@ -79,10 +79,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $insertQuery = "INSERT INTO tab_lpj (id_laporan, jenis, id_ukm, nama_ukm, tgl_laporan, file_lpj, laporan_bulan_tahun, saran)
                     VALUES ('$id_laporan', '$jenis', '$id_ukm', '$nama_ukm', '$tgl_laporan', '$file_lpj', '$laporan_bulan-$laporan_tahun', '$saran')";
     
-    if (mysqli_query($conn, $insertQuery)) {
-        // Redirect to the page after successful insertion
-        header("Location: proses_lpj.php");
-        exit();
+if (mysqli_query($conn, $insertQuery)) {
+    // Redirect to the page after successful insertion
+    header("Location: proses_lpj.php?success=1");
+    exit();
     } else {
         // Handle insertion error
         // You can display an error message or log the error for debugging
@@ -463,36 +463,46 @@ function previewImage(inputId, previewContainerId) {
 }
 </script>    
 <script>
-    $(document).ready(function () {
-        // Handle click event of Delete buttons
-        $('.delete-lpj').click(function () {
-            const lpjId = $(this).data('id');
-            
-            // Show confirmation dialog
-            Swal.fire({
-                title: 'Are you sure you want to delete this LPJ?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Send AJAX request to delete the LPJ
-                    $.ajax({
-                        url: 'delete_lpj.php', // Create this PHP file to handle deletion
-                        type: 'POST',
-                        data: { lpjId: lpjId },
-                        success: function (response) {
-                            // Reload the page after successful deletion
+   $(document).ready(function () {
+    // Handle click event of Delete buttons
+    $('.delete-lpj').click(function () {
+        const lpjId = $(this).data('id');
+        
+        // Show confirmation dialog
+        Swal.fire({
+            title: 'Are you sure you want to delete this LPJ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send AJAX request to delete the LPJ
+                $.ajax({
+                    url: 'delete_lpj.php', // Create this PHP file to handle deletion
+                    type: 'POST',
+                    data: { lpjId: lpjId },
+                    success: function (response) {
+                        // Show success message using SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil menghapus data LPJ',
+                            showConfirmButton: false,
+                            timer: 2000 // Display the alert for 2 seconds
+                        });
+
+                        // Reload the page after successful deletion
+                        setTimeout(function () {
                             location.reload();
-                        }
-                    });
-                }
-            });
+                        }, 2000);
+                    }
+                });
+            }
         });
     });
+});
 </script>
 
 <script>
@@ -526,6 +536,19 @@ document.getElementById('file').addEventListener('change', function() {
     // Function to open the Lapor LPJ modal
     function openLaporModal() {
         $('#laporModal').modal('show');
+    }
+    // Check if a success query parameter is present in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const successParam = urlParams.get('success');
+
+    if (successParam === '1') {
+        // Show a success alert using SweetAlert
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil mengunggah LPJ',
+            showConfirmButton: false,
+            timer: 2000 // Display the alert for 2 seconds
+        });
     }
 </script>
 <script>

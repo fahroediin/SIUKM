@@ -5,21 +5,18 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
-// Check if id_user is sent through the form submission
-if (isset($_POST['id_user'])) {
-    $id_user = $_POST['id_user'];
+// Check if id_admin is sent through the form submission
+if (isset($_POST['id_admin'])) {
+    $id_admin = $_POST['id_admin'];
 }
-
-// Menandai halaman yang aktif
-$active_page = 'pengurus';
-
 // Memeriksa apakah pengguna sudah login
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['id_admin'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
-
+// Menandai halaman yang aktif
+$active_page = 'pengurus';
 function logout() {
     // Menghapus semua data session
     session_unset();
@@ -36,9 +33,9 @@ if (isset($_GET['logout'])) {
     logout();
 }
 
-// Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
-$userId = $_SESSION['id_user'];
-$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+$userId = $_SESSION['id_admin'];
+$id_ukm = $_SESSION['id_ukm'];
+$query = "SELECT * FROM tab_admin WHERE id_admin = '$userId'";
 
 // Mengeksekusi query
 $result = mysqli_query($conn, $query);
@@ -50,9 +47,7 @@ if ($result) {
     // Menyimpan data pengguna ke dalam variabel
     $nama_lengkap = $user['nama_lengkap'];
     $email = $user['email'];
-    $no_hp = $user['no_hp'];
-    $prodi = $user['prodi']; // Assuming "prodi" is the field name in the database
-    $semester = $user['semester']; // Assuming "semester" is the field name in the database
+    $id_ukm = $user['id_ukm'];
 
     // Check if the pasfoto field is not empty
     if (!empty($user['pasfoto'])) {
@@ -71,13 +66,13 @@ if ($result) {
 
 
 // Mengambil data pengguna dari tabel tab_user berdasarkan ID yang ada di session
-$userId = $_SESSION['id_user'];
-$query = "SELECT * FROM tab_user WHERE id_user = '$userId'";
+$userId = $_SESSION['id_admin'];
+$query = "SELECT * FROM tab_user WHERE id_admin = '$userId'";
 
 // Mengeksekusi query
 $result = mysqli_query($conn, $query);
 // Prepare the SQL query to get the number of snapshots for tab_ukm
-$sqlMemberSnapshotCount = "SELECT COUNT(*) AS member_snapshot_count FROM tab_dau";
+$sqlMemberSnapshotCount = "SELECT COUNT(*) AS member_snapshot_count FROM tab_dau WHERE id_ukm = '$id_ukm'";
 
 // Execute the query to get the ukm snapshot count
 $resultMemberSnapshotCount = mysqli_query($conn, $sqlMemberSnapshotCount);
@@ -93,7 +88,7 @@ if ($resultMemberSnapshotCount) {
 
 
 // Prepare the SQL query to get the number of snapshots for the current user
-$pacabSnapshotCount = "SELECT COUNT(*) AS pacab_snapshot_count FROM tab_pacab";
+$pacabSnapshotCount = "SELECT COUNT(*) AS pacab_snapshot_count FROM tab_pacab WHERE id_ukm = '$id_ukm'";
 
 // Execute the query to get the snapshot count
 $resultPacabSnapshotCount = mysqli_query($conn, $pacabSnapshotCount);
@@ -111,7 +106,7 @@ if ($resultPacabSnapshotCount) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Pengurus</title>
+    <title>Dashboard Admin UKM</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -242,6 +237,7 @@ if ($resultPacabSnapshotCount) {
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="view_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_lpj') echo 'active'; ?>">Unggah LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -265,7 +261,7 @@ if ($resultPacabSnapshotCount) {
 </script>
 <body>
         <div class="content">
-            <h1>Pengurus UKM</h1>
+            <h1>Admin UKM</h1>
             <hr class="divider">
             <div class="wrapper">
     <div class="col-md-12 col-sm-12">
@@ -285,7 +281,6 @@ if ($resultPacabSnapshotCount) {
                                 <div class="profile-details">
                                     <p><span class="label">Nama Lengkap:</span> <span class="value"><?php echo $nama_lengkap; ?></span></p>
                                     <p><span class="label">Email:</span> <span class="value"><?php echo $email; ?></span></p>
-                                    <p><span class="label">Nomor HP:</span> <span class="value"><?php echo $no_hp; ?></span></p>
                                 </div>
                                 <!-- Tombol Ganti Password -->
                                 <a href="ganti_password_pengurus.php" class="btn btn-primary mt-2"><i class="fas fa-key"></i> Ganti Password</a>

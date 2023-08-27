@@ -98,7 +98,7 @@ $active_page = 'calon_anggota';
     <h2><i>Calon Anggota</i></h2>
     <a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
     <p style="text-align: center;">--Manajemen--</p>
-    <a href="proses_index.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_index') echo 'active'; ?>">Beranda</a>
+    <a href="proses_beranda.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_index') echo 'active'; ?>">Beranda</a>
     <a href="proses_profil.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_profil') echo 'active'; ?>">Profil</a>
     <a href="proses_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="proses_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'galeri') echo 'active'; ?>">Galeri</a>
@@ -168,7 +168,7 @@ $active_page = 'calon_anggota';
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                                               <tbody>
                             <?php
                             // Mengambil data calabar dari database
                             $query = "SELECT * FROM tab_pacab";
@@ -204,7 +204,7 @@ $active_page = 'calon_anggota';
 
                         } else {
                             // Jika tidak ada data, tampilkan pesan dalam baris tabel khusus
-                            echo '<tr><td colspan="15" class="text-center">Tidak ada data yang tersedia.</td></tr>';
+                            echo '<tr><td colspan="15" class="text-center">Tidak ada data pendaftar anggota baru.</td></tr>';
                         }
                 
                         // Menutup koneksi

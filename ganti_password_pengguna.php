@@ -256,15 +256,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="form-group">
                     <label for="old_password">Password Lama:</label>
-                    <input type="password" class="form-control" id="old_password" name="old_password">
+                    <input type="password" placeholder="Masukan password lama anda" class="form-control" id="old_password" name="old_password">
                 </div>
                 <div class="form-group">
                     <label for="password">Password Baru:</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <input type="password" placeholder="Masukan password baru anda" class="form-control" id="password" name="password" required>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Konfirmasi Password:</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    <input type="password" placeholder="Ulangi password baru anda" class="form-control" id="confirm_password" name="confirm_password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>

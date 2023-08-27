@@ -5,17 +5,14 @@ require_once "db_connect.php";
 // Memulai session
 session_start();
 
+// Check if id_admin is sent through the form submission
+if (isset($_POST['id_admin'])) {
+    $id_admin = $_POST['id_admin'];
+}
 // Memeriksa apakah pengguna sudah login
-if (!isset($_SESSION['id_user'])) {
+if (!isset($_SESSION['id_admin'])) {
     // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
-    exit();
-}
-
-// Memeriksa level pengguna
-if ($_SESSION['level'] == "3") {
-    // Jika level adalah "3" atau "2", redirect ke halaman index.php
-    header("Location: index.php");
     exit();
 }
 
@@ -75,7 +72,7 @@ if (isset($_POST['submit'])) {
             // If the user confirms, proceed with the update
             if (updateStruktur($conn, $id_ukm, $id_jabatan, $nama_lengkap, $nim, $id_anggota)) {
                 // Redirect to the page after successful update
-                header("Location: proses_struktur.php");
+                header("Location: proses_struktur_pengurus.php");
                 exit();
             } else {
                 // If there's an error during update
@@ -172,7 +169,7 @@ if (isset($_POST['submit'])) {
   <img src="./assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Struktur</i></h2>
-<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'pengurus') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
     <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
@@ -181,6 +178,7 @@ if (isset($_POST['submit'])) {
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="view_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_lpj') echo 'active'; ?>">Unggah LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
@@ -206,33 +204,12 @@ if (isset($_POST['submit'])) {
 
         <body>
  <!-- Konten -->
- <div class="content">
+<div class="content">
     <div class="card">
         <h2 style="text-align: center;">Kelola Struktur Organisasi</h2>
-        <form method="post" action="proses_struktur.php">
-            <div class="form-group">
-                <select class="form-control" id="id_ukm" name="id_ukm" required onchange="this.form.submit()">
-                    <option value="">-- Pilih Nama UKM --</option>
-                    <?php
-                    // Query untuk mendapatkan data tab_ukm
-                    $sql_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-                    $result_ukm = $conn->query($sql_ukm);
-
-                    // Menampilkan opsi untuk setiap baris data
-                    while ($row_ukm = $result_ukm->fetch_assoc()) {
-                        $id_ukm = $row_ukm['id_ukm'];
-                        $nama_ukm = $row_ukm['nama_ukm'];
-                        $selected = isset($_POST['id_ukm']) && $_POST['id_ukm'] == $id_ukm ? 'selected' : '';
-                        echo "<option value='$id_ukm' $selected>$nama_ukm</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-        </form>
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID UKM</th>
                     <th>Jabatan</th>
                     <th>Nama Lengkap</th>
                     <th>NIM/NIDN</th>
@@ -240,33 +217,28 @@ if (isset($_POST['submit'])) {
             </thead>
             <tbody>
                 <?php
-                    // Check if "id_ukm" is selected
-                if (isset($_POST['id_ukm'])) {
-                    // Query to retrieve "tab_strukm" data based on "id_ukm" and sort by "id_jabatan"
-                    $id_ukm_selected = $_POST['id_ukm'];
-                    $sql_strukm = "SELECT * FROM tab_strukm WHERE id_ukm = ? ORDER BY id_jabatan ASC";
-                    $stmt_strukm = $conn->prepare($sql_strukm);
-                    $stmt_strukm->bind_param("s", $id_ukm_selected);
-                    $stmt_strukm->execute();
-                    $result_strukm = $stmt_strukm->get_result();
+                // Get the id_ukm from the session
+                $id_ukm_selected = $_SESSION['id_ukm'];
 
-                    // Display data in table rows
-                    while ($row_strukm = $result_strukm->fetch_assoc()) {
-                        $id_jabatan = $row_strukm['id_jabatan'];
-                        $nama_lengkap = $row_strukm['nama_lengkap'];
-                        $nim = $row_strukm['nim'];
+                // Query to retrieve "tab_strukm" data based on "id_ukm" and sort by "id_jabatan"
+                $sql_strukm = "SELECT * FROM tab_strukm WHERE id_ukm = ? ORDER BY id_jabatan ASC";
+                $stmt_strukm = $conn->prepare($sql_strukm);
+                $stmt_strukm->bind_param("s", $id_ukm_selected);
+                $stmt_strukm->execute();
+                $result_strukm = $stmt_strukm->get_result();
 
-                        // Mendapatkan nama UKM berdasarkan id_ukm dari tabel tab_ukm
-                        $sql_ukm_name = "SELECT id_ukm FROM tab_ukm WHERE id_ukm = ?";
-                        $stmt_ukm_name = $conn->prepare($sql_ukm_name);
-                        $stmt_ukm_name->bind_param("s", $id_ukm_selected);
-                        $stmt_ukm_name->execute();
-                        $result_ukm_name = $stmt_ukm_name->get_result();
-                        $ukm_name = $result_ukm_name->fetch_assoc()['id_ukm'];
+                // Display data in table rows
+                while ($row_strukm = $result_strukm->fetch_assoc()) {
+                    $id_jabatan = $row_strukm['id_jabatan'];
+                    $nama_lengkap = $row_strukm['nama_lengkap'];
+                    $nim = $row_strukm['nim'];
+                    
 
-                        // Mengonversi id_jabatan menjadi teks jabatan
+                     $first_digit = substr($id_jabatan, 0, 1);
+
+                        // Map the first digit to the corresponding jabatan text
                         $jabatan = "";
-                        switch ($id_jabatan) {
+                        switch ($first_digit) {
                             case 0:
                                 $jabatan = "Pembimbing";
                                 break;
@@ -293,36 +265,32 @@ if (isset($_POST['submit'])) {
                                 break;
                         }
 
-                        // Menampilkan data dalam baris tabel
-                        echo "<tr>";
-                        echo "<td>$ukm_name</td>";
-                        echo "<td>$jabatan</td>";
-                        echo "<td>$nama_lengkap</td>";
-                        echo "<td>$nim</td>";
-                        echo "</tr>";
-                    }
+                    // Menampilkan data dalam baris tabel
+                    echo "<tr>";
+                    echo "<td>$jabatan</td>";
+                    echo "<td>$nama_lengkap</td>";
+                    echo "<td>$nim</td>";
+                    echo "</tr>";
                 }
                 ?>
             </tbody>
         </table>
         <form method="post" action="proses_struktur.php" onsubmit="return checkJabatan()">
             <div class="form-group">
-                <label for="id_ukm">Nama UKM:</label>
-                <select class="form-control" id="id_ukm" name="id_ukm" required>
-                    <?php
-                    // Query untuk mendapatkan data tab_ukm
-                    $sql_ukm = "SELECT id_ukm, nama_ukm FROM tab_ukm";
-                    $result_ukm = $conn->query($sql_ukm);
+    <label for="id_ukm">Nama UKM:</label>
+    <?php
+    // Query untuk mendapatkan nama UKM berdasarkan id_ukm_selected
+    $sql_nama_ukm = "SELECT nama_ukm FROM tab_ukm WHERE id_ukm = ?";
+    $stmt_nama_ukm = $conn->prepare($sql_nama_ukm);
+    $stmt_nama_ukm->bind_param("s", $id_ukm_selected);
+    $stmt_nama_ukm->execute();
+    $result_nama_ukm = $stmt_nama_ukm->get_result();
+    $row_nama_ukm = $result_nama_ukm->fetch_assoc();
+    $nama_ukm = $row_nama_ukm['nama_ukm'];
+    ?>
+    <input type="text" class="form-control" id="id_ukm" name="id_ukm" value="<?php echo $nama_ukm; ?>" readonly>
+</div>
 
-                    // Menampilkan opsi untuk setiap baris data
-                    while ($row_ukm = $result_ukm->fetch_assoc()) {
-                        $id_ukm = $row_ukm['id_ukm'];
-                        $nama_ukm = $row_ukm['nama_ukm'];
-                        echo "<option value='$id_ukm'>$nama_ukm</option>";
-                    }
-                    ?>
-                </select>
-            </div>
             <div class="form-group">
                 <label for="id_jabatan">ID Jabatan:</label>
                 <select class="form-control" id="id_jabatan" name="id_jabatan" required>
@@ -335,23 +303,29 @@ if (isset($_POST['submit'])) {
                     <option value="0">Pembimbing</option>
                 </select>
             </div>
-            <div class="form-group">
-            <label for="id_anggota">ID Anggota:</label>
-            <select class="form-control" id="id_anggota_dropdown" name="id_anggota" required>
-                <option value="">Pilih ID Anggota</option>
-                <?php
-                // Query to get data from tab_dau
-                $sql_anggota = "SELECT id_anggota FROM tab_dau";
-                $result_anggota = $conn->query($sql_anggota);
+<div class="form-group">
+    <label for="id_anggota">ID Anggota:</label>
+    <select class="form-control" id="id_anggota_dropdown" name="id_anggota" required>
+        <option value="">Pilih ID Anggota</option>
+        <?php
+        // Query to get data from tab_dau based on id_ukm
+        $sql_anggota = "SELECT id_anggota, nama_lengkap FROM tab_dau WHERE id_ukm = ?";
+        $stmt_anggota = $conn->prepare($sql_anggota);
+        $stmt_anggota->bind_param("s", $id_ukm_selected);
+        $stmt_anggota->execute();
+        $result_anggota = $stmt_anggota->get_result();
 
-                // Display options for each row of data
-                while ($row_anggota = $result_anggota->fetch_assoc()) {
-                    $id_anggota = $row_anggota['id_anggota'];
-                    echo "<option value='$id_anggota'>$id_anggota</option>";
-                }
-                ?>
-            </select>
-        </div>
+        // Display options for each row of data
+        while ($row_anggota = $result_anggota->fetch_assoc()) {
+            $id_anggota = $row_anggota['id_anggota'];
+            $nama_lengkap = $row_anggota['nama_lengkap'];
+            echo "<option value='$id_anggota'>$id_anggota - $nama_lengkap</option>";
+        }
+        ?>
+    </select>
+</div>
+
+
     <!-- Add the text fields to be auto-populated -->
     <div class="form-group">
     <label for="nama_lengkap">Nama Lengkap:</label>

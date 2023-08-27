@@ -1,93 +1,100 @@
 <?php
 require_once "db_connect.php";
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+require_once "db_connect.php";
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php'; // Include PHPMailer autoloader
+require_once 'vendor/PHPMailer/src/Exception.php';
+require_once 'vendor/PHPMailer/src/SMTP.php';
+require_once 'vendor/PHPMailer/src/PHPMailer.php';
 
+// Function to generate a random token
 function generateToken($length = 32)
 {
     return bin2hex(random_bytes($length));
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id_user = $_POST["id_user"];
-    $email = $_POST["email"];
+function sendPasswordResetEmail($email, $token) {
+    // Create a new PHPMailer instance
+    $mail = new PHPMailer(true);
+    
+    // Configure SMTP settings
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'mailer@siukm-stmikkomputama.site';
+    $mail->Password = 'whosyourdaddy1343';
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port = 465;
 
-    // Check if the user exists in the database
+    // Set email content
+    $subject = "Password Reset Link - SIUKM STMIK Komputama Majenang";
+    $reset_link = "http://{$_SERVER['HTTP_HOST']}/reset_password.php?token=" . $token;
+    $message = "Hello,\n\nYou have requested to reset your password. Click the link below to reset your password:\n\n{$reset_link}\n\nIf you didn't request this, please ignore this email.\n\nBest regards,\nThe SIUKM Team";
+    $mail->setFrom('siukm.komputama@gmail.com', 'SIUKM - Komputama Majenang');
+    $mail->addAddress($email);
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $message;
+
+    // Send email
+    $mail->send();
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Input validation and sanitization
+    $id_user = filter_input(INPUT_POST, 'id_user', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    
+  // Prepare the SELECT query
     $query = "SELECT * FROM tab_user WHERE id_user = ? AND email = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ss", $id_user, $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
+     if ($result->num_rows === 1) {
         // User exists, generate a unique token
         $token = generateToken();
 
         // Save the token, id_user, email, and expiry timestamp to the password_reset_tokens table
-        $expiry_timestamp = time() + (24 * 60 * 60); // Token valid for 24 hours
+        $expiry_timestamp = time() + (24 * 60 * 60); 
 
-        // Insert or update token in password_reset_tokens table
         $query = "INSERT INTO password_reset_tokens (token, id_user, email, expiry_timestamp) VALUES (?, ?, ?, ?)
                   ON DUPLICATE KEY UPDATE token = VALUES(token), expiry_timestamp = VALUES(expiry_timestamp)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("sssi", $token, $id_user, $email, $expiry_timestamp);
         $stmt->execute();
 
-        // Clean up expired tokens
-        $cleanup_query = "DELETE FROM password_reset_tokens WHERE expiry_timestamp < ?";
-        $cleanup_stmt = $conn->prepare($cleanup_query);
-        $cleanup_stmt->bind_param("i", time());
-        $cleanup_stmt->execute();
+         // Send password reset email
+        sendPasswordResetEmail($email, $token);
 
-        // Send email to the user with the password reset link using PHPMailer
-        $reset_link = "http://localhost/SIUKMSTMIK/page/forgot_password.php?token=" . $token;
-
-        try {
-            $mail = new PHPMailer(true);
-            $mail->isSMTP();
-            // Configure SMTP settings
-            $mail->Host = 'smtp.example.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'your_email@example.com';
-            $mail->Password = 'your_email_password';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
-
-            $mail->setFrom('your_email@example.com', 'Your Name');
-            $mail->addAddress($email);
-            $mail->Subject = "Password Reset Link - SIUKM STMIK Komputama Majenang";
-            $mail->Body = "Hello,\n\nYou have requested to reset your password. Click the link below to reset your password:\n\n{$reset_link}\n\nIf you didn't request this, please ignore this email.\n\nBest regards,\nThe SIUKM Team";
-
-            $mail->send();
-            header("Location: forgot_password_success.php");
-            exit();
-        } catch (Exception $e) {
-            echo "Failed to send email. Error: {$mail->ErrorInfo}";
-        }
+        // Redirect to success page
+        header("Location: forgot_password_success.php");
+        exit();
     } else {
-        // User not found or incorrect email
-        echo '<script type="text/javascript">';
-        echo 'alert("Username tidak terdaftar atau email tidak benar, ulangi.");';
-        echo '</script>';
+        // User not found
+        $error_message = "Invalid ID User or Email.";
     }
 }
-$query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
-$result_bg = mysqli_query($conn, $query_bg);
-if ($result_bg && mysqli_num_rows($result_bg) > 0) {
-    $row_bg = mysqli_fetch_assoc($result_bg);
-    $background_image_filename = $row_bg["bg_login"];
 
-    // Construct the background image URL
-    $background_image_url = "./assets/images/bg/" . $background_image_filename;
-} else {
-    $background_image_url = ""; // Set a default image URL if not found
-}
+    $query_bg = "SELECT bg_login FROM tab_beranda LIMIT 1"; // Retrieve the first row
+    $result_bg = mysqli_query($conn, $query_bg);
+    if ($result_bg && mysqli_num_rows($result_bg) > 0) {
+        $row_bg = mysqli_fetch_assoc($result_bg);
+        $background_image_filename = $row_bg["bg_login"];
+
+        // Construct the background image URL
+        $background_image_url = "./assets/images/bg/" . $background_image_filename;
+    } else {
+        $background_image_url = ""; // Set a default image URL if not found
+    }
 ?>
-
-
 <!DOCTYPE html>
 <html>
 <head>

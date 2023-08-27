@@ -100,8 +100,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$id_anggota', '$id_user', '$nama_lengkap', '$no_hp', '$email', '$prodi', '$semester', '$pasfoto', '$fotoKtm', '$id_ukm', '$nama_ukm', '$sjk_bergabung')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "Berhasil menambahkan anggota";
-        // Redirect ke halaman data anggota setelah penyimpanan berhasil
         header("Location: proses_dau.php");
         exit();
     } else {

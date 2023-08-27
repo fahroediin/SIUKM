@@ -2,15 +2,17 @@
 require_once "db_connect.php";
 session_start();
 
-if (!isset($_SESSION['id_user'])) {
+// Check if id_admin is sent through the form submission
+if (isset($_POST['id_admin'])) {
+    $id_admin = $_POST['id_admin'];
+}
+// Memeriksa apakah pengguna sudah login
+if (!isset($_SESSION['id_admin'])) {
+    // Jika belum login, redirect ke halaman login.php
     header("Location: login.php");
     exit();
 }
-
-if ($_SESSION['level'] == "3") {
-    header("Location: index.php");
-    exit();
-}
+$id_ukm = $_SESSION['id_ukm'];
 
 $active_page = 'view_kegiatan';
 
@@ -41,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssss", $id_ukm, $nama_ukm, $id_kegiatan, $nama_kegiatan, $deskripsi, $jenis, $tgl);
 
     if ($stmt->execute()) {
-        header("Location: view_kegiatan.php?success=1");
+        header("Location: proses_kegiatan.php?success=1");
         exit();
     } else {
         echo "Sorry, there was an error uploading your file.";
@@ -49,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm";
+$query = "SELECT id_ukm, nama_ukm, logo_ukm, instagram, facebook, sejarah, visi, misi FROM tab_ukm WHERE id_ukm = '$id_ukm'";
 $result = mysqli_query($conn, $query);
 
 // Inisialisasi variabel untuk opsi combobox
@@ -64,7 +66,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 // Construct the base query
-$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, deskripsi, jenis, id_ukm, nama_ukm, tgl FROM tab_kegiatan";
+$query_kegiatan = "SELECT id_kegiatan, nama_kegiatan, deskripsi, jenis, id_ukm, nama_ukm, tgl FROM tab_kegiatan WHERE id_ukm = '$id_ukm'";
 
 // Check if a search query is provided
 if (isset($_GET['search_query']) && !empty($_GET['search_query'])) {
@@ -193,15 +195,16 @@ $result_kegiatan = mysqli_query($conn, $query_kegiatan);
   <img src="./assets/images/siukm-logo.png" alt="Profile Picture" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
 </a>
 <h2><i>Kegiatan</i></h2>
-<a href="pengurus.php" class="btn btn-primary <?php if($active_page == 'kemahasiswaan') echo 'active'; ?>">Dashboard</a>
+<a href="admin.php" class="btn btn-primary <?php if($active_page == 'dashboard') echo 'active'; ?>">Dashboard</a>
             <p style="text-align: center;">--Manajemen--</p>
-    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_dau') echo 'active'; ?>">Data Anggota</a>
+    <a href="proses_dau_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'proses_dau_pengurus') echo 'active'; ?>">Data Anggota</a>
     <a href="proses_struktur_pengurus.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'struktur') echo 'active'; ?>">Pengurus</a>
     <a href="view_prestasi.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_prestasi') echo 'active'; ?>">Prestasi</a>
     <a href="view_ukm.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_ukm') echo 'active'; ?>">Data UKM</a>
     <a href="view_galeri.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_galeri') echo 'active'; ?>">Galeri</a>
     <a href="view_kegiatan.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_kegiatan') echo 'active'; ?>">Kegiatan</a>
     <a href="view_calon_anggota.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_calon_anggota') echo 'active'; ?>">Daftar Calon Anggota Baru</a>
+    <a href="view_lpj.php" class="btn btn-primary btn-manajemen <?php if($active_page == 'view_lpj') echo 'active'; ?>">Unggah LPJ</a>
     <a href="#" class="btn btn-primary" id="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </a>
